@@ -4,6 +4,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { NuqsAdapter } from 'nuqs/adapters/tanstack-router'
 import type { ReactNode } from 'react'
 
+import { PostHogProvider } from '../providers/posthog-provider'
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
@@ -21,9 +22,11 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <NuqsAdapter>
-        <Outlet />
-      </NuqsAdapter>
+      <PostHogProvider>
+        <NuqsAdapter>
+          <Outlet />
+        </NuqsAdapter>
+      </PostHogProvider>
     </RootDocument>
   )
 }
