@@ -4,6 +4,9 @@ import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
 import { Layout } from '~/components/layout/layout'
 import { Button } from '~/components/ui/button'
+import { Description } from '~/components/ui/description'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
 import { useTheme } from '~/providers/theme-provider'
 
 export const Route = createFileRoute('/dev')({
@@ -73,35 +76,35 @@ function DevPage() {
               </div>
             </div>
             <div>
-              <h3 className="mb-3 font-semibold text-sm">Red Scale</h3>
+              <h3 className="mb-3 font-semibold text-sm">Brand Scale</h3>
               <div className="grid grid-cols-11 gap-2">
-                <ColorSwatch name="red-50" className="bg-red-50" />
-                <ColorSwatch name="red-100" className="bg-red-100" />
-                <ColorSwatch name="red-200" className="bg-red-200" />
-                <ColorSwatch name="red-300" className="bg-red-300" />
-                <ColorSwatch name="red-400" className="bg-red-400" />
-                <ColorSwatch name="red-500" className="bg-red-500" />
-                <ColorSwatch name="red-600" className="bg-red-600" />
-                <ColorSwatch name="red-700" className="bg-red-700" />
-                <ColorSwatch name="red-800" className="bg-red-800" />
-                <ColorSwatch name="red-900" className="bg-red-900" />
-                <ColorSwatch name="red-950" className="bg-red-950" />
+                <ColorSwatch name="brand-50" className="bg-brand-50" />
+                <ColorSwatch name="brand-100" className="bg-brand-100" />
+                <ColorSwatch name="brand-200" className="bg-brand-200" />
+                <ColorSwatch name="brand-300" className="bg-brand-300" />
+                <ColorSwatch name="brand-400" className="bg-brand-400" />
+                <ColorSwatch name="brand-500" className="bg-brand-500" />
+                <ColorSwatch name="brand-600" className="bg-brand-600" />
+                <ColorSwatch name="brand-700" className="bg-brand-700" />
+                <ColorSwatch name="brand-800" className="bg-brand-800" />
+                <ColorSwatch name="brand-900" className="bg-brand-900" />
+                <ColorSwatch name="brand-950" className="bg-brand-950" />
               </div>
             </div>
             <div>
-              <h3 className="mb-3 font-semibold text-sm">Neutral Scale</h3>
+              <h3 className="mb-3 font-semibold text-sm">Base Scale</h3>
               <div className="grid grid-cols-11 gap-2">
-                <ColorSwatch name="neutral-50" className="bg-neutral-50" />
-                <ColorSwatch name="neutral-100" className="bg-neutral-100" />
-                <ColorSwatch name="neutral-200" className="bg-neutral-200" />
-                <ColorSwatch name="neutral-300" className="bg-neutral-300" />
-                <ColorSwatch name="neutral-400" className="bg-neutral-400" />
-                <ColorSwatch name="neutral-500" className="bg-neutral-500" />
-                <ColorSwatch name="neutral-600" className="bg-neutral-600" />
-                <ColorSwatch name="neutral-700" className="bg-neutral-700" />
-                <ColorSwatch name="neutral-800" className="bg-neutral-800" />
-                <ColorSwatch name="neutral-900" className="bg-neutral-900" />
-                <ColorSwatch name="neutral-950" className="bg-neutral-950" />
+                <ColorSwatch name="base-50" className="bg-base-50" />
+                <ColorSwatch name="base-100" className="bg-base-100" />
+                <ColorSwatch name="base-200" className="bg-base-200" />
+                <ColorSwatch name="base-300" className="bg-base-300" />
+                <ColorSwatch name="base-400" className="bg-base-400" />
+                <ColorSwatch name="base-500" className="bg-base-500" />
+                <ColorSwatch name="base-600" className="bg-base-600" />
+                <ColorSwatch name="base-700" className="bg-base-700" />
+                <ColorSwatch name="base-800" className="bg-base-800" />
+                <ColorSwatch name="base-900" className="bg-base-900" />
+                <ColorSwatch name="base-950" className="bg-base-950" />
               </div>
             </div>
           </div>
@@ -150,6 +153,35 @@ function DevPage() {
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Full Width</h3>
               <Button fullWidth>Full Width Button</Button>
+            </div>
+          </div>
+        </Section>
+
+        {/* Form Elements Section */}
+        <Section title="Form Elements">
+          <div className="grid max-w-md gap-8">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Normal State</h3>
+              <div>
+                <Label htmlFor="name">Nome</Label>
+                <Input id="name" placeholder="Ex: Maria" />
+                <Description>Digite seu nome completo</Description>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Error State</h3>
+              <div>
+                <Label htmlFor="income">Renda mensal</Label>
+                <Input id="income" placeholder="R$ 0,00" error />
+                <Description error>Este campo e obrigatorio</Description>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Disabled State</h3>
+              <div>
+                <Label htmlFor="disabled">Campo desabilitado</Label>
+                <Input id="disabled" placeholder="Nao editavel" disabled />
+              </div>
             </div>
           </div>
         </Section>
