@@ -3,6 +3,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
 import { Layout } from '~/components/layout/layout'
+import { Button } from '~/components/ui/button'
 import { useTheme } from '~/providers/theme-provider'
 
 export const Route = createFileRoute('/dev')({
@@ -34,21 +35,21 @@ function DevPage() {
               <button
                 type="button"
                 onClick={() => setTheme('system')}
-                className={`rounded-lg border px-3 py-1.5 text-sm ${theme === 'system' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
+                className={`cursor-pointer rounded-lg border px-3 py-1.5 text-sm ${theme === 'system' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
               >
                 System
               </button>
               <button
                 type="button"
                 onClick={() => setTheme('light')}
-                className={`rounded-lg border px-3 py-1.5 text-sm ${theme === 'light' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
+                className={`cursor-pointer rounded-lg border px-3 py-1.5 text-sm ${theme === 'light' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
               >
                 Light
               </button>
               <button
                 type="button"
                 onClick={() => setTheme('dark')}
-                className={`rounded-lg border px-3 py-1.5 text-sm ${theme === 'dark' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
+                className={`cursor-pointer rounded-lg border px-3 py-1.5 text-sm ${theme === 'dark' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
               >
                 Dark
               </button>
@@ -116,6 +117,40 @@ function DevPage() {
             <p className="text-base">Body text - regular weight, base size</p>
             <p className="text-muted-foreground text-sm">Muted text - smaller, secondary color</p>
             <p className="text-muted-foreground text-xs">Helper text - extra small, muted</p>
+          </div>
+        </Section>
+
+        {/* Buttons Section */}
+        <Section title="Buttons">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Variants</h3>
+              <div className="flex flex-wrap items-center gap-4">
+                <Button variant="primary">Primary</Button>
+                <Button variant="secondary">Secondary</Button>
+                <Button variant="outline">Outline</Button>
+                <Button variant="ghost">Ghost</Button>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Sizes</h3>
+              <div className="flex flex-wrap items-center gap-4">
+                <Button size="sm">Small</Button>
+                <Button size="md">Medium</Button>
+                <Button size="lg">Large</Button>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">States</h3>
+              <div className="flex flex-wrap items-center gap-4">
+                <Button>Normal</Button>
+                <Button disabled>Disabled</Button>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Full Width</h3>
+              <Button fullWidth>Full Width Button</Button>
+            </div>
           </div>
         </Section>
 
