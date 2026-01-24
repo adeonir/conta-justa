@@ -1,12 +1,17 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
+import { Info } from 'lucide-react'
+
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
 import { Layout } from '~/components/layout/layout'
 import { Button } from '~/components/ui/button'
+import { Card } from '~/components/ui/card'
 import { Description } from '~/components/ui/description'
+import { InfoBox } from '~/components/ui/info-box'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { Title } from '~/components/ui/title'
 import { useTheme } from '~/providers/theme-provider'
 
 export const Route = createFileRoute('/dev')({
@@ -182,6 +187,50 @@ function DevPage() {
                 <Label htmlFor="disabled">Campo desabilitado</Label>
                 <Input id="disabled" placeholder="Nao editavel" disabled />
               </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* Container Components Section */}
+        <Section title="Container Components">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Card (with accent - default)</h3>
+              <Card>
+                <Title>Pessoa A</Title>
+                <p className="text-muted-foreground text-sm">Card with accent bar enabled by default.</p>
+              </Card>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Card (without accent)</h3>
+              <Card accent={false}>
+                <Title>Pessoa A</Title>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="card-name">Nome</Label>
+                    <Input id="card-name" placeholder="Ex: Maria" />
+                  </div>
+                  <div>
+                    <Label htmlFor="card-income">Renda mensal</Label>
+                    <Input id="card-income" placeholder="R$ 0,00" />
+                  </div>
+                </div>
+              </Card>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Title</h3>
+              <div className="rounded-lg border border-border bg-card p-6">
+                <Title>Section Title</Title>
+                <p className="text-muted-foreground text-sm">
+                  The Title component renders an uppercase heading with tracking-wide and a bottom border.
+                </p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">InfoBox</h3>
+              <InfoBox icon={<Info />}>
+                This is an informational message to help users understand a feature or provide additional context.
+              </InfoBox>
             </div>
           </div>
         </Section>
