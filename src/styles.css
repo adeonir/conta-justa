@@ -1,1 +1,93 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-white: #ffffff;
+  --color-black: #1a1a1a;
+
+  --color-red-50: #fff5f5;
+  --color-red-100: #ffe0e0;
+  --color-red-200: #ffbdbd;
+  --color-red-300: #ff8a8a;
+  --color-red-400: #ff6f60;
+  --color-red-500: #e53935;
+  --color-red-600: #d32f2f;
+  --color-red-700: #ab000d;
+  --color-red-800: #8b0000;
+  --color-red-900: #6b0000;
+  --color-red-950: #450a0a;
+
+  --color-neutral-50: #f8f6fa;
+  --color-neutral-100: #f1f1f1;
+  --color-neutral-200: #e8e8e8;
+  --color-neutral-300: #d0d0d0;
+  --color-neutral-400: #a0a0a0;
+  --color-neutral-500: #666666;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #2a2a2a;
+  --color-neutral-800: #1c1c1c;
+  --color-neutral-900: #141414;
+  --color-neutral-950: #0a0a0a;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-success: var(--color-green-500);
+  --color-warning: var(--color-amber-500);
+  --color-error: var(--color-red-500);
+  --color-info: var(--color-blue-500);
+
+  --shadow-glow: 0 0 60px rgba(229, 57, 53, 0.3);
+
+  --font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  --background: var(--color-neutral-50);
+  --foreground: var(--color-black);
+  --card: var(--color-white);
+  --card-foreground: var(--color-black);
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-500);
+  --primary: var(--color-red-500);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-black);
+  --secondary-foreground: var(--color-white);
+  --border: var(--color-neutral-200);
+  --input: var(--color-neutral-200);
+  --ring: var(--color-red-500);
+}
+
+.dark {
+  --background: var(--color-neutral-950);
+  --foreground: var(--color-white);
+  --card: var(--color-neutral-900);
+  --card-foreground: var(--color-white);
+  --muted: var(--color-neutral-800);
+  --muted-foreground: var(--color-neutral-400);
+  --primary: var(--color-red-500);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-white);
+  --secondary-foreground: var(--color-black);
+  --border: var(--color-neutral-700);
+  --input: var(--color-neutral-700);
+  --ring: var(--color-red-500);
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
