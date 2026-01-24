@@ -7,6 +7,7 @@ import { Header } from '~/components/layout/header'
 import { Layout } from '~/components/layout/layout'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
+import { Collapsible } from '~/components/ui/collapsible'
 import { Description } from '~/components/ui/description'
 import { InfoBox } from '~/components/ui/info-box'
 import { Input } from '~/components/ui/input'
@@ -231,6 +232,77 @@ function DevPage() {
               <InfoBox icon={<Info />}>
                 This is an informational message to help users understand a feature or provide additional context.
               </InfoBox>
+            </div>
+          </div>
+        </Section>
+
+        {/* Collapsible Section */}
+        <Section title="Collapsible">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">With separator (form context)</h3>
+              <Card accent={false}>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="main-field">Main field</Label>
+                    <Input id="main-field" placeholder="Required field" />
+                  </div>
+                </div>
+                <Collapsible.Root className="mt-8 border-border border-t pt-8">
+                  <Collapsible.Trigger>Show additional options</Collapsible.Trigger>
+                  <Collapsible.Content>
+                    <Collapsible.Description>
+                      This is a description that provides context about the collapsible content below.
+                    </Collapsible.Description>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="field-a">Field A</Label>
+                        <Input id="field-a" type="number" placeholder="0" />
+                      </div>
+                      <div>
+                        <Label htmlFor="field-b">Field B</Label>
+                        <Input id="field-b" type="number" placeholder="0" />
+                      </div>
+                    </div>
+                    <InfoBox icon={<Info />} className="mt-5">
+                      An informational note related to the fields above.
+                    </InfoBox>
+                  </Collapsible.Content>
+                </Collapsible.Root>
+              </Card>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Standalone (default open)</h3>
+              <Card accent={false}>
+                <Collapsible.Root defaultOpen>
+                  <Collapsible.Trigger>Advanced settings</Collapsible.Trigger>
+                  <Collapsible.Content>
+                    <Collapsible.Description>
+                      Configure additional settings to customize the behavior.
+                    </Collapsible.Description>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="custom-value">Custom value</Label>
+                        <Input id="custom-value" placeholder="Enter value" />
+                        <Description>Optional field for custom configuration</Description>
+                      </div>
+                    </div>
+                  </Collapsible.Content>
+                </Collapsible.Root>
+              </Card>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">With chevron icon</h3>
+              <Card accent={false}>
+                <Collapsible.Root>
+                  <Collapsible.Trigger icon="chevron">View details</Collapsible.Trigger>
+                  <Collapsible.Content>
+                    <p className="text-muted-foreground text-sm">
+                      This collapsible uses a chevron icon instead of the default plus icon.
+                    </p>
+                  </Collapsible.Content>
+                </Collapsible.Root>
+              </Card>
             </div>
           </div>
         </Section>
