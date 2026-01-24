@@ -206,24 +206,24 @@ function DevPage() {
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Normal State</h3>
               <div>
-                <Label htmlFor="name">Nome</Label>
-                <Input id="name" placeholder="Ex: Maria" />
-                <Description>Digite seu nome completo</Description>
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" placeholder="e.g. John" />
+                <Description>Enter your full name</Description>
               </div>
             </div>
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Error State</h3>
               <div>
-                <Label htmlFor="income">Renda mensal</Label>
-                <Input id="income" placeholder="R$ 0,00" error />
-                <Description error>Este campo e obrigatorio</Description>
+                <Label htmlFor="income">Monthly income</Label>
+                <Input id="income" placeholder="$0.00" error />
+                <Description error>This field is required</Description>
               </div>
             </div>
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Disabled State</h3>
               <div>
-                <Label htmlFor="disabled">Campo desabilitado</Label>
-                <Input id="disabled" placeholder="Nao editavel" disabled />
+                <Label htmlFor="disabled">Disabled field</Label>
+                <Input id="disabled" placeholder="Not editable" disabled />
               </div>
             </div>
           </div>
@@ -235,22 +235,22 @@ function DevPage() {
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Card (with accent - default)</h3>
               <Card>
-                <Title>Pessoa A</Title>
+                <Title>Person A</Title>
                 <p className="text-muted-foreground text-sm">Card with accent bar enabled by default.</p>
               </Card>
             </div>
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Card (without accent)</h3>
               <Card accent={false}>
-                <Title>Pessoa A</Title>
+                <Title>Person A</Title>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="card-name">Nome</Label>
-                    <Input id="card-name" placeholder="Ex: Maria" />
+                    <Label htmlFor="card-name">Name</Label>
+                    <Input id="card-name" placeholder="e.g. John" />
                   </div>
                   <div>
-                    <Label htmlFor="card-income">Renda mensal</Label>
-                    <Input id="card-income" placeholder="R$ 0,00" />
+                    <Label htmlFor="card-income">Monthly income</Label>
+                    <Input id="card-income" placeholder="$0.00" />
                   </div>
                 </div>
               </Card>
