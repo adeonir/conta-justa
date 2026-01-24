@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
+import { Layout } from '~/components/layout/layout'
 import { useTheme } from '~/providers/theme-provider'
 
 export const Route = createFileRoute('/dev')({
@@ -131,6 +132,20 @@ function DevPage() {
               <h3 className="font-semibold text-sm">Footer</h3>
               <div className="-mx-6 overflow-hidden rounded-lg border border-border">
                 <Footer />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Layout (full page wrapper)</h3>
+              <p className="text-muted-foreground text-sm">
+                The Layout component combines Header, main content area (max-w-275, px-6, py-20), and Footer.
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-lg border border-border">
+                <Layout>
+                  <div className="rounded-lg border border-border border-dashed bg-muted/50 p-8 text-center">
+                    <p className="text-muted-foreground text-sm">Main content area</p>
+                    <p className="mt-1 text-muted-foreground text-xs">max-w-275 (1100px) | px-6 | py-20</p>
+                  </div>
+                </Layout>
               </div>
             </div>
           </div>
