@@ -1,5 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
+import { Header } from '~/components/layout/header'
 import { useTheme } from '~/providers/theme-provider'
 
 export const Route = createFileRoute('/dev')({
@@ -113,6 +114,16 @@ function DevPage() {
             <p className="text-base">Body text - regular weight, base size</p>
             <p className="text-muted-foreground text-sm">Muted text - smaller, secondary color</p>
             <p className="text-muted-foreground text-xs">Helper text - extra small, muted</p>
+          </div>
+        </Section>
+
+        {/* Layout Components Section */}
+        <Section title="Layout Components">
+          <div className="space-y-4">
+            <h3 className="font-semibold text-sm">Header</h3>
+            <div className="-mx-6 overflow-hidden rounded-lg border border-border">
+              <Header />
+            </div>
           </div>
         </Section>
       </div>
