@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import type { ComponentProps } from 'react'
 
+import { buttonVariants } from '~/components/ui/button'
 import { ThemeToggle } from '~/components/ui/theme-toggle'
 import { cn } from '~/lib/utils'
 
@@ -17,10 +18,7 @@ export function Header({ className, ...props }: HeaderProps) {
         <Logo />
         <nav className="flex items-center gap-4">
           <ThemeToggle />
-          <Link
-            to="/"
-            className="rounded-xl border border-border px-6 py-3 font-semibold text-muted-foreground text-sm transition-colors hover:border-foreground hover:text-foreground"
-          >
+          <Link to="/" className={buttonVariants({ variant: 'outline', size: 'md' })}>
             Sobre
           </Link>
         </nav>
