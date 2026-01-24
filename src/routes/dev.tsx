@@ -1,5 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
+import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
 import { useTheme } from '~/providers/theme-provider'
 
@@ -119,10 +120,18 @@ function DevPage() {
 
         {/* Layout Components Section */}
         <Section title="Layout Components">
-          <div className="space-y-4">
-            <h3 className="font-semibold text-sm">Header</h3>
-            <div className="-mx-6 overflow-hidden rounded-lg border border-border">
-              <Header />
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Header</h3>
+              <div className="-mx-6 overflow-hidden rounded-lg border border-border">
+                <Header />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Footer</h3>
+              <div className="-mx-6 overflow-hidden rounded-lg border border-border">
+                <Footer />
+              </div>
             </div>
           </div>
         </Section>
