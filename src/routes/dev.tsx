@@ -13,6 +13,7 @@ import { InfoBox } from '~/components/ui/info-box'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Title } from '~/components/ui/title'
+import { Tooltip } from '~/components/ui/tooltip'
 import { useTheme } from '~/providers/theme-provider'
 
 export const Route = createFileRoute('/dev')({
@@ -159,6 +160,43 @@ function DevPage() {
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Full Width</h3>
               <Button fullWidth>Full Width Button</Button>
+            </div>
+          </div>
+        </Section>
+
+        {/* Tooltip Section */}
+        <Section title="Tooltip">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Positions</h3>
+              <div className="flex flex-wrap items-center gap-4">
+                <Tooltip content="Tooltip on top" side="top">
+                  <Button variant="outline">Top</Button>
+                </Tooltip>
+                <Tooltip content="Tooltip on bottom" side="bottom">
+                  <Button variant="outline">Bottom</Button>
+                </Tooltip>
+                <Tooltip content="Tooltip on left" side="left">
+                  <Button variant="outline">Left</Button>
+                </Tooltip>
+                <Tooltip content="Tooltip on right" side="right">
+                  <Button variant="outline">Right</Button>
+                </Tooltip>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Delay</h3>
+              <div className="flex flex-wrap items-center gap-4">
+                <Tooltip content="No delay" side="top" delay="none">
+                  <Button variant="outline">None</Button>
+                </Tooltip>
+                <Tooltip content="Short delay (300ms)" side="top" delay="short">
+                  <Button variant="outline">Short</Button>
+                </Tooltip>
+                <Tooltip content="Long delay (700ms)" side="top" delay="long">
+                  <Button variant="outline">Long</Button>
+                </Tooltip>
+              </div>
             </div>
           </div>
         </Section>
