@@ -12,6 +12,7 @@ import { Description } from '~/components/ui/description'
 import { InfoBox } from '~/components/ui/info-box'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { ThemeToggle } from '~/components/ui/theme-toggle'
 import { Title } from '~/components/ui/title'
 import { Tooltip } from '~/components/ui/tooltip'
 import { useTheme } from '~/providers/theme-provider'
@@ -34,35 +35,33 @@ function DevPage() {
         <h1 className="mb-2 font-bold text-3xl">Design System</h1>
         <p className="mb-12 text-muted-foreground">Component preview gallery</p>
 
-        {/* Theme Toggle Section - using ThemeProvider directly until ThemeToggle component is created */}
+        {/* Theme Toggle Section */}
         <Section title="Theme Toggle">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-sm">
-              Current: <strong className="text-foreground">{theme}</strong> (resolved:{' '}
-              <strong className="text-foreground">{resolvedTheme}</strong>)
-            </span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setTheme('system')}
-                className={`cursor-pointer rounded-lg border px-3 py-1.5 text-sm ${theme === 'system' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
-              >
-                System
-              </button>
-              <button
-                type="button"
-                onClick={() => setTheme('light')}
-                className={`cursor-pointer rounded-lg border px-3 py-1.5 text-sm ${theme === 'light' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
-              >
-                Light
-              </button>
-              <button
-                type="button"
-                onClick={() => setTheme('dark')}
-                className={`cursor-pointer rounded-lg border px-3 py-1.5 text-sm ${theme === 'dark' ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card'}`}
-              >
-                Dark
-              </button>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground text-sm">
+                Current: <strong className="text-foreground">{theme}</strong> (resolved:{' '}
+                <strong className="text-foreground">{resolvedTheme}</strong>)
+              </span>
+              <ThemeToggle />
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Manual selection</h3>
+              <div className="flex gap-2">
+                <Button
+                  variant={theme === 'system' ? 'primary' : 'outline'}
+                  size="sm"
+                  onClick={() => setTheme('system')}
+                >
+                  System
+                </Button>
+                <Button variant={theme === 'light' ? 'primary' : 'outline'} size="sm" onClick={() => setTheme('light')}>
+                  Light
+                </Button>
+                <Button variant={theme === 'dark' ? 'primary' : 'outline'} size="sm" onClick={() => setTheme('dark')}>
+                  Dark
+                </Button>
+              </div>
             </div>
           </div>
         </Section>

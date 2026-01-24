@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { Monitor } from 'lucide-react'
 import type { ComponentProps } from 'react'
 
+import { ThemeToggle } from '~/components/ui/theme-toggle'
 import { cn } from '~/lib/utils'
 
 export interface HeaderProps extends ComponentProps<'header'> {}
@@ -16,14 +16,7 @@ export function Header({ className, ...props }: HeaderProps) {
       <div className="mx-auto flex max-w-300 items-center justify-between">
         <Logo />
         <nav className="flex items-center gap-4">
-          {/* ThemeToggle placeholder - will be replaced in T012 */}
-          <button
-            type="button"
-            className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            aria-label="Toggle theme"
-          >
-            <Monitor className="size-4" />
-          </button>
+          <ThemeToggle />
           <Link
             to="/"
             className="rounded-xl border border-border px-6 py-3 font-semibold text-muted-foreground text-sm transition-colors hover:border-foreground hover:text-foreground"
