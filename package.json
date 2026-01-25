@@ -30,6 +30,7 @@
     "nuqs": "2.8.6",
     "posthog-js": "1.334.1",
     "react": "19.2.3",
+    "react-currency-input-field": "4.0.3",
     "react-dom": "19.2.3",
     "tailwind-merge": "3.4.0",
     "tailwind-variants": "3.2.2",
