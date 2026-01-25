@@ -7,7 +7,7 @@ test.describe('Home', () => {
   })
 
   test('currency input formats value as user types', async ({ page }) => {
-    const incomeInput = page.locator('#income_a')
+    const incomeInput = page.locator('#incomeA')
 
     await incomeInput.click()
     await incomeInput.pressSequentially('4500')
@@ -17,30 +17,87 @@ test.describe('Home', () => {
   })
 
   test('all form fields are interactive and accept input', async ({ page }) => {
-    await page.locator('#name_a').fill('Alice')
-    await page.locator('#name_b').fill('Bob')
+    await page.locator('#nameA').fill('Ana')
+    await page.locator('#nameB').fill('Bob')
 
-    await page.locator('#income_a').click()
-    await page.locator('#income_a').pressSequentially('5000')
+    await page.locator('#incomeA').click()
+    await page.locator('#incomeA').pressSequentially('5000')
 
-    await page.locator('#income_b').click()
-    await page.locator('#income_b').pressSequentially('3000')
+    await page.locator('#incomeB').click()
+    await page.locator('#incomeB').pressSequentially('3000')
 
-    await page.locator('#total_expenses').click()
-    await page.locator('#total_expenses').pressSequentially('2500')
+    await page.locator('#expenses').click()
+    await page.locator('#expenses').pressSequentially('2500')
 
-    await expect(page.locator('#name_a')).toHaveValue('Alice')
-    await expect(page.locator('#name_b')).toHaveValue('Bob')
-    expect(await page.locator('#income_a').inputValue()).toContain('5.000')
-    expect(await page.locator('#income_b').inputValue()).toContain('3.000')
-    expect(await page.locator('#total_expenses').inputValue()).toContain('2.500')
+    await expect(page.locator('#nameA')).toHaveValue('Ana')
+    await expect(page.locator('#nameB')).toHaveValue('Bob')
+    expect(await page.locator('#incomeA').inputValue()).toContain('5.000')
+    expect(await page.locator('#incomeB').inputValue()).toContain('3.000')
+    expect(await page.locator('#expenses').inputValue()).toContain('2.500')
   })
 
-  test('submit button is visible but non-functional', async ({ page }) => {
+  test('submit button is disabled when form is invalid', async ({ page }) => {
     const button = page.getByRole('button', { name: 'Calcular divisão' })
 
     await expect(button).toBeVisible()
-    await expect(button).toHaveAttribute('type', 'button')
+    await expect(button).toHaveAttribute('type', 'submit')
+
+    await page.locator('#nameA').focus()
+    await page.locator('#nameA').blur()
+
+    await expect(button).toBeDisabled()
+  })
+
+  test('shows validation error for empty name field after blur', async ({ page }) => {
+    const nameInput = page.locator('#nameA')
+
+    await nameInput.focus()
+    await nameInput.blur()
+
+    await expect(page.getByText('Campo obrigatório')).toBeVisible()
+  })
+
+  test('shows validation error for zero currency value after blur', async ({ page }) => {
+    const incomeInput = page.locator('#incomeA')
+
+    await incomeInput.focus()
+    await incomeInput.blur()
+
+    await expect(page.getByText('Valor deve ser maior que zero')).toBeVisible()
+  })
+
+  test('form submission navigates to /resultado with correct URL params', async ({ page }) => {
+    await page.locator('#nameA').fill('Ana')
+    await page.locator('#nameA').blur()
+
+    await page.locator('#incomeA').click()
+    await page.locator('#incomeA').pressSequentially('5000')
+    await page.locator('#incomeA').blur()
+
+    await page.locator('#nameB').fill('Bob')
+    await page.locator('#nameB').blur()
+
+    await page.locator('#incomeB').click()
+    await page.locator('#incomeB').pressSequentially('3000')
+    await page.locator('#incomeB').blur()
+
+    await page.locator('#expenses').click()
+    await page.locator('#expenses').pressSequentially('2000')
+    await page.locator('#expenses').blur()
+
+    const button = page.getByRole('button', { name: 'Calcular divisão' })
+    await expect(button).toBeEnabled()
+
+    await button.click()
+
+    await page.waitForURL(/\/resultado/)
+
+    const url = page.url()
+    expect(url).toContain('a=Ana')
+    expect(url).toContain('b=Bob')
+    expect(url).toContain('ra=500000')
+    expect(url).toContain('rb=300000')
+    expect(url).toContain('d=200000')
   })
 })
 
