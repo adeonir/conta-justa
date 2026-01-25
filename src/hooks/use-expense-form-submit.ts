@@ -1,6 +1,10 @@
+import { useNavigate } from '@tanstack/react-router'
+
 import type { ExpenseFormData } from '~/schemas/expense-form'
 
 export function useExpenseFormSubmit() {
+  const navigate = useNavigate()
+
   return (value: ExpenseFormData) => {
     const params = new URLSearchParams({
       a: value.nameA,
@@ -10,6 +14,6 @@ export function useExpenseFormSubmit() {
       d: String(value.expenses),
     })
 
-    console.log('Form submitted:', params.toString())
+    navigate({ to: `/resultado?${params.toString()}` })
   }
 }

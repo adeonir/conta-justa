@@ -12,12 +12,12 @@ describe('Form', () => {
     expect(screen.getByText('Despesas compartilhadas')).toBeInTheDocument()
   })
 
-  it('renders submit button with type="button"', () => {
+  it('renders submit button with type="submit"', () => {
     render(<Form />)
 
     const button = screen.getByRole('button', { name: 'Calcular divisão' })
     expect(button).toBeInTheDocument()
-    expect(button).toHaveAttribute('type', 'button')
+    expect(button).toHaveAttribute('type', 'submit')
   })
 
   it('renders name and income fields for both persons', () => {

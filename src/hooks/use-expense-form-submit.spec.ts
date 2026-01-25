@@ -3,11 +3,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useExpenseFormSubmit } from './use-expense-form-submit'
 
-describe('useExpenseFormSubmit', () => {
-  const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+const mockNavigate = vi.fn()
 
+vi.mock('@tanstack/react-router', () => ({
+  useNavigate: () => mockNavigate,
+}))
+
+describe('useExpenseFormSubmit', () => {
   beforeEach(() => {
-    consoleSpy.mockClear()
+    mockNavigate.mockClear()
   })
 
   it('returns a function', () => {
@@ -16,7 +20,7 @@ describe('useExpenseFormSubmit', () => {
     expect(typeof result.current).toBe('function')
   })
 
-  it('logs form data with correct query params', () => {
+  it('navigates to /resultado with correct query params', () => {
     const { result } = renderHook(() => useExpenseFormSubmit())
 
     result.current({
@@ -27,11 +31,10 @@ describe('useExpenseFormSubmit', () => {
       expenses: 200000,
     })
 
-    expect(consoleSpy).toHaveBeenCalledTimes(1)
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Form submitted:',
-      'a=Alice&ra=500000&b=Bob&rb=300000&d=200000'
-    )
+    expect(mockNavigate).toHaveBeenCalledTimes(1)
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/resultado?a=Alice&ra=500000&b=Bob&rb=300000&d=200000',
+    })
   })
 
   it('handles empty names', () => {
@@ -45,10 +48,9 @@ describe('useExpenseFormSubmit', () => {
       expenses: 50000,
     })
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Form submitted:',
-      'a=&ra=100000&b=&rb=100000&d=50000'
-    )
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/resultado?a=&ra=100000&b=&rb=100000&d=50000',
+    })
   })
 
   it('handles zero values', () => {
@@ -62,9 +64,8 @@ describe('useExpenseFormSubmit', () => {
       expenses: 0,
     })
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Form submitted:',
-      'a=A&ra=0&b=B&rb=0&d=0'
-    )
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/resultado?a=A&ra=0&b=B&rb=0&d=0',
+    })
   })
 })

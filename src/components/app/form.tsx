@@ -159,9 +159,13 @@ export function Form() {
           </form.Field>
         </div>
 
-        <Button type="button" variant="primary" size="lg" fullWidth>
-          Calcular divisão
-        </Button>
+        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+          {([canSubmit, isSubmitting]) => (
+            <Button type="submit" variant="primary" size="lg" fullWidth disabled={!canSubmit || isSubmitting}>
+              {isSubmitting ? 'Calculando...' : 'Calcular divisão'}
+            </Button>
+          )}
+        </form.Subscribe>
       </form>
     </Card>
   )
