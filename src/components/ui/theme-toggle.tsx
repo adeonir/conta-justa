@@ -22,7 +22,7 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   const cycleTheme = () => setTheme(config.next)
 
   return (
-    <Tooltip content={config.label} side="top">
+    <Tooltip content={config.label} side="bottom">
       <button
         type="button"
         data-slot="theme-toggle"
