@@ -22,7 +22,8 @@ const inputStyles = (error?: boolean, className?: string) =>
 
 export function Input({ className, error, currency, onValueChange, ...props }: InputProps) {
   if (currency) {
-    const { id, name, placeholder, disabled, required, autoFocus, autoComplete, ref, value, defaultValue } = props
+    const { id, name, placeholder, disabled, required, autoFocus, autoComplete, ref, value, defaultValue, onBlur } =
+      props
 
     return (
       <CurrencyInput
@@ -42,6 +43,7 @@ export function Input({ className, error, currency, onValueChange, ...props }: I
         aria-invalid={error || undefined}
         className={inputStyles(error, className)}
         intlConfig={{ locale: 'pt-BR', currency: 'BRL' }}
+        onBlur={onBlur}
         onValueChange={(val) => {
           if (onValueChange) {
             const cents = val ? Math.round(Number.parseFloat(val) * 100) : null
