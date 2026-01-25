@@ -6,14 +6,13 @@ import { Description } from '~/components/ui/description'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Title } from '~/components/ui/title'
+import { useExpenseFormSubmit } from '~/hooks/use-expense-form-submit'
 import { getErrorMessage } from '~/lib/utils'
 import { type ExpenseFormData, expenseFormSchema } from '~/schemas/expense-form'
 
-function handleFormSubmit(value: ExpenseFormData) {
-  console.log('Form submitted:', value)
-}
-
 export function Form() {
+  const handleSubmit = useExpenseFormSubmit()
+
   const form = useForm({
     defaultValues: {
       nameA: '',
@@ -26,7 +25,7 @@ export function Form() {
       onBlur: expenseFormSchema,
       onSubmit: expenseFormSchema,
     },
-    onSubmit: ({ value }) => handleFormSubmit(value),
+    onSubmit: ({ value }) => handleSubmit(value),
   })
 
   return (
