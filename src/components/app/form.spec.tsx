@@ -23,8 +23,8 @@ describe('Form', () => {
   it('renders name and income fields for both persons', () => {
     render(<Form />)
 
-    expect(screen.getByLabelText('Nome', { selector: '#name_a' })).toBeInTheDocument()
-    expect(screen.getByLabelText('Nome', { selector: '#name_b' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Nome', { selector: '#nameA' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Nome', { selector: '#nameB' })).toBeInTheDocument()
     expect(screen.getByPlaceholderText('Ex: Maria')).toBeInTheDocument()
     expect(screen.getByPlaceholderText('Ex: João')).toBeInTheDocument()
   })

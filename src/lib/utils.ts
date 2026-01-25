@@ -4,3 +4,10 @@ import { twMerge } from 'tailwind-merge'
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export function getErrorMessage(errors: Array<{ message?: string } | undefined>): string {
+  return errors
+    .filter((e): e is { message: string } => e !== undefined && typeof e.message === 'string')
+    .map((e) => e.message)
+    .join(', ')
+}
