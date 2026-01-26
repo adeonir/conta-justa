@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { ResultCard } from '~/components/app/result-card'
 import { ResultComparison } from '~/components/app/result-comparison'
+import { ResultExplanation } from '~/components/app/result-explanation'
 import { ResultSummary } from '~/components/app/result-summary'
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
@@ -133,12 +134,7 @@ function ResultsPage() {
             onSelect={setSelectedMethod}
           />
 
-          <div className="rounded-sm border border-border bg-card p-6">
-            <p className="text-muted-foreground">
-              ResultExplanation placeholder - Como funciona{' '}
-              {calculations.hasHousework ? '(com trabalho doméstico)' : ''}
-            </p>
-          </div>
+          <ResultExplanation hasHousework={calculations.hasHousework} />
 
           <div className="rounded-sm border border-border bg-card p-6">
             <p className="text-muted-foreground">ResultActions placeholder - Fazer novo cálculo</p>
