@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
+import { ResultSummary } from '~/components/app/result-summary'
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
 import {
@@ -85,6 +86,14 @@ function ResultsPage() {
     <>
       <Header />
       <main className="mx-auto grid max-w-275 flex-1 grid-cols-[1fr_1.2fr] items-start gap-20 px-6 py-20 max-md:max-w-140 max-md:grid-cols-1 max-md:gap-12 max-md:py-12">
+        <ResultSummary
+          nameA={formData.nameA}
+          nameB={formData.nameB}
+          totalIncome={formData.incomeA + formData.incomeB}
+          totalExpenses={formData.expenses}
+          houseworkA={formData.houseworkA}
+          houseworkB={formData.houseworkB}
+        />
 
         <div className="flex flex-col gap-8">
           <div className="rounded-sm border border-border bg-card p-6">
