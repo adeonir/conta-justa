@@ -1,70 +1,34 @@
 import { useCalculations } from '~/hooks/use-calculations'
-import { useExpenseStore } from '~/stores/expense-store'
 import { MethodCard } from './method-card'
 
 export function Comparison() {
-  const formData = useExpenseStore((s) => s.formData)
   const calculations = useCalculations()
 
-  if (!formData || !calculations) return null
+  if (!calculations) return null
 
-  const { nameA, nameB } = formData
-  const { proportional, adjusted, hybrid, equal, recommendedMethod, activeMethod, setSelectedMethod } = calculations
+  const { hasHousework } = calculations
 
   return (
     <section>
       <h2 className="mb-6 font-bold text-xl">Compare os métodos</h2>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid auto-rows-fr gap-4 sm:grid-cols-2">
+        <MethodCard method="proportional" title="Proporcional simples" description="Baseado apenas na renda" />
+
         <MethodCard
-          title="Proporcional simples"
-          description="Baseado apenas na renda"
-          nameA={nameA}
-          nameB={nameB}
-          contributionA={proportional.personA.contribution}
-          contributionB={proportional.personB.contribution}
-          isRecommended={recommendedMethod === 'proportional'}
-          isSelected={activeMethod === 'proportional'}
-          onSelect={() => setSelectedMethod('proportional')}
+          method="adjusted"
+          title="Proporcional + trabalho doméstico"
+          description="Considera renda e horas de trabalho em casa"
+          disabled={!hasHousework}
         />
 
-        {adjusted && (
-          <MethodCard
-            title="Proporcional + trabalho doméstico"
-            description="Considera renda e horas de trabalho em casa"
-            nameA={nameA}
-            nameB={nameB}
-            contributionA={adjusted.personA.contribution}
-            contributionB={adjusted.personB.contribution}
-            isRecommended={recommendedMethod === 'adjusted'}
-            isSelected={activeMethod === 'adjusted'}
-            onSelect={() => setSelectedMethod('adjusted')}
-          />
-        )}
-
         <MethodCard
+          method="hybrid"
           title="Contribuição mínima"
           description="Cada pessoa paga pelo menos 30% da própria renda"
-          nameA={nameA}
-          nameB={nameB}
-          contributionA={hybrid.personA.contribution}
-          contributionB={hybrid.personB.contribution}
-          isRecommended={false}
-          isSelected={activeMethod === 'hybrid'}
-          onSelect={() => setSelectedMethod('hybrid')}
         />
 
-        <MethodCard
-          title="Divisão igual"
-          description="Cada pessoa paga metade das despesas"
-          nameA={nameA}
-          nameB={nameB}
-          contributionA={equal.personA.contribution}
-          contributionB={equal.personB.contribution}
-          isRecommended={false}
-          isSelected={activeMethod === 'equal'}
-          onSelect={() => setSelectedMethod('equal')}
-        />
+        <MethodCard method="equal" title="Divisão igual" description="Cada pessoa paga metade das despesas" />
       </div>
     </section>
   )

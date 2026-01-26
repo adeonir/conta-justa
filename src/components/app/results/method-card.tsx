@@ -1,33 +1,44 @@
+import { useShallow } from 'zustand/react/shallow'
+
 import { Card } from '~/components/ui/card'
+import { useCalculations } from '~/hooks/use-calculations'
 import { cn, formatCurrency } from '~/lib/utils'
+import { useExpenseStore } from '~/stores/expense-store'
+import type { MethodType } from './types'
 
 interface MethodCardProps {
+  method: MethodType
   title: string
   description: string
-  nameA: string
-  nameB: string
-  contributionA: number
-  contributionB: number
-  isRecommended: boolean
-  isSelected: boolean
-  onSelect: () => void
+  disabled?: boolean
 }
 
-export function MethodCard({
-  title,
-  description,
-  nameA,
-  nameB,
-  contributionA,
-  contributionB,
-  isRecommended,
-  isSelected,
-  onSelect,
-}: MethodCardProps) {
+export function MethodCard({ method, title, description, disabled = false }: MethodCardProps) {
+  const { nameA, nameB } = useExpenseStore(
+    useShallow((s) => ({
+      nameA: s.formData?.nameA ?? '',
+      nameB: s.formData?.nameB ?? '',
+    })),
+  )
+  const calculations = useCalculations()
+
+  if (!calculations) return null
+
+  const { recommendedMethod, activeMethod, setSelectedMethod } = calculations
+  const result = calculations[method]
+
+  const isRecommended = !disabled && recommendedMethod === method
+  const isSelected = !disabled && activeMethod === method
+
+  function handleClick() {
+    if (!disabled) setSelectedMethod(method)
+  }
+
   function handleKeyDown(e: React.KeyboardEvent) {
+    if (disabled) return
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      onSelect()
+      setSelectedMethod(method)
     }
   }
 
@@ -35,16 +46,18 @@ export function MethodCard({
     <Card
       accent={false}
       className={cn(
-        'cursor-pointer p-6 transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/20',
+        'flex h-full flex-col p-6 transition-shadow focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/20',
+        disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:shadow-md',
         isSelected && 'ring-2 ring-primary',
       )}
-      onClick={onSelect}
+      onClick={handleClick}
       onKeyDown={handleKeyDown}
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
       role="button"
       aria-pressed={isSelected}
+      aria-disabled={disabled}
     >
-      <div className="mb-4">
+      <div className="mb-4 flex-1">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-bold">{title}</h3>
           {isRecommended && (
@@ -59,11 +72,15 @@ export function MethodCard({
       <div className="flex justify-between gap-4 text-sm">
         <div>
           <p className="text-muted-foreground">{nameA}</p>
-          <p className="font-semibold tabular-nums">{formatCurrency(contributionA / 100)}</p>
+          <p className="font-semibold tabular-nums">
+            {result ? formatCurrency(result.personA.contribution / 100) : '-'}
+          </p>
         </div>
         <div className="text-right">
           <p className="text-muted-foreground">{nameB}</p>
-          <p className="font-semibold tabular-nums">{formatCurrency(contributionB / 100)}</p>
+          <p className="font-semibold tabular-nums">
+            {result ? formatCurrency(result.personB.contribution / 100) : '-'}
+          </p>
         </div>
       </div>
     </Card>
