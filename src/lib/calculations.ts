@@ -43,3 +43,112 @@ export function buildPersonResult(contribution: number, income: number, expenses
     remaining: income - contribution,
   }
 }
+
+/**
+ * Method 1: Proportional Division
+ * Divides expenses based on income ratio
+ */
+export function calculateProportional(input: CalculationInput): CalculationResult {
+  const { incomeA, incomeB, expenses } = input
+  const totalIncome = incomeA + incomeB
+
+  // Edge case: zero total income - split 50/50
+  if (totalIncome === 0) {
+    const halfExpenses = Math.round(expenses / 2)
+    return {
+      personA: buildPersonResult(halfExpenses, incomeA, expenses),
+      personB: buildPersonResult(expenses - halfExpenses, incomeB, expenses),
+      method: 'proportional',
+    }
+  }
+
+  const contributionA = Math.round(expenses * (incomeA / totalIncome))
+  const contributionB = expenses - contributionA
+
+  return {
+    personA: buildPersonResult(contributionA, incomeA, expenses),
+    personB: buildPersonResult(contributionB, incomeB, expenses),
+    method: 'proportional',
+  }
+}
+
+/**
+ * Method 2: Adjusted Division (with housework)
+ * Adds housework value to income before calculating ratio
+ */
+export function calculateAdjusted(input: CalculationInput): CalculationResult {
+  const { incomeA, incomeB, expenses, houseworkA, houseworkB, minimumWage } = input
+  const hourlyRate = calculateHourlyRate(minimumWage)
+
+  const houseworkValueA = calculateHouseworkValue(houseworkA, hourlyRate)
+  const houseworkValueB = calculateHouseworkValue(houseworkB, hourlyRate)
+
+  const adjustedIncomeA = incomeA + houseworkValueA
+  const adjustedIncomeB = incomeB + houseworkValueB
+  const totalAdjustedIncome = adjustedIncomeA + adjustedIncomeB
+
+  // Edge case: zero adjusted income - split 50/50
+  if (totalAdjustedIncome === 0) {
+    const halfExpenses = Math.round(expenses / 2)
+    return {
+      personA: buildPersonResult(halfExpenses, incomeA, expenses),
+      personB: buildPersonResult(expenses - halfExpenses, incomeB, expenses),
+      method: 'adjusted',
+    }
+  }
+
+  const contributionA = Math.round(expenses * (adjustedIncomeA / totalAdjustedIncome))
+  const contributionB = expenses - contributionA
+
+  return {
+    personA: buildPersonResult(contributionA, incomeA, expenses),
+    personB: buildPersonResult(contributionB, incomeB, expenses),
+    method: 'adjusted',
+  }
+}
+
+const HYBRID_FLOOR_PERCENTAGE = 0.3 // 30% minimum contribution
+
+/**
+ * Method 3: Hybrid Division (proportional with 30% floor)
+ * Ensures minimum 30% contribution from lower earner
+ */
+export function calculateHybrid(input: CalculationInput): CalculationResult {
+  const { incomeA, incomeB, expenses } = input
+  const totalIncome = incomeA + incomeB
+
+  // Edge case: zero total income - split 50/50
+  if (totalIncome === 0) {
+    const halfExpenses = Math.round(expenses / 2)
+    return {
+      personA: buildPersonResult(halfExpenses, incomeA, expenses),
+      personB: buildPersonResult(expenses - halfExpenses, incomeB, expenses),
+      method: 'hybrid',
+    }
+  }
+
+  const floor = Math.round(expenses * HYBRID_FLOOR_PERCENTAGE)
+
+  // Calculate proportional contributions
+  const proportionalA = Math.round(expenses * (incomeA / totalIncome))
+  const proportionalB = expenses - proportionalA
+
+  let contributionA = proportionalA
+  let contributionB = proportionalB
+
+  // Apply floor - boost lower contributor to 30% minimum
+  if (proportionalA < floor && proportionalB >= floor) {
+    contributionA = floor
+    contributionB = expenses - floor
+  } else if (proportionalB < floor && proportionalA >= floor) {
+    contributionB = floor
+    contributionA = expenses - floor
+  }
+  // If both would hit floor (similar incomes), keep proportional
+
+  return {
+    personA: buildPersonResult(contributionA, incomeA, expenses),
+    personB: buildPersonResult(contributionB, incomeB, expenses),
+    method: 'hybrid',
+  }
+}
