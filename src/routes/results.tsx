@@ -57,9 +57,18 @@ function calculateResults(formData: ExpenseFormData, minimumWage: number): Calcu
   }
 }
 
+type MethodType = 'proportional' | 'adjusted' | 'hybrid'
+
+const methodTitles: Record<MethodType, string> = {
+  proportional: 'Proporcional simples',
+  adjusted: 'Proporcional + trabalho doméstico',
+  hybrid: 'Com contribuição mínima (30%)',
+}
+
 function ResultsPage() {
   const navigate = useNavigate()
   const [mounted, setMounted] = useState(false)
+  const [selectedMethod, setSelectedMethod] = useState<MethodType | null>(null)
   const { formData, minimumWage } = useExpenseStore(
     useShallow((s) => ({
       formData: s.formData,
@@ -83,6 +92,14 @@ function ResultsPage() {
 
   const calculations = calculateResults(formData, minimumWage)
 
+  const activeMethod = selectedMethod ?? calculations.recommendedMethod
+  const activeResult =
+    activeMethod === 'adjusted'
+      ? (calculations.adjusted ?? calculations.proportional)
+      : activeMethod === 'hybrid'
+        ? calculations.hybrid
+        : calculations.proportional
+
   return (
     <>
       <Header />
@@ -100,8 +117,9 @@ function ResultsPage() {
           <ResultCard
             nameA={formData.nameA}
             nameB={formData.nameB}
-            result={calculations.recommended}
-            methodTitle={calculations.hasHousework ? 'Proporcional + trabalho doméstico' : 'Proporcional simples'}
+            result={activeResult}
+            methodTitle={methodTitles[activeMethod]}
+            isRecommended={activeMethod === calculations.recommendedMethod}
           />
 
           <ResultComparison
@@ -111,6 +129,8 @@ function ResultsPage() {
             adjusted={calculations.adjusted}
             hybrid={calculations.hybrid}
             recommended={calculations.recommendedMethod === 'adjusted' ? 'adjusted' : 'proportional'}
+            selected={activeMethod}
+            onSelect={setSelectedMethod}
           />
 
           <div className="rounded-sm border border-border bg-card p-6">

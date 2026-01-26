@@ -7,6 +7,7 @@ interface ResultCardProps {
   nameB: string
   result: CalculationResult
   methodTitle: string
+  isRecommended?: boolean
 }
 
 interface PersonResultDisplayProps {
@@ -51,10 +52,12 @@ function PersonResultDisplay({
   )
 }
 
-export function ResultCard({ nameA, nameB, result, methodTitle }: ResultCardProps) {
+export function ResultCard({ nameA, nameB, result, methodTitle, isRecommended = true }: ResultCardProps) {
   return (
     <Card>
-      <p className="mb-2 font-medium text-primary text-sm uppercase tracking-wider">Divisão recomendada</p>
+      <p className="mb-2 font-medium text-primary text-sm uppercase tracking-wider">
+        {isRecommended ? 'Divisão recomendada' : 'Método selecionado'}
+      </p>
       <h2 className="mb-8 font-bold text-2xl">{methodTitle}</h2>
 
       <div className="flex gap-8 max-sm:flex-col">
