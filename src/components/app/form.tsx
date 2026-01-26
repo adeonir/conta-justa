@@ -12,12 +12,10 @@ import { Title } from '~/components/ui/title'
 import { useExpenseFormSubmit } from '~/hooks/use-expense-form-submit'
 import { formatCurrency, getErrorMessage } from '~/lib/utils'
 import { type ExpenseFormData, expenseFormSchema } from '~/schemas/expense-form'
+import { useExpenseStore } from '~/stores/expense-store'
 
-interface FormProps {
-  minimumWage: number
-}
-
-export function Form({ minimumWage }: FormProps) {
+export function Form() {
+  const minimumWage = useExpenseStore((state) => state.minimumWage) ?? 0
   const handleSubmit = useExpenseFormSubmit()
 
   const form = useForm({
@@ -176,7 +174,7 @@ export function Form({ minimumWage }: FormProps) {
                 Cuidar da casa é trabalho. Informe as horas semanais dedicadas a tarefas domésticas.
               </Collapsible.Description>
               <InfoBox icon={<Info />}>
-                Usamos o salário mínimo/hora ({formatCurrency(minimumWage / 220)}) como referência para valorar o
+                Usamos o salário mínimo/hora ({formatCurrency(minimumWage / 100 / 220)}) como referência para valorar o
                 trabalho doméstico.
               </InfoBox>
               <form.Subscribe selector={(state) => [state.values.nameA, state.values.nameB]}>

@@ -5,9 +5,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Form } from './form'
 
 const mockNavigate = vi.fn()
+const mockSetFormData = vi.fn()
 
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
+}))
+
+vi.mock('~/stores/expense-store', () => ({
+  useExpenseStore: (selector: (state: { minimumWage: number; setFormData: typeof mockSetFormData }) => unknown) =>
+    selector({ minimumWage: 162100, setFormData: mockSetFormData }),
 }))
 
 async function fillFormWithValidData(user: ReturnType<typeof userEvent.setup>) {
@@ -36,6 +42,7 @@ async function fillFormWithValidData(user: ReturnType<typeof userEvent.setup>) {
 describe('Form', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
+    mockSetFormData.mockClear()
   })
 
   afterEach(() => {
@@ -43,7 +50,7 @@ describe('Form', () => {
   })
 
   it('renders all three form sections', () => {
-    render(<Form minimumWage={1621} />)
+    render(<Form />)
 
     expect(screen.getByText('Pessoa A')).toBeInTheDocument()
     expect(screen.getByText('Pessoa B')).toBeInTheDocument()
@@ -51,7 +58,7 @@ describe('Form', () => {
   })
 
   it('renders submit button with type="submit"', () => {
-    render(<Form minimumWage={1621} />)
+    render(<Form />)
 
     const button = screen.getByRole('button', { name: 'Calcular divisão' })
     expect(button).toBeInTheDocument()
@@ -59,7 +66,7 @@ describe('Form', () => {
   })
 
   it('renders name and income fields for both persons', () => {
-    render(<Form minimumWage={1621} />)
+    render(<Form />)
 
     expect(screen.getByLabelText('Nome', { selector: '#nameA' })).toBeInTheDocument()
     expect(screen.getByLabelText('Nome', { selector: '#nameB' })).toBeInTheDocument()
@@ -68,7 +75,7 @@ describe('Form', () => {
   })
 
   it('renders expenses section with helper text', () => {
-    render(<Form minimumWage={1621} />)
+    render(<Form />)
 
     expect(screen.getByLabelText('Total mensal')).toBeInTheDocument()
     expect(screen.getByText('Aluguel, contas, mercado, etc.')).toBeInTheDocument()
@@ -77,7 +84,7 @@ describe('Form', () => {
   describe('validation errors', () => {
     it('shows "Campo obrigatório" error after blur on empty name field', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
       await user.click(nameAInput)
@@ -89,7 +96,7 @@ describe('Form', () => {
     })
 
     it('shows "Valor deve ser maior que zero" error for zero currency value after blur', async () => {
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const incomeAInput = screen.getByLabelText('Renda mensal', { selector: '#incomeA' })
 
@@ -103,7 +110,7 @@ describe('Form', () => {
 
     it('shows errors for nameB after blur on empty field', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const nameBInput = screen.getByLabelText('Nome', { selector: '#nameB' })
       await user.click(nameBInput)
@@ -115,7 +122,7 @@ describe('Form', () => {
     })
 
     it('shows errors for expenses field after blur with zero value', async () => {
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const expensesInput = screen.getByLabelText('Total mensal')
 
@@ -130,7 +137,7 @@ describe('Form', () => {
 
     it('clears error when user corrects name field', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
       await user.click(nameAInput)
@@ -150,7 +157,7 @@ describe('Form', () => {
 
     it('clears error when user corrects currency field', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const incomeAInput = screen.getByLabelText('Renda mensal', { selector: '#incomeA' })
 
@@ -172,7 +179,7 @@ describe('Form', () => {
 
   describe('submit button state', () => {
     it('submit button becomes disabled after touching invalid field', async () => {
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
 
@@ -187,7 +194,7 @@ describe('Form', () => {
 
     it('submit button is enabled when all fields are valid', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       await fillFormWithValidData(user)
 
@@ -199,7 +206,7 @@ describe('Form', () => {
 
     it('submit button becomes disabled when field becomes invalid', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       await fillFormWithValidData(user)
 
@@ -219,14 +226,14 @@ describe('Form', () => {
 
   describe('housework section', () => {
     it('renders collapsible trigger for housework section', () => {
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       expect(screen.getByText('Incluir trabalho doméstico no cálculo')).toBeInTheDocument()
     })
 
     it('expands housework section when trigger is clicked', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const trigger = screen.getByText('Incluir trabalho doméstico no cálculo')
       await user.click(trigger)
@@ -240,7 +247,7 @@ describe('Form', () => {
 
     it('shows dynamic labels with person names when filled', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
       const nameBInput = screen.getByLabelText('Nome', { selector: '#nameB' })
@@ -259,7 +266,7 @@ describe('Form', () => {
 
     it('displays minimum wage hourly rate in InfoBox', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const trigger = screen.getByText('Incluir trabalho doméstico no cálculo')
       await user.click(trigger)
@@ -271,7 +278,7 @@ describe('Form', () => {
 
     it('allows entering housework hours', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const trigger = screen.getByText('Incluir trabalho doméstico no cálculo')
       await user.click(trigger)
@@ -288,7 +295,7 @@ describe('Form', () => {
 
     it('includes housework values in form submission', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       await fillFormWithValidData(user)
 
@@ -308,20 +315,20 @@ describe('Form', () => {
       await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalled()
-        const navigateCall = mockNavigate.mock.calls[0][0]
-        const url = navigateCall.to
-
-        expect(url).toContain('ha=15')
-        expect(url).toContain('hb=5')
+        expect(mockSetFormData).toHaveBeenCalledWith(
+          expect.objectContaining({
+            houseworkA: 15,
+            houseworkB: 5,
+          }),
+        )
       })
     })
   })
 
   describe('form submission', () => {
-    it('navigates to /resultado with correct query params on valid submit', async () => {
+    it('saves form data to store and navigates to /results on valid submit', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       await fillFormWithValidData(user)
 
@@ -332,16 +339,15 @@ describe('Form', () => {
       await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
 
       await waitFor(() => {
+        expect(mockSetFormData).toHaveBeenCalledTimes(1)
         expect(mockNavigate).toHaveBeenCalledTimes(1)
-        expect(mockNavigate).toHaveBeenCalledWith({
-          to: expect.stringContaining('/resultado'),
-        })
+        expect(mockNavigate).toHaveBeenCalledWith({ to: '/results' })
       })
     })
 
-    it('sends income and expense values as cents in URL params', async () => {
+    it('sends income and expense values as cents to store', async () => {
       const user = userEvent.setup()
-      render(<Form minimumWage={1621} />)
+      render(<Form />)
 
       const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
       const incomeAInput = screen.getByLabelText('Renda mensal', { selector: '#incomeA' })
@@ -371,15 +377,15 @@ describe('Form', () => {
       await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalled()
-        const navigateCall = mockNavigate.mock.calls[0][0]
-        const url = navigateCall.to
-
-        expect(url).toContain('a=Ana')
-        expect(url).toContain('b=Bob')
-        expect(url).toContain('ra=500000')
-        expect(url).toContain('rb=300000')
-        expect(url).toContain('d=200000')
+        expect(mockSetFormData).toHaveBeenCalledWith({
+          nameA: 'Ana',
+          nameB: 'Bob',
+          incomeA: 500000,
+          incomeB: 300000,
+          expenses: 200000,
+          houseworkA: 0,
+          houseworkB: 0,
+        })
       })
     })
   })
