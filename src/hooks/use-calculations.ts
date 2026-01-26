@@ -13,7 +13,7 @@ import { useExpenseStore } from '~/stores/expense-store'
 const methodTitles: Record<MethodType, string> = {
   proportional: 'Proporcional simples',
   adjusted: 'Proporcional + trabalho doméstico',
-  hybrid: 'Com contribuição mínima (30%)',
+  hybrid: 'Contribuição mínima',
 }
 
 interface CalculationResults {

@@ -24,11 +24,25 @@ export function MethodCard({
   isSelected,
   onSelect,
 }: MethodCardProps) {
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onSelect()
+    }
+  }
+
   return (
     <Card
       accent={false}
-      className={cn('cursor-pointer p-6 transition-shadow hover:shadow-md', isSelected && 'ring-2 ring-primary')}
+      className={cn(
+        'cursor-pointer p-6 transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/20',
+        isSelected && 'ring-2 ring-primary',
+      )}
       onClick={onSelect}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-pressed={isSelected}
     >
       <div className="mb-4">
         <div className="flex items-start justify-between gap-2">

@@ -213,7 +213,7 @@ describe('useCalculations', () => {
 
       const { result } = renderHook(() => useCalculations())
 
-      expect(result.current?.methodTitle).toBe('Com contribuição mínima (30%)')
+      expect(result.current?.methodTitle).toBe('Contribuição mínima')
     })
 
     it('isRecommended is false when activeMethod differs from recommendedMethod', () => {
