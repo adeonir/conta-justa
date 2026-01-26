@@ -6,8 +6,8 @@ export const expenseFormSchema = z.object({
   nameB: z.string().min(1, 'Campo obrigatório'),
   incomeB: z.number().positive('Valor deve ser maior que zero'),
   expenses: z.number().positive('Valor deve ser maior que zero'),
-  houseworkA: z.number().min(0, 'Valor deve ser zero ou maior').optional(),
-  houseworkB: z.number().min(0, 'Valor deve ser zero ou maior').optional(),
+  houseworkA: z.number().min(0, 'Valor deve ser zero ou maior'),
+  houseworkB: z.number().min(0, 'Valor deve ser zero ou maior'),
 })
 
 export type ExpenseFormData = z.infer<typeof expenseFormSchema>

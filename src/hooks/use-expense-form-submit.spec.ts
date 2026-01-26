@@ -24,16 +24,18 @@ describe('useExpenseFormSubmit', () => {
     const { result } = renderHook(() => useExpenseFormSubmit())
 
     result.current({
-      nameA: 'Alice',
+      nameA: 'Ana',
       incomeA: 500000,
       nameB: 'Bob',
       incomeB: 300000,
       expenses: 200000,
+      houseworkA: 0,
+      houseworkB: 0,
     })
 
     expect(mockNavigate).toHaveBeenCalledTimes(1)
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/resultado?a=Alice&ra=500000&b=Bob&rb=300000&d=200000',
+      to: '/resultado?a=Ana&ra=500000&b=Bob&rb=300000&d=200000',
     })
   })
 
@@ -46,6 +48,8 @@ describe('useExpenseFormSubmit', () => {
       nameB: '',
       incomeB: 100000,
       expenses: 50000,
+      houseworkA: 0,
+      houseworkB: 0,
     })
 
     expect(mockNavigate).toHaveBeenCalledWith({
@@ -62,10 +66,84 @@ describe('useExpenseFormSubmit', () => {
       nameB: 'B',
       incomeB: 0,
       expenses: 0,
+      houseworkA: 0,
+      houseworkB: 0,
     })
 
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/resultado?a=A&ra=0&b=B&rb=0&d=0',
+    })
+  })
+
+  it('includes ha and hb params when housework is provided', () => {
+    const { result } = renderHook(() => useExpenseFormSubmit())
+
+    result.current({
+      nameA: 'Ana',
+      incomeA: 500000,
+      nameB: 'Bob',
+      incomeB: 300000,
+      expenses: 200000,
+      houseworkA: 15,
+      houseworkB: 5,
+    })
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/resultado?a=Ana&ra=500000&b=Bob&rb=300000&d=200000&ha=15&hb=5',
+    })
+  })
+
+  it('excludes ha param when houseworkA is zero', () => {
+    const { result } = renderHook(() => useExpenseFormSubmit())
+
+    result.current({
+      nameA: 'Ana',
+      incomeA: 500000,
+      nameB: 'Bob',
+      incomeB: 300000,
+      expenses: 200000,
+      houseworkA: 0,
+      houseworkB: 10,
+    })
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/resultado?a=Ana&ra=500000&b=Bob&rb=300000&d=200000&hb=10',
+    })
+  })
+
+  it('excludes hb param when houseworkB is zero', () => {
+    const { result } = renderHook(() => useExpenseFormSubmit())
+
+    result.current({
+      nameA: 'Ana',
+      incomeA: 500000,
+      nameB: 'Bob',
+      incomeB: 300000,
+      expenses: 200000,
+      houseworkA: 20,
+      houseworkB: 0,
+    })
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/resultado?a=Ana&ra=500000&b=Bob&rb=300000&d=200000&ha=20',
+    })
+  })
+
+  it('excludes ha and hb params when both housework values are zero', () => {
+    const { result } = renderHook(() => useExpenseFormSubmit())
+
+    result.current({
+      nameA: 'Ana',
+      incomeA: 500000,
+      nameB: 'Bob',
+      incomeB: 300000,
+      expenses: 200000,
+      houseworkA: 0,
+      houseworkB: 0,
+    })
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/resultado?a=Ana&ra=500000&b=Bob&rb=300000&d=200000',
     })
   })
 })

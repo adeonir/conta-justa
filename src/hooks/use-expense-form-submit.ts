@@ -14,6 +14,13 @@ export function useExpenseFormSubmit() {
       d: String(value.expenses),
     })
 
+    if (value.houseworkA > 0) {
+      params.set('ha', String(value.houseworkA))
+    }
+    if (value.houseworkB > 0) {
+      params.set('hb', String(value.houseworkB))
+    }
+
     navigate({ to: `/resultado?${params.toString()}` })
   }
 }
