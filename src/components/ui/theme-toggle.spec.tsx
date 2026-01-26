@@ -10,6 +10,7 @@ vi.mock('~/providers/theme-provider', () => ({
   useTheme: () => ({
     theme: 'system',
     resolvedTheme: 'dark',
+    mounted: true,
     setTheme: mockSetTheme,
   }),
 }))
