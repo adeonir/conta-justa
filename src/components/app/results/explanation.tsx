@@ -1,11 +1,14 @@
 import { Card } from '~/components/ui/card'
+import { useExpenseStore } from '~/stores/expense-store'
 import { ExplanationItem } from './explanation-item'
 
-interface ExplanationProps {
-  hasHousework: boolean
-}
+export function Explanation() {
+  const formData = useExpenseStore((s) => s.formData)
 
-export function Explanation({ hasHousework }: ExplanationProps) {
+  if (!formData) return null
+
+  const hasHousework = formData.houseworkA > 0 || formData.houseworkB > 0
+
   return (
     <Card accent={false} className="p-6">
       <h2 className="mb-6 font-bold text-xl">Como funciona</h2>

@@ -1,16 +1,21 @@
 import { Card as CardUI } from '~/components/ui/card'
 import type { CalculationResult } from '~/lib/calculations'
+import { useExpenseStore } from '~/stores/expense-store'
 import { PersonDisplay } from './person-display'
 
 interface CardProps {
-  nameA: string
-  nameB: string
   result: CalculationResult
   methodTitle: string
   isRecommended?: boolean
 }
 
-export function Card({ nameA, nameB, result, methodTitle, isRecommended = true }: CardProps) {
+export function Card({ result, methodTitle, isRecommended = true }: CardProps) {
+  const formData = useExpenseStore((s) => s.formData)
+
+  if (!formData) return null
+
+  const { nameA, nameB } = formData
+
   return (
     <CardUI>
       <p className="mb-2 font-medium text-primary text-sm uppercase tracking-wider">

@@ -1,15 +1,13 @@
 import { formatCurrency } from '~/lib/utils'
+import { useExpenseStore } from '~/stores/expense-store'
 
-interface SummaryProps {
-  nameA: string
-  nameB: string
-  totalIncome: number
-  totalExpenses: number
-  houseworkA: number
-  houseworkB: number
-}
+export function Summary() {
+  const formData = useExpenseStore((s) => s.formData)
 
-export function Summary({ nameA, nameB, totalIncome, totalExpenses, houseworkA, houseworkB }: SummaryProps) {
+  if (!formData) return null
+
+  const { nameA, nameB, incomeA, incomeB, expenses, houseworkA, houseworkB } = formData
+  const totalIncome = incomeA + incomeB
   const hasHousework = houseworkA > 0 || houseworkB > 0
   const totalHousework = houseworkA + houseworkB
 
@@ -36,7 +34,7 @@ export function Summary({ nameA, nameB, totalIncome, totalExpenses, houseworkA, 
 
         <div className="flex items-center justify-between border-border border-b pb-4">
           <dt className="text-muted-foreground">Despesas compartilhadas</dt>
-          <dd className="font-semibold">{formatCurrency(totalExpenses / 100)}</dd>
+          <dd className="font-semibold">{formatCurrency(expenses / 100)}</dd>
         </div>
 
         {hasHousework && (

@@ -1,10 +1,9 @@
 import type { CalculationResult } from '~/lib/calculations'
+import { useExpenseStore } from '~/stores/expense-store'
 import { MethodCard } from './method-card'
 import type { MethodType } from './types'
 
 interface ComparisonProps {
-  nameA: string
-  nameB: string
   proportional: CalculationResult
   adjusted: CalculationResult | null
   hybrid: CalculationResult
@@ -13,16 +12,13 @@ interface ComparisonProps {
   onSelect: (method: MethodType) => void
 }
 
-export function Comparison({
-  nameA,
-  nameB,
-  proportional,
-  adjusted,
-  hybrid,
-  recommended,
-  selected,
-  onSelect,
-}: ComparisonProps) {
+export function Comparison({ proportional, adjusted, hybrid, recommended, selected, onSelect }: ComparisonProps) {
+  const formData = useExpenseStore((s) => s.formData)
+
+  if (!formData) return null
+
+  const { nameA, nameB } = formData
+
   return (
     <section>
       <h2 className="mb-6 font-bold text-xl">Compare os métodos</h2>
