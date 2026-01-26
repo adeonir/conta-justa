@@ -6,10 +6,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getErrorMessage(errors: Array<{ message?: string } | undefined>): string {
-  return errors
+  const messages = errors
     .filter((e): e is { message: string } => e !== undefined && typeof e.message === 'string')
     .map((e) => e.message)
-    .join(', ')
+
+  return [...new Set(messages)].join(', ')
 }
 
 export function formatCurrency(value: number): string {
