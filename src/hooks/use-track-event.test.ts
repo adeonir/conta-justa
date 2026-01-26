@@ -45,10 +45,9 @@ describe('useTrackEvent', () => {
     const eventName = 'test_event'
     const properties = { key: 'value' }
 
-    const { rerender } = renderHook(
-      ({ isReady }) => useTrackEvent(eventName, properties, isReady),
-      { initialProps: { isReady: true } }
-    )
+    const { rerender } = renderHook(({ isReady }) => useTrackEvent(eventName, properties, isReady), {
+      initialProps: { isReady: true },
+    })
 
     expect(posthog.capture).toHaveBeenCalledTimes(1)
 
@@ -62,10 +61,9 @@ describe('useTrackEvent', () => {
     const eventName = 'test_event'
     const properties = { key: 'value' }
 
-    const { rerender } = renderHook(
-      ({ isReady }) => useTrackEvent(eventName, properties, isReady),
-      { initialProps: { isReady: false } }
-    )
+    const { rerender } = renderHook(({ isReady }) => useTrackEvent(eventName, properties, isReady), {
+      initialProps: { isReady: false },
+    })
 
     expect(posthog.capture).not.toHaveBeenCalled()
 
@@ -80,10 +78,9 @@ describe('useTrackEvent', () => {
     const initialProperties = { key: 'initial' }
     const updatedProperties = { key: 'updated' }
 
-    const { rerender } = renderHook(
-      ({ properties }) => useTrackEvent(eventName, properties, true),
-      { initialProps: { properties: initialProperties } }
-    )
+    const { rerender } = renderHook(({ properties }) => useTrackEvent(eventName, properties, true), {
+      initialProps: { properties: initialProperties },
+    })
 
     expect(posthog.capture).toHaveBeenCalledTimes(1)
     expect(posthog.capture).toHaveBeenCalledWith(eventName, initialProperties)
