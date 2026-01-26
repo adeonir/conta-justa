@@ -1,3 +1,5 @@
+import type { MethodType } from '~/components/app/results/types'
+
 export interface CalculationInput {
   incomeA: number // Person A monthly income in cents
   incomeB: number // Person B monthly income in cents
@@ -17,7 +19,7 @@ export interface PersonResult {
 export interface CalculationResult {
   personA: PersonResult
   personB: PersonResult
-  method: 'proportional' | 'adjusted' | 'hybrid'
+  method: MethodType
 }
 
 const MONTHLY_WORK_HOURS = 220 // Standard monthly hours for hourly rate
@@ -107,11 +109,11 @@ export function calculateAdjusted(input: CalculationInput): CalculationResult {
   }
 }
 
-const HYBRID_FLOOR_PERCENTAGE = 0.3 // 30% minimum contribution
+const HYBRID_FLOOR_PERCENTAGE = 0.3 // 30% minimum contribution of income
 
 /**
- * Method 3: Hybrid Division (proportional with 30% floor)
- * Ensures minimum 30% contribution from lower earner
+ * Method 3: Hybrid Division (proportional with 30% income floor)
+ * Ensures each person pays at least 30% of their own income
  */
 export function calculateHybrid(input: CalculationInput): CalculationResult {
   const { incomeA, incomeB, expenses } = input
@@ -127,28 +129,46 @@ export function calculateHybrid(input: CalculationInput): CalculationResult {
     }
   }
 
-  const floor = Math.round(expenses * HYBRID_FLOOR_PERCENTAGE)
+  // Calculate floors based on individual income (30% of each person's income)
+  const floorA = Math.round(incomeA * HYBRID_FLOOR_PERCENTAGE)
+  const floorB = Math.round(incomeB * HYBRID_FLOOR_PERCENTAGE)
+  const totalFloor = floorA + floorB
 
-  // Calculate proportional contributions
-  const proportionalA = Math.round(expenses * (incomeA / totalIncome))
-  const proportionalB = expenses - proportionalA
+  let contributionA: number
+  let contributionB: number
 
-  let contributionA = proportionalA
-  let contributionB = proportionalB
-
-  // Apply floor - boost lower contributor to 30% minimum
-  if (proportionalA < floor && proportionalB >= floor) {
-    contributionA = floor
-    contributionB = expenses - floor
-  } else if (proportionalB < floor && proportionalA >= floor) {
-    contributionB = floor
-    contributionA = expenses - floor
+  if (totalFloor > expenses) {
+    // When sum of floors exceeds expenses, adjust proportionally
+    contributionA = Math.round(expenses * (floorA / totalFloor))
+    contributionB = expenses - contributionA
+  } else {
+    // Normal case: use max of floor and proportional contribution
+    const proportionalA = Math.round(expenses * (incomeA / totalIncome))
+    contributionA = Math.max(floorA, proportionalA)
+    contributionB = expenses - contributionA
   }
-  // If both would hit floor (similar incomes), keep proportional
 
   return {
     personA: buildPersonResult(contributionA, incomeA, expenses),
     personB: buildPersonResult(contributionB, incomeB, expenses),
     method: 'hybrid',
+  }
+}
+
+/**
+ * Method 4: Equal Division
+ * Splits expenses equally (50/50) regardless of income
+ */
+export function calculateEqual(input: CalculationInput): CalculationResult {
+  const { incomeA, incomeB, expenses } = input
+
+  const halfExpenses = Math.round(expenses / 2)
+  const contributionA = halfExpenses
+  const contributionB = expenses - halfExpenses
+
+  return {
+    personA: buildPersonResult(contributionA, incomeA, expenses),
+    personB: buildPersonResult(contributionB, incomeB, expenses),
+    method: 'equal',
   }
 }

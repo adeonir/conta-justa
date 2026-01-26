@@ -4,6 +4,7 @@ import {
   buildPersonResult,
   type CalculationInput,
   calculateAdjusted,
+  calculateEqual,
   calculateHourlyRate,
   calculateHouseworkValue,
   calculateHybrid,
@@ -254,7 +255,7 @@ describe('calculateAdjusted', () => {
 
 describe('calculateHybrid', () => {
   const baseInput: CalculationInput = {
-    incomeA: 700000, // R$7000
+    incomeA: 500000, // R$5000
     incomeB: 300000, // R$3000
     expenses: 400000, // R$4000
     houseworkA: 0,
@@ -262,59 +263,54 @@ describe('calculateHybrid', () => {
     minimumWage: 162100,
   }
 
-  it('applies 30% floor to lower earner', () => {
-    // Proportional: A=70%, B=30%
-    // Floor: 30% = R$1200 (120000 cents)
-    // B hits exactly floor
+  it('calculates floor based on individual income', () => {
+    // Floor A = 5000 * 0.3 = R$1500 (150000 cents)
+    // Floor B = 3000 * 0.3 = R$900 (90000 cents)
+    // Total floor = R$2400, less than R$4000 expenses
+    // Proportional A = 4000 * (5000/8000) = R$2500
+    // Proportional A (250000) > Floor A (150000), so use proportional
     const result = calculateHybrid(baseInput)
 
     expect(result.method).toBe('hybrid')
-    expect(result.personB.contribution).toBe(120000) // 30% floor
-    expect(result.personA.contribution).toBe(280000)
+    expect(result.personA.contribution).toBe(250000) // R$2500 (proportional)
+    expect(result.personB.contribution).toBe(150000) // R$1500
+    expect(result.personA.contribution + result.personB.contribution).toBe(400000)
   })
 
-  it('does not apply floor when proportional exceeds 30%', () => {
-    // Both contribute more than 30%
-    const input = { ...baseInput, incomeA: 500000, incomeB: 500000 }
-    const result = calculateHybrid(input)
-
-    expect(result.personA.contribution).toBe(200000) // 50%
-    expect(result.personB.contribution).toBe(200000) // 50%
-  })
-
-  it('applies floor when person A is below 30%', () => {
-    // When A=20%, B=80%, A would hit floor at 30%
-    // A proportional: 20% = 80000, floor: 120000
-    // B proportional: 80% = 320000, stays above floor
-    const input = { ...baseInput, incomeA: 200000, incomeB: 800000 }
-    const result = calculateHybrid(input)
-
-    // A gets boosted to floor (30% = 120000)
-    // B adjusts to 280000 to keep total at 400000
-    expect(result.personA.contribution).toBe(120000)
-    expect(result.personB.contribution).toBe(280000)
-  })
-
-  it('applies floor when person B is below 30%', () => {
-    // When A=80%, B=20%, B would hit floor at 30%
-    // A proportional: 80% = 320000, stays above floor
-    // B proportional: 20% = 80000, floor: 120000
+  it('applies income-based floor when proportional is lower', () => {
+    // A earns R$8000, B earns R$2000
+    // Floor A = 8000 * 0.3 = R$2400 (240000 cents)
+    // Floor B = 2000 * 0.3 = R$600 (60000 cents)
+    // Proportional A = 4000 * (8000/10000) = R$3200
+    // Proportional A (320000) > Floor A (240000), so use proportional
     const input = { ...baseInput, incomeA: 800000, incomeB: 200000 }
     const result = calculateHybrid(input)
 
-    // B gets boosted to floor (30% = 120000)
-    // A adjusts to 280000 to keep total at 400000
-    expect(result.personB.contribution).toBe(120000)
-    expect(result.personA.contribution).toBe(280000)
+    expect(result.personA.contribution).toBe(320000) // 80% proportional
+    expect(result.personB.contribution).toBe(80000) // 20% proportional
   })
 
-  it('handles equal incomes (no floor needed)', () => {
+  it('adjusts proportionally when sum of floors exceeds expenses', () => {
+    // A earns R$10000, B earns R$5000, expenses R$3000
+    // Floor A = 10000 * 0.3 = R$3000 (300000 cents)
+    // Floor B = 5000 * 0.3 = R$1500 (150000 cents)
+    // Total floor = R$4500 > R$3000 expenses
+    // A contribution = 3000 * (300000/450000) = R$2000
+    // B contribution = 3000 - 2000 = R$1000
+    const input = { ...baseInput, incomeA: 1000000, incomeB: 500000, expenses: 300000 }
+    const result = calculateHybrid(input)
+
+    expect(result.personA.contribution).toBe(200000) // R$2000
+    expect(result.personB.contribution).toBe(100000) // R$1000
+    expect(result.personA.contribution + result.personB.contribution).toBe(300000)
+  })
+
+  it('handles equal incomes (uses proportional 50/50)', () => {
     const input = { ...baseInput, incomeA: 500000, incomeB: 500000 }
     const result = calculateHybrid(input)
 
     expect(result.personA.contribution).toBe(200000)
     expect(result.personB.contribution).toBe(200000)
-    expect(result.personA.expensePercentage).toBe(50)
   })
 
   it('returns 50/50 when both incomes are zero', () => {
@@ -329,5 +325,95 @@ describe('calculateHybrid', () => {
     const result = calculateHybrid(baseInput)
 
     expect(result.personA.contribution + result.personB.contribution).toBe(400000)
+  })
+
+  it('matches AC-001: income A=R$5000, B=R$3000, expenses=R$4000', () => {
+    // Floor A = 5000 * 0.3 = 1500 (150000 cents)
+    // Floor B = 3000 * 0.3 = 900 (90000 cents)
+    const input: CalculationInput = {
+      incomeA: 500000,
+      incomeB: 300000,
+      expenses: 400000,
+      houseworkA: 0,
+      houseworkB: 0,
+      minimumWage: 162100,
+    }
+    const result = calculateHybrid(input)
+
+    const expectedFloorA = Math.round(500000 * 0.3)
+    const expectedFloorB = Math.round(300000 * 0.3)
+    expect(expectedFloorA).toBe(150000)
+    expect(expectedFloorB).toBe(90000)
+    expect(result.personA.contribution + result.personB.contribution).toBe(400000)
+  })
+})
+
+describe('calculateEqual', () => {
+  const baseInput: CalculationInput = {
+    incomeA: 500000, // R$5000
+    incomeB: 300000, // R$3000
+    expenses: 200000, // R$2000
+    houseworkA: 0,
+    houseworkB: 0,
+    minimumWage: 162100,
+  }
+
+  it('splits expenses exactly 50/50', () => {
+    const result = calculateEqual(baseInput)
+
+    expect(result.method).toBe('equal')
+    expect(result.personA.contribution).toBe(100000)
+    expect(result.personB.contribution).toBe(100000)
+    expect(result.personA.expensePercentage).toBe(50)
+    expect(result.personB.expensePercentage).toBe(50)
+  })
+
+  it('ensures contributions sum to total expenses', () => {
+    const result = calculateEqual(baseInput)
+    expect(result.personA.contribution + result.personB.contribution).toBe(200000)
+  })
+
+  it('handles odd expense amounts', () => {
+    // 200001 cents / 2 = 100000.5, rounds to 100001 for A
+    // B gets remainder: 200001 - 100001 = 100000
+    const input = { ...baseInput, expenses: 200001 }
+    const result = calculateEqual(input)
+
+    expect(result.personA.contribution + result.personB.contribution).toBe(200001)
+  })
+
+  it('calculates remaining balance correctly', () => {
+    const result = calculateEqual(baseInput)
+
+    expect(result.personA.remaining).toBe(400000) // 5000 - 1000
+    expect(result.personB.remaining).toBe(200000) // 3000 - 1000
+  })
+
+  it('shows negative remaining when contribution exceeds income', () => {
+    // Person B earns R$500 but must pay R$1000 (half of R$2000)
+    const input = { ...baseInput, incomeB: 50000 }
+    const result = calculateEqual(input)
+
+    expect(result.personB.contribution).toBe(100000)
+    expect(result.personB.remaining).toBe(-50000)
+  })
+
+  it('ignores income for calculation', () => {
+    // Even with very different incomes, split is 50/50
+    const input = { ...baseInput, incomeA: 1000000, incomeB: 100000 }
+    const result = calculateEqual(input)
+
+    expect(result.personA.contribution).toBe(100000)
+    expect(result.personB.contribution).toBe(100000)
+  })
+
+  it('handles zero income', () => {
+    const input = { ...baseInput, incomeA: 0, incomeB: 0 }
+    const result = calculateEqual(input)
+
+    expect(result.personA.contribution).toBe(100000)
+    expect(result.personB.contribution).toBe(100000)
+    expect(result.personA.remaining).toBe(-100000)
+    expect(result.personB.remaining).toBe(-100000)
   })
 })
