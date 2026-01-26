@@ -4,7 +4,7 @@ import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { useExpenseStore } from '~/stores/expense-store'
 
-export function ResultActions() {
+export function Actions() {
   const navigate = useNavigate()
   const reset = useExpenseStore((s) => s.reset)
 

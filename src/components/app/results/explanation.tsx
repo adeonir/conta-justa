@@ -1,24 +1,11 @@
 import { Card } from '~/components/ui/card'
+import { ExplanationItem } from './explanation-item'
 
-interface ResultExplanationProps {
+interface ExplanationProps {
   hasHousework: boolean
 }
 
-interface ExplanationItemProps {
-  title: string
-  text: string
-}
-
-function ExplanationItem({ title, text }: ExplanationItemProps) {
-  return (
-    <div className="space-y-2">
-      <h3 className="font-bold">{title}</h3>
-      <p className="text-muted-foreground text-sm leading-relaxed">{text}</p>
-    </div>
-  )
-}
-
-export function ResultExplanation({ hasHousework }: ResultExplanationProps) {
+export function Explanation({ hasHousework }: ExplanationProps) {
   return (
     <Card accent={false} className="p-6">
       <h2 className="mb-6 font-bold text-xl">Como funciona</h2>

@@ -329,7 +329,7 @@ const mensagemErro = 'Required field'
 
 - **Filenames**: kebab-case only (enforced)
 - **Imports**: Use `import type` for type-only imports
-- **No barrel files**: Direct imports only
+- **Barrel files**: Allowed with named exports only (`export { X } from './x'`), no `export * from`
 - **No forEach**: Use `for...of` loops
 - **Semicolons**: As needed (omit when possible)
 - **Quotes**: Single quotes for JS, double for JSX

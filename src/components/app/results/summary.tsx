@@ -1,6 +1,6 @@
 import { formatCurrency } from '~/lib/utils'
 
-interface ResultSummaryProps {
+interface SummaryProps {
   nameA: string
   nameB: string
   totalIncome: number
@@ -9,14 +9,7 @@ interface ResultSummaryProps {
   houseworkB: number
 }
 
-export function ResultSummary({
-  nameA,
-  nameB,
-  totalIncome,
-  totalExpenses,
-  houseworkA,
-  houseworkB,
-}: ResultSummaryProps) {
+export function Summary({ nameA, nameB, totalIncome, totalExpenses, houseworkA, houseworkB }: SummaryProps) {
   const hasHousework = houseworkA > 0 || houseworkB > 0
   const totalHousework = houseworkA + houseworkB
 

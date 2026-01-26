@@ -47,7 +47,8 @@
         }
       },
       "performance": {
-        "noBarrelFile": "error",
+        "noBarrelFile": "off",
+        "noReExportAll": "error",
         "noNamespaceImport": "off"
       },
       "style": {
