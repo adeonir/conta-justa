@@ -310,6 +310,21 @@ function SearchPage() {
 
 ## Code Conventions
 
+### Language
+
+- **Code**: All in English (variable names, function names, comments, types)
+- **User-facing text**: Portuguese with correct accents (labels, messages, UI copy)
+
+```tsx
+// CORRECT
+const calculateContribution = (income: number) => { ... }
+const errorMessage = 'Campo obrigatório'
+
+// WRONG
+const calcularContribuicao = (renda: number) => { ... }
+const mensagemErro = 'Required field'
+```
+
 ### Enforced by Biome
 
 - **Filenames**: kebab-case only (enforced)
