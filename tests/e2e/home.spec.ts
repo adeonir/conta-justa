@@ -99,6 +99,102 @@ test.describe('Home', () => {
     expect(url).toContain('rb=300000')
     expect(url).toContain('d=200000')
   })
+
+  test('form submission without housework does not include ha/hb params', async ({ page }) => {
+    await page.locator('#nameA').fill('Ana')
+    await page.locator('#incomeA').click()
+    await page.locator('#incomeA').pressSequentially('5000')
+
+    await page.locator('#nameB').fill('Bob')
+    await page.locator('#incomeB').click()
+    await page.locator('#incomeB').pressSequentially('3000')
+
+    await page.locator('#expenses').click()
+    await page.locator('#expenses').pressSequentially('2000')
+    await page.locator('#expenses').blur()
+
+    const button = page.getByRole('button', { name: 'Calcular divisão' })
+    await expect(button).toBeEnabled()
+    await button.click()
+
+    await page.waitForURL(/\/resultado/)
+
+    const url = page.url()
+    expect(url).not.toContain('ha=')
+    expect(url).not.toContain('hb=')
+  })
+})
+
+test.describe('Housework Section', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+  })
+
+  test('housework section is collapsed by default', async ({ page }) => {
+    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    await expect(trigger).toBeVisible()
+
+    const content = page.locator('[data-slot="collapsible-content"]')
+    await expect(content).toHaveAttribute('data-state', 'closed')
+  })
+
+  test('housework section expands when trigger is clicked', async ({ page }) => {
+    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    await trigger.click()
+
+    await expect(page.getByText('Cuidar da casa é trabalho')).toBeVisible()
+    await expect(page.locator('#houseworkA')).toBeVisible()
+    await expect(page.locator('#houseworkB')).toBeVisible()
+  })
+
+  test('housework fields show dynamic labels based on person names', async ({ page }) => {
+    await page.locator('#nameA').fill('Maria')
+    await page.locator('#nameB').fill('Joao')
+
+    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    await trigger.click()
+
+    await expect(page.getByText('Horas semanais de Maria')).toBeVisible()
+    await expect(page.getByText('Horas semanais de Joao')).toBeVisible()
+  })
+
+  test('housework section displays minimum wage hourly rate', async ({ page }) => {
+    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    await trigger.click()
+
+    await expect(page.getByText(/salário mínimo\/hora/)).toBeVisible()
+  })
+
+  test('form submission with housework includes ha and hb params', async ({ page }) => {
+    await page.locator('#nameA').fill('Ana')
+    await page.locator('#incomeA').click()
+    await page.locator('#incomeA').pressSequentially('5000')
+
+    await page.locator('#nameB').fill('Bob')
+    await page.locator('#incomeB').click()
+    await page.locator('#incomeB').pressSequentially('3000')
+
+    await page.locator('#expenses').click()
+    await page.locator('#expenses').pressSequentially('2000')
+
+    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    await trigger.click()
+
+    await page.locator('#houseworkA').fill('15')
+    await page.locator('#houseworkB').fill('5')
+    await page.locator('#houseworkB').blur()
+
+    const button = page.getByRole('button', { name: 'Calcular divisão' })
+    await expect(button).toBeEnabled()
+    await button.click()
+
+    await page.waitForURL(/\/resultado/)
+
+    const url = page.url()
+    expect(url).toContain('ha=15')
+    expect(url).toContain('hb=5')
+  })
 })
 
 test.describe('Responsive Layout', () => {
