@@ -9,7 +9,7 @@ export function Comparison() {
   if (!formData || !calculations) return null
 
   const { nameA, nameB } = formData
-  const { proportional, adjusted, hybrid, recommendedMethod, activeMethod, setSelectedMethod } = calculations
+  const { proportional, adjusted, hybrid, equal, recommendedMethod, activeMethod, setSelectedMethod } = calculations
 
   return (
     <section>
@@ -44,7 +44,7 @@ export function Comparison() {
 
         <MethodCard
           title="Contribuição mínima"
-          description="Cada pessoa paga pelo menos 30% das despesas"
+          description="Cada pessoa paga pelo menos 30% da própria renda"
           nameA={nameA}
           nameB={nameB}
           contributionA={hybrid.personA.contribution}
@@ -52,6 +52,18 @@ export function Comparison() {
           isRecommended={false}
           isSelected={activeMethod === 'hybrid'}
           onSelect={() => setSelectedMethod('hybrid')}
+        />
+
+        <MethodCard
+          title="Divisão igual"
+          description="Cada pessoa paga metade das despesas"
+          nameA={nameA}
+          nameB={nameB}
+          contributionA={equal.personA.contribution}
+          contributionB={equal.personB.contribution}
+          isRecommended={false}
+          isSelected={activeMethod === 'equal'}
+          onSelect={() => setSelectedMethod('equal')}
         />
       </div>
     </section>

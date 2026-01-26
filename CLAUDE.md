@@ -310,6 +310,12 @@ function SearchPage() {
 
 ## Code Conventions
 
+### Never Assume
+
+Never assume any class, variable, pattern, or convention exists. Always check `styles.css`, existing components, and the codebase before using any CSS class, utility, or pattern. Verify first, then use.
+
+This project does NOT use shadcn/ui. Components are custom, inspired by shadcn/ui patterns but with different implementations and CSS variables.
+
 ### Language
 
 - **Code**: All in English (variable names, function names, comments, types)

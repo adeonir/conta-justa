@@ -1,4 +1,4 @@
-import { formatCurrency } from '~/lib/utils'
+import { cn, formatCurrency } from '~/lib/utils'
 
 interface PersonDisplayProps {
   name: string
@@ -34,7 +34,9 @@ export function PersonDisplay({
           <span className="text-muted-foreground">da renda comprometida</span>
         </li>
         <li className="space-x-1 pt-2">
-          <span className="font-semibold tabular-nums">{formatCurrency(remaining / 100)}</span>
+          <span className={cn('font-semibold tabular-nums', remaining < 0 ? 'text-red-600' : 'text-green-600')}>
+            {formatCurrency(remaining / 100)}
+          </span>
           <span className="text-muted-foreground">sobra mensal</span>
         </li>
       </ul>
