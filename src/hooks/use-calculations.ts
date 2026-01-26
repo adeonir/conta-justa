@@ -5,6 +5,7 @@ import {
   type CalculationInput,
   type CalculationResult,
   calculateAdjusted,
+  calculateEqual,
   calculateHybrid,
   calculateProportional,
 } from '~/lib/calculations'
@@ -14,12 +15,14 @@ const methodTitles: Record<MethodType, string> = {
   proportional: 'Proporcional simples',
   adjusted: 'Proporcional + trabalho doméstico',
   hybrid: 'Contribuição mínima',
+  equal: 'Divisão igual',
 }
 
 interface CalculationResults {
   proportional: CalculationResult
   adjusted: CalculationResult | null
   hybrid: CalculationResult
+  equal: CalculationResult
   recommendedMethod: 'proportional' | 'adjusted'
   hasHousework: boolean
   activeMethod: MethodType
@@ -56,17 +59,25 @@ export function useCalculations(): CalculationResults | null {
   const hasHousework = formData.houseworkA > 0 || formData.houseworkB > 0
   const adjusted = hasHousework ? calculateAdjusted(input) : null
   const hybrid = calculateHybrid(input)
+  const equal = calculateEqual(input)
 
   const recommendedMethod = hasHousework ? 'adjusted' : 'proportional'
   const activeMethod = selectedMethod ?? recommendedMethod
 
   const activeResult =
-    activeMethod === 'adjusted' ? (adjusted ?? proportional) : activeMethod === 'hybrid' ? hybrid : proportional
+    activeMethod === 'adjusted'
+      ? (adjusted ?? proportional)
+      : activeMethod === 'hybrid'
+        ? hybrid
+        : activeMethod === 'equal'
+          ? equal
+          : proportional
 
   return {
     proportional,
     adjusted,
     hybrid,
+    equal,
     recommendedMethod,
     hasHousework,
     activeMethod,

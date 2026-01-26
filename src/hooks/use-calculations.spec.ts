@@ -16,7 +16,7 @@ let mockStoreState = {
     houseworkB: number
   } | null,
   minimumWage: null as number | null,
-  selectedMethod: null as 'proportional' | 'adjusted' | 'hybrid' | null,
+  selectedMethod: null as 'proportional' | 'adjusted' | 'hybrid' | 'equal' | null,
   setSelectedMethod: mockSetSelectedMethod,
 }
 
@@ -85,6 +85,15 @@ describe('useCalculations', () => {
       expect(result.current).not.toBeNull()
       expect(result.current?.proportional).toBeDefined()
       expect(result.current?.hybrid).toBeDefined()
+      expect(result.current?.equal).toBeDefined()
+    })
+
+    it('calculates equal method (50/50 split)', () => {
+      const { result } = renderHook(() => useCalculations())
+
+      // Equal split: 200000 / 2 = 100000 each
+      expect(result.current?.equal.personA.contribution).toBe(100000)
+      expect(result.current?.equal.personB.contribution).toBe(100000)
     })
 
     it('calculates proportional contributions based on income ratio', () => {
@@ -214,6 +223,31 @@ describe('useCalculations', () => {
       const { result } = renderHook(() => useCalculations())
 
       expect(result.current?.methodTitle).toBe('Contribuição mínima')
+    })
+
+    it('uses equal when selected', () => {
+      mockStoreState.selectedMethod = 'equal'
+
+      const { result } = renderHook(() => useCalculations())
+
+      expect(result.current?.activeMethod).toBe('equal')
+      expect(result.current?.activeResult).toEqual(result.current?.equal)
+    })
+
+    it('returns correct methodTitle for equal', () => {
+      mockStoreState.selectedMethod = 'equal'
+
+      const { result } = renderHook(() => useCalculations())
+
+      expect(result.current?.methodTitle).toBe('Divisão igual')
+    })
+
+    it('isRecommended is false for equal method', () => {
+      mockStoreState.selectedMethod = 'equal'
+
+      const { result } = renderHook(() => useCalculations())
+
+      expect(result.current?.isRecommended).toBe(false)
     })
 
     it('isRecommended is false when activeMethod differs from recommendedMethod', () => {
