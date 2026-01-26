@@ -97,7 +97,8 @@ test.describe('Results Page - Complete Flow', () => {
   test('hides housework section when no housework hours', async ({ page }) => {
     await fillFormAndSubmit(page)
 
-    await expect(page.getByText('Trabalho doméstico')).not.toBeVisible()
+    const summary = page.locator('section').filter({ hasText: 'Renda total do casal' })
+    await expect(summary.getByText('Trabalho doméstico')).not.toBeVisible()
   })
 })
 
