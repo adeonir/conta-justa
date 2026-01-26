@@ -116,7 +116,7 @@ test.describe('Responsive Layout', () => {
     })
 
     expect(computedStyle.display).toBe('grid')
-    expect(computedStyle.gridTemplateColumns).toMatch(/\d+px \d+px/)
+    expect(computedStyle.gridTemplateColumns).toMatch(/[\d.]+px [\d.]+px/)
   })
 
   test('1-column layout on mobile viewport', async ({ page }) => {
