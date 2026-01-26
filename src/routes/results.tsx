@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
+import { ResultCard } from '~/components/app/result-card'
 import { ResultSummary } from '~/components/app/result-summary'
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
@@ -96,11 +97,12 @@ function ResultsPage() {
         />
 
         <div className="flex flex-col gap-8">
-          <div className="rounded-sm border border-border bg-card p-6">
-            <p className="text-muted-foreground">
-              ResultCard placeholder - Método recomendado: {calculations.recommendedMethod}
-            </p>
-          </div>
+          <ResultCard
+            nameA={formData.nameA}
+            nameB={formData.nameB}
+            result={calculations.recommended}
+            methodTitle={calculations.hasHousework ? 'Proporcional + trabalho doméstico' : 'Proporcional simples'}
+          />
 
           <div className="rounded-sm border border-border bg-card p-6">
             <p className="text-muted-foreground">
