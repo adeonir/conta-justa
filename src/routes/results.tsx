@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-
 import { ResultCard } from '~/components/app/result-card'
+import { ResultComparison } from '~/components/app/result-comparison'
 import { ResultSummary } from '~/components/app/result-summary'
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
@@ -104,11 +104,14 @@ function ResultsPage() {
             methodTitle={calculations.hasHousework ? 'Proporcional + trabalho doméstico' : 'Proporcional simples'}
           />
 
-          <div className="rounded-sm border border-border bg-card p-6">
-            <p className="text-muted-foreground">
-              ResultComparison placeholder - Mostrando {calculations.hasHousework ? '3' : '2'} métodos
-            </p>
-          </div>
+          <ResultComparison
+            nameA={formData.nameA}
+            nameB={formData.nameB}
+            proportional={calculations.proportional}
+            adjusted={calculations.adjusted}
+            hybrid={calculations.hybrid}
+            recommended={calculations.recommendedMethod === 'adjusted' ? 'adjusted' : 'proportional'}
+          />
 
           <div className="rounded-sm border border-border bg-card p-6">
             <p className="text-muted-foreground">
