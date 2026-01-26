@@ -57,7 +57,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: FOUC prevention requires inline script with static content */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>
+      <body className="flex min-h-screen flex-col">
         {children}
         <Scripts />
       </body>
