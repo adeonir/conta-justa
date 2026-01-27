@@ -19,7 +19,7 @@ describe('expense-store', () => {
     act(() => {
       result.current.reset()
       useExpenseStore.setState({
-        formData: null,
+        data: null,
         minimumWage: null,
         selectedMethod: null,
         _hasHydrated: false,
@@ -32,26 +32,26 @@ describe('expense-store', () => {
     vi.clearAllMocks()
   })
 
-  describe('setFormData', () => {
-    it('updates formData state', () => {
+  describe('setData', () => {
+    it('updates data state', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setFormData(mockFormData)
+        result.current.setData(mockFormData)
       })
 
-      expect(result.current.formData).toEqual(mockFormData)
+      expect(result.current.data).toEqual(mockFormData)
     })
 
-    it('persists formData to sessionStorage', () => {
+    it('persists data to sessionStorage', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setFormData(mockFormData)
+        result.current.setData(mockFormData)
       })
 
       const stored = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')
-      expect(stored.state.formData).toEqual(mockFormData)
+      expect(stored.state.data).toEqual(mockFormData)
     })
   })
 
@@ -118,20 +118,20 @@ describe('expense-store', () => {
   })
 
   describe('reset', () => {
-    it('clears formData state', () => {
+    it('clears data state', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setFormData(mockFormData)
+        result.current.setData(mockFormData)
       })
 
-      expect(result.current.formData).toEqual(mockFormData)
+      expect(result.current.data).toEqual(mockFormData)
 
       act(() => {
         result.current.reset()
       })
 
-      expect(result.current.formData).toBeNull()
+      expect(result.current.data).toBeNull()
     })
 
     it('clears selectedMethod state', () => {
@@ -150,23 +150,23 @@ describe('expense-store', () => {
       expect(result.current.selectedMethod).toBeNull()
     })
 
-    it('clears formData from sessionStorage', () => {
+    it('clears data from sessionStorage', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setFormData(mockFormData)
+        result.current.setData(mockFormData)
         result.current.setMinimumWage(141200)
       })
 
       const storedBefore = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')
-      expect(storedBefore.state.formData).toEqual(mockFormData)
+      expect(storedBefore.state.data).toEqual(mockFormData)
 
       act(() => {
         result.current.reset()
       })
 
       const storedAfter = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')
-      expect(storedAfter.state.formData).toBeNull()
+      expect(storedAfter.state.data).toBeNull()
     })
 
     it('preserves minimumWage in state after reset', () => {
@@ -174,7 +174,7 @@ describe('expense-store', () => {
 
       act(() => {
         result.current.setMinimumWage(141200)
-        result.current.setFormData(mockFormData)
+        result.current.setData(mockFormData)
       })
 
       act(() => {
@@ -186,18 +186,18 @@ describe('expense-store', () => {
   })
 
   describe('partialize', () => {
-    it('only persists formData and minimumWage', () => {
+    it('only persists data and minimumWage', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setFormData(mockFormData)
+        result.current.setData(mockFormData)
         result.current.setMinimumWage(141200)
         result.current.setSelectedMethod('hybrid')
       })
 
       const stored = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')
 
-      expect(stored.state).toHaveProperty('formData')
+      expect(stored.state).toHaveProperty('data')
       expect(stored.state).toHaveProperty('minimumWage')
       expect(stored.state).not.toHaveProperty('selectedMethod')
       expect(stored.state).not.toHaveProperty('_hasHydrated')
@@ -207,12 +207,12 @@ describe('expense-store', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setFormData(mockFormData)
+        result.current.setData(mockFormData)
       })
 
       const stored = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')
 
-      expect(stored.state).not.toHaveProperty('setFormData')
+      expect(stored.state).not.toHaveProperty('setData')
       expect(stored.state).not.toHaveProperty('setMinimumWage')
       expect(stored.state).not.toHaveProperty('setSelectedMethod')
       expect(stored.state).not.toHaveProperty('reset')
@@ -224,7 +224,7 @@ describe('expense-store', () => {
       sessionStorage.setItem(
         'expense-storage',
         JSON.stringify({
-          state: { formData: mockFormData, minimumWage: 141200 },
+          state: { data: mockFormData, minimumWage: 141200 },
           version: 0,
         }),
       )
@@ -236,11 +236,11 @@ describe('expense-store', () => {
       })
     })
 
-    it('restores formData from sessionStorage', async () => {
+    it('restores data from sessionStorage', async () => {
       sessionStorage.setItem(
         'expense-storage',
         JSON.stringify({
-          state: { formData: mockFormData, minimumWage: 141200 },
+          state: { data: mockFormData, minimumWage: 141200 },
           version: 0,
         }),
       )
@@ -248,7 +248,7 @@ describe('expense-store', () => {
       useExpenseStore.persist.rehydrate()
 
       await vi.waitFor(() => {
-        expect(useExpenseStore.getState().formData).toEqual(mockFormData)
+        expect(useExpenseStore.getState().data).toEqual(mockFormData)
       })
     })
 
@@ -256,7 +256,7 @@ describe('expense-store', () => {
       sessionStorage.setItem(
         'expense-storage',
         JSON.stringify({
-          state: { formData: mockFormData, minimumWage: 141200 },
+          state: { data: mockFormData, minimumWage: 141200 },
           version: 0,
         }),
       )
@@ -270,8 +270,8 @@ describe('expense-store', () => {
   })
 
   describe('initial state', () => {
-    it('starts with null formData', () => {
-      expect(useExpenseStore.getState().formData).toBeNull()
+    it('starts with null data', () => {
+      expect(useExpenseStore.getState().data).toBeNull()
     })
 
     it('starts with null minimumWage', () => {
