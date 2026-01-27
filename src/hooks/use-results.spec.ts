@@ -161,9 +161,13 @@ describe('useResults', () => {
 
     it('returns default names when data names are empty', () => {
       mockStoreState.data = {
-        ...mockStoreState.data!,
         nameA: '',
+        incomeA: 500000,
         nameB: '',
+        incomeB: 300000,
+        expenses: 200000,
+        houseworkA: 0,
+        houseworkB: 0,
       }
 
       const { result } = renderHook(() => useResults())

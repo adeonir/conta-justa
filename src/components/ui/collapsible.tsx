@@ -72,8 +72,8 @@ function CollapsibleTrigger({ icon = 'plus', className, children, ...props }: Co
       onClick={toggle}
       className={cn(
         'flex cursor-pointer items-center gap-3 bg-transparent p-0 font-bold text-primary text-sm uppercase tracking-wide',
-        'transition-colors hover:text-primary/80',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+        'rounded-sm transition-colors hover:text-primary/80',
+        'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
         className,
       )}
       {...props}
