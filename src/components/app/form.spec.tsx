@@ -14,6 +14,7 @@ vi.mock('@tanstack/react-router', () => ({
 vi.mock('~/stores/expense-store', () => ({
   useExpenseStore: (selector: (state: { minimumWage: number; setData: typeof mockSetData }) => unknown) =>
     selector({ minimumWage: 162100, setData: mockSetData }),
+  useData: () => null,
 }))
 
 async function fillFormWithValidData(user: ReturnType<typeof userEvent.setup>) {

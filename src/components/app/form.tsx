@@ -6,23 +6,29 @@ import { Button, Card, InfoBox, Title } from '~/components/ui'
 import { useExpenseFormSubmit } from '~/hooks/use-expense-form-submit'
 import { formatCurrency } from '~/lib/utils'
 import { type ExpenseFormData, expenseFormSchema } from '~/schemas/expense-form'
-import { useExpenseStore } from '~/stores/expense-store'
+import { useData, useExpenseStore } from '~/stores/expense-store'
 import { FormField } from './form-field'
+
+const emptyDefaults: ExpenseFormData = {
+  nameA: '',
+  incomeA: 0,
+  nameB: '',
+  incomeB: 0,
+  expenses: 0,
+  houseworkA: 0,
+  houseworkB: 0,
+}
 
 export function Form() {
   const minimumWage = useExpenseStore((state) => state.minimumWage) ?? 0
+  const storeData = useData()
   const handleSubmit = useExpenseFormSubmit()
 
+  const defaultValues = storeData ?? emptyDefaults
+  const hasHouseworkData = (storeData?.houseworkA ?? 0) > 0 || (storeData?.houseworkB ?? 0) > 0
+
   const form = useForm({
-    defaultValues: {
-      nameA: '',
-      incomeA: 0,
-      nameB: '',
-      incomeB: 0,
-      expenses: 0,
-      houseworkA: 0,
-      houseworkB: 0,
-    } satisfies ExpenseFormData,
+    defaultValues,
     validators: {
       onBlur: expenseFormSchema,
       onChange: expenseFormSchema,
@@ -81,7 +87,7 @@ export function Form() {
           <Collapsible
             trigger="Incluir trabalho doméstico no cálculo"
             description="Cuidar da casa é trabalho. Informe as horas semanais dedicadas a tarefas domésticas."
-            defaultOpen={false}
+            defaultOpen={hasHouseworkData}
           >
             <InfoBox icon={<Info />}>
               Usamos o salário mínimo/hora ({formatCurrency(minimumWage / 100 / 220)}) como referência para valorar o
