@@ -1,12 +1,12 @@
-import { useCalculations } from '~/hooks/use-calculations'
+import { useResults } from '~/hooks/use-results'
 import { MethodCard } from './method-card'
 
 export function Comparison() {
-  const calculations = useCalculations()
+  const results = useResults()
 
-  if (!calculations) return null
+  if (!results) return null
 
-  const { hasHousework } = calculations
+  const { hasHousework } = results
 
   return (
     <section>

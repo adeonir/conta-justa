@@ -2,14 +2,14 @@ import { Info } from 'lucide-react'
 
 import { Tooltip } from '~/components/ui'
 import { formatCurrency } from '~/lib/utils'
-import { useExpenseStore } from '~/stores/expense-store'
+import { useData } from '~/stores/expense-store'
 
 export function Summary() {
-  const formData = useExpenseStore((s) => s.formData)
+  const data = useData()
 
-  if (!formData) return null
+  if (!data) return null
 
-  const { nameA, nameB, incomeA, incomeB, expenses, houseworkA, houseworkB } = formData
+  const { nameA, nameB, incomeA, incomeB, expenses, houseworkA, houseworkB } = data
   const totalIncome = incomeA + incomeB
   const hasHousework = houseworkA > 0 || houseworkB > 0
   const totalHousework = houseworkA + houseworkB

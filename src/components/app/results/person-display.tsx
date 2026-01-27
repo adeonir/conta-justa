@@ -1,20 +1,14 @@
+import type { PersonResult } from '~/lib/calculations'
 import { cn, formatCurrency } from '~/lib/utils'
 
 interface PersonDisplayProps {
   name: string
-  contribution: number
-  expensePercentage: number
-  incomePercentage: number
-  remaining: number
+  result: PersonResult
 }
 
-export function PersonDisplay({
-  name,
-  contribution,
-  expensePercentage,
-  incomePercentage,
-  remaining,
-}: PersonDisplayProps) {
+export function PersonDisplay({ name, result }: PersonDisplayProps) {
+  const { contribution, expensePercentage, incomePercentage, remaining } = result
+
   return (
     <div className="flex min-h-64 flex-1 flex-col space-y-4">
       <h3 className="font-bold text-lg">{name}</h3>

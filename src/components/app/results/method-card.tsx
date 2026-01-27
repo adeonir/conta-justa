@@ -1,9 +1,6 @@
-import { useShallow } from 'zustand/react/shallow'
-
 import { Card } from '~/components/ui'
-import { useCalculations } from '~/hooks/use-calculations'
+import { useResults } from '~/hooks/use-results'
 import { cn, formatCurrency } from '~/lib/utils'
-import { useExpenseStore } from '~/stores/expense-store'
 import type { MethodType } from './types'
 
 interface MethodCardProps {
@@ -14,18 +11,12 @@ interface MethodCardProps {
 }
 
 export function MethodCard({ method, title, description, disabled = false }: MethodCardProps) {
-  const { nameA, nameB } = useExpenseStore(
-    useShallow((s) => ({
-      nameA: s.formData?.nameA ?? '',
-      nameB: s.formData?.nameB ?? '',
-    })),
-  )
-  const calculations = useCalculations()
+  const results = useResults()
 
-  if (!calculations) return null
+  if (!results) return null
 
-  const { recommendedMethod, activeMethod, setSelectedMethod } = calculations
-  const result = calculations[method]
+  const { names, recommendedMethod, activeMethod, setSelectedMethod } = results
+  const result = results[method]
 
   const isRecommended = !disabled && recommendedMethod === method
   const isSelected = !disabled && activeMethod === method
@@ -71,13 +62,13 @@ export function MethodCard({ method, title, description, disabled = false }: Met
 
       <div className="flex justify-between gap-4 text-sm">
         <div>
-          <p className="text-muted-foreground">{nameA}</p>
+          <p className="text-muted-foreground">{names.nameA}</p>
           <p className="font-semibold tabular-nums">
             {result ? formatCurrency(result.personA.contribution / 100) : '-'}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-muted-foreground">{nameB}</p>
+          <p className="text-muted-foreground">{names.nameB}</p>
           <p className="font-semibold tabular-nums">
             {result ? formatCurrency(result.personB.contribution / 100) : '-'}
           </p>

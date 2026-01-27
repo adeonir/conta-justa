@@ -4,21 +4,21 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useExpenseFormSubmit } from './use-expense-form-submit'
 
 const mockNavigate = vi.fn()
-const mockSetFormData = vi.fn()
+const mockSetData = vi.fn()
 
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
 }))
 
 vi.mock('~/stores/expense-store', () => ({
-  useExpenseStore: (selector: (state: { setFormData: typeof mockSetFormData }) => unknown) =>
-    selector({ setFormData: mockSetFormData }),
+  useExpenseStore: (selector: (state: { setData: typeof mockSetData }) => unknown) =>
+    selector({ setData: mockSetData }),
 }))
 
 describe('useExpenseFormSubmit', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
-    mockSetFormData.mockClear()
+    mockSetData.mockClear()
   })
 
   it('returns a function', () => {
@@ -42,8 +42,8 @@ describe('useExpenseFormSubmit', () => {
 
     result.current(formData)
 
-    expect(mockSetFormData).toHaveBeenCalledTimes(1)
-    expect(mockSetFormData).toHaveBeenCalledWith(formData)
+    expect(mockSetData).toHaveBeenCalledTimes(1)
+    expect(mockSetData).toHaveBeenCalledWith(formData)
     expect(mockNavigate).toHaveBeenCalledTimes(1)
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/results' })
   })
@@ -63,7 +63,7 @@ describe('useExpenseFormSubmit', () => {
 
     result.current(formData)
 
-    expect(mockSetFormData).toHaveBeenCalledWith(formData)
+    expect(mockSetData).toHaveBeenCalledWith(formData)
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/results' })
   })
 
@@ -82,7 +82,7 @@ describe('useExpenseFormSubmit', () => {
 
     result.current(formData)
 
-    expect(mockSetFormData).toHaveBeenCalledWith(formData)
+    expect(mockSetData).toHaveBeenCalledWith(formData)
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/results' })
   })
 
@@ -101,7 +101,7 @@ describe('useExpenseFormSubmit', () => {
 
     result.current(formData)
 
-    expect(mockSetFormData).toHaveBeenCalledWith(formData)
+    expect(mockSetData).toHaveBeenCalledWith(formData)
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/results' })
   })
 })

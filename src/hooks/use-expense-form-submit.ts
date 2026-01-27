@@ -5,10 +5,10 @@ import { useExpenseStore } from '~/stores/expense-store'
 
 export function useExpenseFormSubmit() {
   const navigate = useNavigate()
-  const setFormData = useExpenseStore((state) => state.setFormData)
+  const setData = useExpenseStore((state) => state.setData)
 
   return (value: ExpenseFormData) => {
-    setFormData(value)
+    setData(value)
     navigate({ to: '/results' })
   }
 }

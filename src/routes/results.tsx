@@ -1,12 +1,11 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { useShallow } from 'zustand/react/shallow'
 
 import { Actions, Card, Comparison, Explanation, Summary } from '~/components/app/results'
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
 import { useTrackEvent } from '~/hooks/use-track-event'
-import { useExpenseStore } from '~/stores/expense-store'
+import { useData, useMinimumWage } from '~/stores/expense-store'
 
 export const Route = createFileRoute('/results')({
   component: ResultsPage,
@@ -15,31 +14,27 @@ export const Route = createFileRoute('/results')({
 function ResultsPage() {
   const navigate = useNavigate()
   const [mounted, setMounted] = useState(false)
-  const { formData, minimumWage } = useExpenseStore(
-    useShallow((s) => ({
-      formData: s.formData,
-      minimumWage: s.minimumWage,
-    })),
-  )
+  const data = useData()
+  const minimumWage = useMinimumWage()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   useEffect(() => {
-    if (mounted && !formData) {
+    if (mounted && !data) {
       navigate({ to: '/' })
     }
-  }, [mounted, formData, navigate])
+  }, [mounted, data, navigate])
 
-  const hasHousework = formData ? formData.houseworkA > 0 || formData.houseworkB > 0 : false
+  const hasHousework = data ? data.houseworkA > 0 || data.houseworkB > 0 : false
   useTrackEvent(
     'calculation_completed',
-    formData ? { method: hasHousework ? 'adjusted' : 'proportional', has_housework: hasHousework } : null,
+    data ? { method: hasHousework ? 'adjusted' : 'proportional', has_housework: hasHousework } : null,
     mounted,
   )
 
-  if (!mounted || !formData || !minimumWage) {
+  if (!mounted || !data || !minimumWage) {
     return null
   }
 

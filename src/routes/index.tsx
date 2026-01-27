@@ -1,13 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { useShallow } from 'zustand/react/shallow'
 
 import { Form } from '~/components/app/form'
 import { Hero } from '~/components/app/hero'
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
 import { getMinimumWage } from '~/server/get-minimum-wage'
-import { useExpenseStore } from '~/stores/expense-store'
+import { useMinimumWage, useSetMinimumWage } from '~/stores/expense-store'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -19,13 +18,12 @@ export const Route = createFileRoute('/')({
 
 function HomePage() {
   const { minimumWage: loaderWage } = Route.useLoaderData()
-  const { minimumWage: storedWage, setMinimumWage } = useExpenseStore(
-    useShallow((s) => ({ minimumWage: s.minimumWage, setMinimumWage: s.setMinimumWage })),
-  )
+  const storedWage = useMinimumWage()
+  const setMinimumWage = useSetMinimumWage()
 
   useEffect(() => {
     if (!storedWage && loaderWage) {
-      setMinimumWage(loaderWage * 100) // Convert to cents
+      setMinimumWage(loaderWage * 100)
     }
   }, [storedWage, loaderWage, setMinimumWage])
 

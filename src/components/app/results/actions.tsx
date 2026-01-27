@@ -1,11 +1,11 @@
 import { useNavigate } from '@tanstack/react-router'
 
 import { Button, Card } from '~/components/ui'
-import { useExpenseStore } from '~/stores/expense-store'
+import { useReset } from '~/stores/expense-store'
 
 export function Actions() {
   const navigate = useNavigate()
-  const reset = useExpenseStore((s) => s.reset)
+  const reset = useReset()
 
   function handleNewCalculation() {
     reset()

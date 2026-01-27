@@ -5,15 +5,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Form } from './form'
 
 const mockNavigate = vi.fn()
-const mockSetFormData = vi.fn()
+const mockSetData = vi.fn()
 
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
 }))
 
 vi.mock('~/stores/expense-store', () => ({
-  useExpenseStore: (selector: (state: { minimumWage: number; setFormData: typeof mockSetFormData }) => unknown) =>
-    selector({ minimumWage: 162100, setFormData: mockSetFormData }),
+  useExpenseStore: (selector: (state: { minimumWage: number; setData: typeof mockSetData }) => unknown) =>
+    selector({ minimumWage: 162100, setData: mockSetData }),
 }))
 
 async function fillFormWithValidData(user: ReturnType<typeof userEvent.setup>) {
@@ -42,7 +42,7 @@ async function fillFormWithValidData(user: ReturnType<typeof userEvent.setup>) {
 describe('Form', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
-    mockSetFormData.mockClear()
+    mockSetData.mockClear()
   })
 
   afterEach(() => {
@@ -315,7 +315,7 @@ describe('Form', () => {
       await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
 
       await waitFor(() => {
-        expect(mockSetFormData).toHaveBeenCalledWith(
+        expect(mockSetData).toHaveBeenCalledWith(
           expect.objectContaining({
             houseworkA: 15,
             houseworkB: 5,
@@ -339,7 +339,7 @@ describe('Form', () => {
       await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
 
       await waitFor(() => {
-        expect(mockSetFormData).toHaveBeenCalledTimes(1)
+        expect(mockSetData).toHaveBeenCalledTimes(1)
         expect(mockNavigate).toHaveBeenCalledTimes(1)
         expect(mockNavigate).toHaveBeenCalledWith({ to: '/results' })
       })
@@ -377,7 +377,7 @@ describe('Form', () => {
       await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
 
       await waitFor(() => {
-        expect(mockSetFormData).toHaveBeenCalledWith({
+        expect(mockSetData).toHaveBeenCalledWith({
           nameA: 'Ana',
           nameB: 'Bob',
           incomeA: 500000,

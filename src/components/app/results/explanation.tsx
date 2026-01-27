@@ -1,13 +1,13 @@
 import { Card } from '~/components/ui'
-import { useExpenseStore } from '~/stores/expense-store'
+import { useData } from '~/stores/expense-store'
 import { ExplanationItem } from './explanation-item'
 
 export function Explanation() {
-  const formData = useExpenseStore((s) => s.formData)
+  const data = useData()
 
-  if (!formData) return null
+  if (!data) return null
 
-  const hasHousework = formData.houseworkA > 0 || formData.houseworkB > 0
+  const hasHousework = data.houseworkA > 0 || data.houseworkB > 0
 
   return (
     <Card accent={false} className="p-6">

@@ -345,8 +345,8 @@ test.describe('Results Page - Data Persistence', () => {
     expect(storage).not.toBeNull()
 
     const parsed = JSON.parse(storage as string)
-    expect(parsed.state.formData).toBeDefined()
-    expect(parsed.state.formData.nameA).toBe('Ana')
+    expect(parsed.state.data).toBeDefined()
+    expect(parsed.state.data.nameA).toBe('Ana')
   })
 })
 

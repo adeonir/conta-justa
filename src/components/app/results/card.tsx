@@ -1,16 +1,13 @@
 import { Card as CardUI } from '~/components/ui'
-import { useCalculations } from '~/hooks/use-calculations'
-import { useExpenseStore } from '~/stores/expense-store'
+import { useResults } from '~/hooks/use-results'
 import { PersonDisplay } from './person-display'
 
 export function Card() {
-  const formData = useExpenseStore((s) => s.formData)
-  const calculations = useCalculations()
+  const results = useResults()
 
-  if (!formData || !calculations) return null
+  if (!results) return null
 
-  const { nameA, nameB } = formData
-  const { activeResult, methodTitle, isRecommended } = calculations
+  const { names, activeResult, methodTitle, isRecommended } = results
 
   return (
     <CardUI>
@@ -20,23 +17,11 @@ export function Card() {
       <h2 className="mb-8 font-bold text-2xl">{methodTitle}</h2>
 
       <div className="flex gap-8 max-sm:flex-col">
-        <PersonDisplay
-          name={nameA}
-          contribution={activeResult.personA.contribution}
-          expensePercentage={activeResult.personA.expensePercentage}
-          incomePercentage={activeResult.personA.incomePercentage}
-          remaining={activeResult.personA.remaining}
-        />
+        <PersonDisplay name={names.nameA} result={activeResult.personA} />
 
         <div className="w-px bg-border max-sm:h-px max-sm:w-full" />
 
-        <PersonDisplay
-          name={nameB}
-          contribution={activeResult.personB.contribution}
-          expensePercentage={activeResult.personB.expensePercentage}
-          incomePercentage={activeResult.personB.incomePercentage}
-          remaining={activeResult.personB.remaining}
-        />
+        <PersonDisplay name={names.nameB} result={activeResult.personB} />
       </div>
     </CardUI>
   )
