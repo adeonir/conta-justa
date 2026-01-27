@@ -11,7 +11,20 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'Conta Justa' },
+      { title: 'Conta Justa - Divisão de Despesas para Casais' },
+      {
+        name: 'description',
+        content:
+          'Calculadora que divide despesas de forma justa entre casais, considerando renda e trabalho doméstico. Descubra quanto cada pessoa deve contribuir.',
+      },
+      { name: 'theme-color', content: '#e53935' },
+      { property: 'og:title', content: 'Conta Justa - Divisão de Despesas para Casais' },
+      {
+        property: 'og:description',
+        content: 'Calcule a divisão justa das despesas do casal considerando renda e trabalho doméstico.',
+      },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:locale', content: 'pt_BR' },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
