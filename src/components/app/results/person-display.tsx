@@ -16,7 +16,7 @@ export function PersonDisplay({
   remaining,
 }: PersonDisplayProps) {
   return (
-    <div className="flex-1 space-y-4">
+    <div className="flex min-h-64 flex-1 flex-col space-y-4">
       <h3 className="font-bold text-lg">{name}</h3>
 
       <div>

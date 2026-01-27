@@ -28,7 +28,7 @@ export function Card() {
           remaining={activeResult.personA.remaining}
         />
 
-        <div className="w-px bg-primary/30 max-sm:h-px max-sm:w-full" />
+        <div className="w-px bg-border max-sm:h-px max-sm:w-full" />
 
         <PersonDisplay
           name={nameB}

@@ -1,3 +1,6 @@
+import { Info } from 'lucide-react'
+
+import { Tooltip } from '~/components/ui'
 import { formatCurrency } from '~/lib/utils'
 import { useExpenseStore } from '~/stores/expense-store'
 
@@ -28,7 +31,15 @@ export function Summary() {
 
       <dl className="space-y-4">
         <div className="flex items-center justify-between border-border border-b pb-4">
-          <dt className="text-muted-foreground">Renda total do casal</dt>
+          <dt className="flex items-center gap-1.5 text-muted-foreground">
+            Renda total do casal
+            <Tooltip
+              content={`${nameA}: ${formatCurrency(incomeA / 100)} | ${nameB}: ${formatCurrency(incomeB / 100)}`}
+              side="top"
+            >
+              <Info className="size-4 cursor-pointer text-info" />
+            </Tooltip>
+          </dt>
           <dd className="font-semibold">{formatCurrency(totalIncome / 100)}</dd>
         </div>
 
