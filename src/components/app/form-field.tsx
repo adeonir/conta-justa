@@ -1,14 +1,22 @@
 import type { ComponentProps } from 'react'
 
 import { Description, Input, Label } from '~/components/ui'
-import { getErrorMessage } from '~/lib/utils'
+
+interface ValidationIssue {
+  message?: string
+}
 
 interface FieldState<T> {
   value: T
   meta: {
     isTouched: boolean
+    isDirty: boolean
     isValid: boolean
     errors: Array<{ message?: string } | undefined>
+    errorMap: {
+      onBlur?: ValidationIssue[]
+      onChange?: ValidationIssue[]
+    }
   }
 }
 
@@ -33,7 +41,10 @@ export function FormField<T extends string | number>({
   type = 'text',
   ...inputProps
 }: FormFieldProps<T>) {
-  const hasError = field.state.meta.isTouched && !field.state.meta.isValid
+  const { isTouched, isDirty, errorMap } = field.state.meta
+  const errors = isDirty ? errorMap.onChange : errorMap.onBlur
+  const errorMessage = errors?.[0]?.message
+  const hasError = isTouched && !!errorMessage
 
   if (type === 'currency') {
     return (
@@ -50,9 +61,7 @@ export function FormField<T extends string | number>({
           error={hasError}
         />
         {(hasError || description) && (
-          <Description error={hasError}>
-            {hasError ? getErrorMessage(field.state.meta.errors) : description}
-          </Description>
+          <Description error={hasError}>{hasError ? errorMessage : description}</Description>
         )}
       </div>
     )
@@ -76,9 +85,7 @@ export function FormField<T extends string | number>({
           error={hasError}
         />
         {(hasError || description) && (
-          <Description error={hasError}>
-            {hasError ? getErrorMessage(field.state.meta.errors) : description}
-          </Description>
+          <Description error={hasError}>{hasError ? errorMessage : description}</Description>
         )}
       </div>
     )
@@ -96,9 +103,7 @@ export function FormField<T extends string | number>({
         onBlur={field.handleBlur}
         error={hasError}
       />
-      {(hasError || description) && (
-        <Description error={hasError}>{hasError ? getErrorMessage(field.state.meta.errors) : description}</Description>
-      )}
+      {(hasError || description) && <Description error={hasError}>{hasError ? errorMessage : description}</Description>}
     </div>
   )
 }
