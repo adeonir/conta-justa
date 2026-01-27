@@ -1,4 +1,4 @@
-import { type ComponentProps, type ReactNode, useId, useLayoutEffect, useRef, useState } from 'react'
+import { type ComponentProps, type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { cn } from '~/lib/utils'
@@ -30,9 +30,14 @@ export function Tooltip({ content, side = 'top', delay = 'short', className, chi
   const tooltipRef = useRef<HTMLSpanElement>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 
+  const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [isPositioned, setIsPositioned] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const showTooltip = () => {
     timeoutRef.current = setTimeout(() => {
@@ -48,6 +53,7 @@ export function Tooltip({ content, side = 'top', delay = 'short', className, chi
     setIsPositioned(false)
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: content changes tooltip width, needs repositioning
   useLayoutEffect(() => {
     if (!isVisible || !triggerRef.current || !tooltipRef.current) return
 
@@ -84,8 +90,10 @@ export function Tooltip({ content, side = 'top', delay = 'short', className, chi
       setIsPositioned(true)
     }
 
-    requestAnimationFrame(updatePosition)
-  }, [isVisible, side])
+    requestAnimationFrame(() => {
+      requestAnimationFrame(updatePosition)
+    })
+  }, [isVisible, side, content])
 
   useLayoutEffect(() => {
     return () => {
@@ -113,7 +121,7 @@ export function Tooltip({ content, side = 'top', delay = 'short', className, chi
       >
         {children}
       </div>
-      {typeof document !== 'undefined' &&
+      {mounted &&
         createPortal(
           <span
             ref={tooltipRef}
