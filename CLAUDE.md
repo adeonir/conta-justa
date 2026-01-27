@@ -13,12 +13,12 @@ Conta Justa is a fair expense division calculator for couples that considers inc
 pnpm dev              # Start dev server on port 3000
 
 # Testing
-pnpm test             # Run unit tests in watch mode
-pnpm test:run         # Single test run
-pnpm test:coverage    # Run with coverage report
-pnpm test:e2e         # Run Playwright E2E tests
-pnpm test:e2e:ui      # E2E tests with UI
-pnpm test:e2e:headed  # E2E tests in headed mode
+pnpm test:unit           # Single test run
+pnpm test:unit:watch     # Run unit tests in watch mode
+pnpm test:unit:coverage  # Run with coverage report
+pnpm test:e2e            # Run Playwright E2E tests
+pnpm test:e2e:ui         # E2E tests with UI
+pnpm test:e2e:headed     # E2E tests in headed mode
 
 # Code quality
 pnpm lint             # Run Biome (lint + format with auto-fix)
@@ -95,42 +95,42 @@ Configuration is in `src/styles.css` using `@theme` directive (no `tailwind.conf
 
 ```tsx
 // v4 canonical - USE THIS
-className="z-100 max-w-300 backdrop-blur-md rounded-sm shadow-sm"
+className = "z-100 max-w-300 backdrop-blur-md rounded-sm shadow-sm";
 
 // v3 arbitrary - AVOID
-className="z-[100] max-w-[1200px] backdrop-blur-[12px] rounded shadow"
+className = "z-[100] max-w-[1200px] backdrop-blur-[12px] rounded shadow";
 ```
 
 #### Spacing Scale
 
 The spacing scale uses `number * 4px`:
 
-| Class | Value | Pixels |
-|-------|-------|--------|
-| `w-1` | 0.25rem | 4px |
-| `w-4` | 1rem | 16px |
-| `w-64` | 16rem | 256px |
-| `w-300` | 75rem | 1200px |
+| Class       | Value    | Pixels |
+| ----------- | -------- | ------ |
+| `w-1`       | 0.25rem  | 4px    |
+| `w-4`       | 1rem     | 16px   |
+| `w-64`      | 16rem    | 256px  |
+| `w-300`     | 75rem    | 1200px |
 | `max-w-275` | 68.75rem | 1100px |
 
 #### Renamed Utilities (v3 -> v4)
 
-| v3 (old) | v4 (new) |
-|----------|----------|
-| `rounded` | `rounded-sm` |
-| `shadow` | `shadow-sm` |
-| `blur` | `blur-sm` |
-| `ring` | `ring-sm` |
+| v3 (old)       | v4 (new)          |
+| -------------- | ----------------- |
+| `rounded`      | `rounded-sm`      |
+| `shadow`       | `shadow-sm`       |
+| `blur`         | `blur-sm`         |
+| `ring`         | `ring-sm`         |
 | `inset-shadow` | `inset-shadow-sm` |
 
 #### CSS Variables Syntax
 
 ```tsx
 // v4 syntax - USE THIS
-className="w-(--my-width) text-(--my-color)"
+className = "w-(--my-width) text-(--my-color)";
 
 // v3 syntax - AVOID
-className="w-[var(--my-width)] text-[var(--my-color)]"
+className = "w-[var(--my-width)] text-[var(--my-color)]";
 ```
 
 #### When to Use Arbitrary Values
@@ -139,28 +139,28 @@ Only use `[value]` when no canonical class exists:
 
 ```tsx
 // OK - no canonical class for 22px (closest: text-xl=20px, text-2xl=24px)
-className="text-[22px]"
+className = "text-[22px]";
 
 // OK - specific design value
-className="tracking-[0.15em]"
+className = "tracking-[0.15em]";
 
 // BAD - use canonical z-100 instead
-className="z-[100]"
+className = "z-[100]";
 
 // BAD - use canonical max-w-300 instead
-className="max-w-[1200px]"
+className = "max-w-[1200px]";
 ```
 
 #### Common Conversions
 
-| Pixels | Canonical Class |
-|--------|-----------------|
-| 1200px | `w-300`, `max-w-300` |
-| 1100px | `w-275`, `max-w-275` |
-| 1024px | `w-256`, `max-w-256` |
-| 768px | `w-192`, `max-w-192` |
-| 12px blur | `backdrop-blur-md` |
-| z-index 100 | `z-100` |
+| Pixels      | Canonical Class      |
+| ----------- | -------------------- |
+| 1200px      | `w-300`, `max-w-300` |
+| 1100px      | `w-275`, `max-w-275` |
+| 1024px      | `w-256`, `max-w-256` |
+| 768px       | `w-192`, `max-w-192` |
+| 12px blur   | `backdrop-blur-md`   |
+| z-index 100 | `z-100`              |
 
 ## React 19 Best Practices
 
@@ -172,16 +172,22 @@ React 19 eliminates the need for `forwardRef`. Pass `ref` as a regular prop:
 
 ```tsx
 // React 19 - USE THIS
-function Button({ ref, children, ...props }: ComponentProps<'button'>) {
-  return <button ref={ref} {...props}>{children}</button>
+function Button({ ref, children, ...props }: ComponentProps<"button">) {
+  return (
+    <button ref={ref} {...props}>
+      {children}
+    </button>
+  );
 }
 
 // React 18 (deprecated) - AVOID
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, ...props }, ref) => (
-    <button ref={ref} {...props}>{children}</button>
-  )
-)
+    <button ref={ref} {...props}>
+      {children}
+    </button>
+  ),
+);
 ```
 
 ### Form Actions with useActionState
@@ -189,25 +195,27 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Use `useActionState` for async form submissions:
 
 ```tsx
-import { useActionState } from 'react'
+import { useActionState } from "react";
 
 function Form() {
   const [error, submitAction, isPending] = useActionState(
     async (previousState, formData) => {
-      const error = await updateData(formData.get('name'))
-      if (error) return error
-      return null
+      const error = await updateData(formData.get("name"));
+      if (error) return error;
+      return null;
     },
-    null
-  )
+    null,
+  );
 
   return (
     <form action={submitAction}>
       <input type="text" name="name" />
-      <button type="submit" disabled={isPending}>Submit</button>
+      <button type="submit" disabled={isPending}>
+        Submit
+      </button>
       {error && <p>{error}</p>}
     </form>
-  )
+  );
 }
 ```
 
@@ -216,30 +224,34 @@ function Form() {
 Access parent form status without prop drilling:
 
 ```tsx
-import { useFormStatus } from 'react-dom'
+import { useFormStatus } from "react-dom";
 
 function SubmitButton() {
-  const { pending } = useFormStatus()
-  return <button type="submit" disabled={pending}>Submit</button>
+  const { pending } = useFormStatus();
+  return (
+    <button type="submit" disabled={pending}>
+      Submit
+    </button>
+  );
 }
 ```
 
 ### useOptimistic for Optimistic Updates
 
 ```tsx
-import { useOptimistic } from 'react'
+import { useOptimistic } from "react";
 
 function Component({ currentName, onUpdate }) {
-  const [optimisticName, setOptimisticName] = useOptimistic(currentName)
+  const [optimisticName, setOptimisticName] = useOptimistic(currentName);
 
   const submitAction = async (formData) => {
-    const newName = formData.get('name')
-    setOptimisticName(newName) // Immediate UI update
-    const result = await updateName(newName)
-    onUpdate(result)
-  }
+    const newName = formData.get("name");
+    setOptimisticName(newName); // Immediate UI update
+    const result = await updateName(newName);
+    onUpdate(result);
+  };
 
-  return <form action={submitAction}>...</form>
+  return <form action={submitAction}>...</form>;
 }
 ```
 
@@ -250,18 +262,18 @@ function Component({ currentName, onUpdate }) {
 Use `createServerFn` for server-side logic:
 
 ```tsx
-import { createServerFn } from '@tanstack/react-start'
-import { z } from 'zod'
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 
 const fetchData = createServerFn()
   .validator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     // Server-only code - safe for secrets
     const response = await fetch(`${process.env.API_URL}/${data.id}`, {
-      headers: { Authorization: `Bearer ${process.env.API_SECRET}` }
-    })
-    return response.json()
-  })
+      headers: { Authorization: `Bearer ${process.env.API_SECRET}` },
+    });
+    return response.json();
+  });
 ```
 
 ### Server Routes
@@ -269,19 +281,19 @@ const fetchData = createServerFn()
 Define API endpoints in route files:
 
 ```tsx
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/api/hello')({
+export const Route = createFileRoute("/api/hello")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        return new Response(JSON.stringify({ message: 'Hello' }), {
-          headers: { 'Content-Type': 'application/json' }
-        })
-      }
-    }
-  }
-})
+        return new Response(JSON.stringify({ message: "Hello" }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      },
+    },
+  },
+});
 ```
 
 ## nuqs Best Practices
@@ -289,21 +301,26 @@ export const Route = createFileRoute('/api/hello')({
 ### Type-Safe Search Params with TanStack Router
 
 ```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { createStandardSchemaV1, parseAsString, parseAsInteger, useQueryStates } from 'nuqs'
+import { createFileRoute } from "@tanstack/react-router";
+import {
+  createStandardSchemaV1,
+  parseAsString,
+  parseAsInteger,
+  useQueryStates,
+} from "nuqs";
 
 const searchParams = {
-  query: parseAsString.withDefault(''),
-  page: parseAsInteger.withDefault(1)
-}
+  query: parseAsString.withDefault(""),
+  page: parseAsInteger.withDefault(1),
+};
 
-export const Route = createFileRoute('/search')({
+export const Route = createFileRoute("/search")({
   component: SearchPage,
-  validateSearch: createStandardSchemaV1(searchParams, { partialOutput: true })
-})
+  validateSearch: createStandardSchemaV1(searchParams, { partialOutput: true }),
+});
 
 function SearchPage() {
-  const [{ query, page }, setParams] = useQueryStates(searchParams)
+  const [{ query, page }, setParams] = useQueryStates(searchParams);
   // ...
 }
 ```
@@ -346,7 +363,7 @@ const mensagemErro = 'Required field'
 Use `~/*` for imports from `src/`:
 
 ```tsx
-import { Button } from '~/components/ui/button'
+import { Button } from "~/components/ui/button";
 ```
 
 ### Environment Variables
@@ -357,13 +374,13 @@ import { Button } from '~/components/ui/button'
 ```tsx
 // Server function - safe for secrets
 createServerFn().handler(async () => {
-  const secret = process.env.API_SECRET // OK
-})
+  const secret = process.env.API_SECRET; // OK
+});
 
 // Client code
-import.meta.env.DEV // true in development
-import.meta.env.PROD // true in production
-import.meta.env.VITE_POSTHOG_KEY // Public key only
+import.meta.env.DEV; // true in development
+import.meta.env.PROD; // true in production
+import.meta.env.VITE_POSTHOG_KEY; // Public key only
 ```
 
 ## Testing
