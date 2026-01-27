@@ -4,15 +4,13 @@ import { Info } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Collapsible } from '~/components/ui/collapsible'
-import { Description } from '~/components/ui/description'
 import { InfoBox } from '~/components/ui/info-box'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
 import { Title } from '~/components/ui/title'
 import { useExpenseFormSubmit } from '~/hooks/use-expense-form-submit'
-import { formatCurrency, getErrorMessage } from '~/lib/utils'
+import { formatCurrency } from '~/lib/utils'
 import { type ExpenseFormData, expenseFormSchema } from '~/schemas/expense-form'
 import { useExpenseStore } from '~/stores/expense-store'
+import { FormField } from './form-field'
 
 export function Form() {
   const minimumWage = useExpenseStore((state) => state.minimumWage) ?? 0
@@ -47,45 +45,10 @@ export function Form() {
           <Title>Pessoa A</Title>
           <div className="space-y-4">
             <form.Field name="nameA">
-              {(field) => {
-                const hasError = field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <div>
-                    <Label htmlFor={field.name}>Nome</Label>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      placeholder="Ex: Maria"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      error={hasError}
-                    />
-                    {hasError && <Description error>{getErrorMessage(field.state.meta.errors)}</Description>}
-                  </div>
-                )
-              }}
+              {(field) => <FormField field={field} label="Nome" placeholder="Ex: Maria" />}
             </form.Field>
             <form.Field name="incomeA">
-              {(field) => {
-                const hasError = field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <div>
-                    <Label htmlFor={field.name}>Renda mensal</Label>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      currency
-                      placeholder="R$ 0,00"
-                      value={field.state.value === 0 ? '' : field.state.value / 100}
-                      onValueChange={(cents) => field.handleChange(cents ?? 0)}
-                      onBlur={field.handleBlur}
-                      error={hasError}
-                    />
-                    {hasError && <Description error>{getErrorMessage(field.state.meta.errors)}</Description>}
-                  </div>
-                )
-              }}
+              {(field) => <FormField field={field} label="Renda mensal" type="currency" placeholder="R$ 0,00" />}
             </form.Field>
           </div>
         </div>
@@ -94,45 +57,10 @@ export function Form() {
           <Title>Pessoa B</Title>
           <div className="space-y-4">
             <form.Field name="nameB">
-              {(field) => {
-                const hasError = field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <div>
-                    <Label htmlFor={field.name}>Nome</Label>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      placeholder="Ex: João"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      onBlur={field.handleBlur}
-                      error={hasError}
-                    />
-                    {hasError && <Description error>{getErrorMessage(field.state.meta.errors)}</Description>}
-                  </div>
-                )
-              }}
+              {(field) => <FormField field={field} label="Nome" placeholder="Ex: João" />}
             </form.Field>
             <form.Field name="incomeB">
-              {(field) => {
-                const hasError = field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <div>
-                    <Label htmlFor={field.name}>Renda mensal</Label>
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      currency
-                      placeholder="R$ 0,00"
-                      value={field.state.value === 0 ? '' : field.state.value / 100}
-                      onValueChange={(cents) => field.handleChange(cents ?? 0)}
-                      onBlur={field.handleBlur}
-                      error={hasError}
-                    />
-                    {hasError && <Description error>{getErrorMessage(field.state.meta.errors)}</Description>}
-                  </div>
-                )
-              }}
+              {(field) => <FormField field={field} label="Renda mensal" type="currency" placeholder="R$ 0,00" />}
             </form.Field>
           </div>
         </div>
@@ -140,29 +68,15 @@ export function Form() {
         <div className="mb-10">
           <Title>Despesas compartilhadas</Title>
           <form.Field name="expenses">
-            {(field) => {
-              const hasError = field.state.meta.isTouched && !field.state.meta.isValid
-              return (
-                <div>
-                  <Label htmlFor={field.name}>Total mensal</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    currency
-                    placeholder="R$ 0,00"
-                    value={field.state.value === 0 ? '' : field.state.value / 100}
-                    onValueChange={(cents) => field.handleChange(cents ?? 0)}
-                    onBlur={field.handleBlur}
-                    error={hasError}
-                  />
-                  {hasError ? (
-                    <Description error>{getErrorMessage(field.state.meta.errors)}</Description>
-                  ) : (
-                    <Description>Aluguel, contas, mercado, etc.</Description>
-                  )}
-                </div>
-              )
-            }}
+            {(field) => (
+              <FormField
+                field={field}
+                label="Total mensal"
+                type="currency"
+                placeholder="R$ 0,00"
+                description="Aluguel, contas, mercado, etc."
+              />
+            )}
           </form.Field>
         </div>
 
@@ -181,58 +95,27 @@ export function Form() {
                 {([nameA, nameB]) => (
                   <div className="mt-6 space-y-4">
                     <form.Field name="houseworkA">
-                      {(field) => {
-                        const hasError = field.state.meta.isTouched && !field.state.meta.isValid
-                        return (
-                          <div>
-                            <Label htmlFor={field.name}>Horas semanais de {nameA || 'Pessoa A'}</Label>
-                            <Input
-                              id={field.name}
-                              name={field.name}
-                              type="number"
-                              placeholder="0"
-                              min={0}
-                              value={field.state.value || ''}
-                              onChange={(e) => {
-                                const value = e.target.value === '' ? 0 : Number(e.target.value)
-                                field.handleChange(value)
-                              }}
-                              onBlur={field.handleBlur}
-                              error={hasError}
-                            />
-                            {hasError ? (
-                              <Description error>{getErrorMessage(field.state.meta.errors)}</Description>
-                            ) : (
-                              <Description>Limpeza, cozinha, cuidado com filhos, etc.</Description>
-                            )}
-                          </div>
-                        )
-                      }}
+                      {(field) => (
+                        <FormField
+                          field={field}
+                          label={`Horas semanais de ${nameA || 'Pessoa A'}`}
+                          type="number"
+                          placeholder="0"
+                          min={0}
+                          description="Limpeza, cozinha, cuidado com filhos, etc."
+                        />
+                      )}
                     </form.Field>
                     <form.Field name="houseworkB">
-                      {(field) => {
-                        const hasError = field.state.meta.isTouched && !field.state.meta.isValid
-                        return (
-                          <div>
-                            <Label htmlFor={field.name}>Horas semanais de {nameB || 'Pessoa B'}</Label>
-                            <Input
-                              id={field.name}
-                              name={field.name}
-                              type="number"
-                              placeholder="0"
-                              min={0}
-                              value={field.state.value || ''}
-                              onChange={(e) => {
-                                const value = e.target.value === '' ? 0 : Number(e.target.value)
-                                field.handleChange(value)
-                              }}
-                              onBlur={field.handleBlur}
-                              error={hasError}
-                            />
-                            {hasError && <Description error>{getErrorMessage(field.state.meta.errors)}</Description>}
-                          </div>
-                        )
-                      }}
+                      {(field) => (
+                        <FormField
+                          field={field}
+                          label={`Horas semanais de ${nameB || 'Pessoa B'}`}
+                          type="number"
+                          placeholder="0"
+                          min={0}
+                        />
+                      )}
                     </form.Field>
                   </div>
                 )}
