@@ -1,9 +1,9 @@
 import { useForm } from '@tanstack/react-form'
-import { Info } from 'lucide-react'
 
+import { Info } from 'lucide-react'
+import { Collapsible } from '~/components/app/collapsible'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
-import { Collapsible } from '~/components/ui/collapsible'
 import { InfoBox } from '~/components/ui/info-box'
 import { Title } from '~/components/ui/title'
 import { useExpenseFormSubmit } from '~/hooks/use-expense-form-submit'
@@ -81,47 +81,45 @@ export function Form() {
         </div>
 
         <div className="mb-10">
-          <Collapsible.Root defaultOpen={false}>
-            <Collapsible.Trigger>Incluir trabalho doméstico no cálculo</Collapsible.Trigger>
-            <Collapsible.Content>
-              <Collapsible.Description>
-                Cuidar da casa é trabalho. Informe as horas semanais dedicadas a tarefas domésticas.
-              </Collapsible.Description>
-              <InfoBox icon={<Info />}>
-                Usamos o salário mínimo/hora ({formatCurrency(minimumWage / 100 / 220)}) como referência para valorar o
-                trabalho doméstico.
-              </InfoBox>
-              <form.Subscribe selector={(state) => [state.values.nameA, state.values.nameB]}>
-                {([nameA, nameB]) => (
-                  <div className="mt-6 space-y-4">
-                    <form.Field name="houseworkA">
-                      {(field) => (
-                        <FormField
-                          field={field}
-                          label={`Horas semanais de ${nameA || 'Pessoa A'}`}
-                          type="number"
-                          placeholder="0"
-                          min={0}
-                          description="Limpeza, cozinha, cuidado com filhos, etc."
-                        />
-                      )}
-                    </form.Field>
-                    <form.Field name="houseworkB">
-                      {(field) => (
-                        <FormField
-                          field={field}
-                          label={`Horas semanais de ${nameB || 'Pessoa B'}`}
-                          type="number"
-                          placeholder="0"
-                          min={0}
-                        />
-                      )}
-                    </form.Field>
-                  </div>
-                )}
-              </form.Subscribe>
-            </Collapsible.Content>
-          </Collapsible.Root>
+          <Collapsible
+            trigger="Incluir trabalho doméstico no cálculo"
+            description="Cuidar da casa é trabalho. Informe as horas semanais dedicadas a tarefas domésticas."
+            defaultOpen={false}
+          >
+            <InfoBox icon={<Info />}>
+              Usamos o salário mínimo/hora ({formatCurrency(minimumWage / 100 / 220)}) como referência para valorar o
+              trabalho doméstico.
+            </InfoBox>
+            <form.Subscribe selector={(state) => [state.values.nameA, state.values.nameB]}>
+              {([nameA, nameB]) => (
+                <div className="mt-6 space-y-4">
+                  <form.Field name="houseworkA">
+                    {(field) => (
+                      <FormField
+                        field={field}
+                        label={`Horas semanais de ${nameA || 'Pessoa A'}`}
+                        type="number"
+                        placeholder="0"
+                        min={0}
+                        description="Limpeza, cozinha, cuidado com filhos, etc."
+                      />
+                    )}
+                  </form.Field>
+                  <form.Field name="houseworkB">
+                    {(field) => (
+                      <FormField
+                        field={field}
+                        label={`Horas semanais de ${nameB || 'Pessoa B'}`}
+                        type="number"
+                        placeholder="0"
+                        min={0}
+                      />
+                    )}
+                  </form.Field>
+                </div>
+              )}
+            </form.Subscribe>
+          </Collapsible>
         </div>
 
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
