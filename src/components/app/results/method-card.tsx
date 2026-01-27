@@ -1,6 +1,6 @@
 import { useShallow } from 'zustand/react/shallow'
 
-import { Card } from '~/components/ui/card'
+import { Card } from '~/components/ui'
 import { useCalculations } from '~/hooks/use-calculations'
 import { cn, formatCurrency } from '~/lib/utils'
 import { useExpenseStore } from '~/stores/expense-store'

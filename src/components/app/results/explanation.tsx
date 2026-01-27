@@ -1,4 +1,4 @@
-import { Card } from '~/components/ui/card'
+import { Card } from '~/components/ui'
 import { useExpenseStore } from '~/stores/expense-store'
 import { ExplanationItem } from './explanation-item'
 

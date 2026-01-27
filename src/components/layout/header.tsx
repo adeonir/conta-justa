@@ -1,8 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import type { ComponentProps } from 'react'
 
-import { buttonVariants } from '~/components/ui/button'
-import { ThemeToggle } from '~/components/ui/theme-toggle'
+import { buttonVariants, ThemeToggle } from '~/components/ui'
 import { cn } from '~/lib/utils'
 
 export interface HeaderProps extends ComponentProps<'header'> {}

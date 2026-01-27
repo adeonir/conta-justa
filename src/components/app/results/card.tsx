@@ -1,4 +1,4 @@
-import { Card as CardUI } from '~/components/ui/card'
+import { Card as CardUI } from '~/components/ui'
 import { useCalculations } from '~/hooks/use-calculations'
 import { useExpenseStore } from '~/stores/expense-store'
 import { PersonDisplay } from './person-display'

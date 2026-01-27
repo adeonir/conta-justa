@@ -1,8 +1,6 @@
 import type { ComponentProps } from 'react'
 
-import { Description } from '~/components/ui/description'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
+import { Description, Input, Label } from '~/components/ui'
 import { getErrorMessage } from '~/lib/utils'
 
 interface FieldState<T> {

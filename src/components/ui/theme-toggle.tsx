@@ -1,7 +1,7 @@
 import { Monitor, Moon, Sun } from 'lucide-react'
 import type { ComponentProps } from 'react'
 
-import { Tooltip } from '~/components/ui/tooltip'
+import { Tooltip } from '~/components/ui'
 import { cn } from '~/lib/utils'
 import { useTheme } from '~/providers/theme-provider'
 

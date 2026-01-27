@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Collapsible as CollapsibleUI } from '~/components/ui/collapsible'
+import { Collapsible as CollapsibleUI } from '~/components/ui'
 
 interface CollapsibleProps {
   trigger: string
