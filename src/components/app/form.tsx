@@ -30,7 +30,7 @@ export function Form() {
     } satisfies ExpenseFormData,
     validators: {
       onBlur: expenseFormSchema,
-      onSubmit: expenseFormSchema,
+      onChange: expenseFormSchema,
     },
     onSubmit: ({ value }) => handleSubmit(value),
   })
