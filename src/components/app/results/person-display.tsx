@@ -34,7 +34,10 @@ export function PersonDisplay({
           <span className="text-muted-foreground">da renda comprometida</span>
         </li>
         <li className="space-x-1 pt-2">
-          <span className={cn('font-semibold tabular-nums', remaining < 0 ? 'text-red-600' : 'text-green-600')}>
+          <span
+            className={cn('font-semibold tabular-nums', remaining < 0 ? 'text-error' : 'text-success')}
+            data-balance={remaining < 0 ? 'negative' : 'positive'}
+          >
             {formatCurrency(remaining / 100)}
           </span>
           <span className="text-muted-foreground">sobra mensal</span>

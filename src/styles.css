@@ -44,10 +44,10 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-success: var(--color-green-500);
-  --color-warning: var(--color-amber-500);
-  --color-error: var(--color-red-500);
-  --color-info: var(--color-blue-500);
+  --color-success: var(--color-green-600);
+  --color-warning: var(--color-amber-600);
+  --color-error: var(--color-red-600);
+  --color-info: var(--color-blue-600);
 
   --shadow-glow: 0 0 60px rgba(229, 57, 53, 0.3);
 
