@@ -9,10 +9,10 @@ export function Hero() {
         </em>{' '}
         das contas do casal
       </h1>
+      <div className="my-8 h-0.75 w-15 rounded-sm bg-primary max-md:mx-auto" />
       <p className="max-w-100 text-lg text-muted-foreground leading-relaxed max-md:mx-auto">
         Calcule quanto cada pessoa deve contribuir considerando renda e trabalho doméstico
       </p>
-      <div className="mt-8 h-0.75 w-15 rounded-sm bg-primary max-md:mx-auto" />
     </section>
   )
 }
