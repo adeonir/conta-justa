@@ -44,12 +44,12 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-success: var(--color-green-600);
-  --color-warning: var(--color-amber-600);
-  --color-error: var(--color-red-600);
-  --color-info: var(--color-blue-600);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
 
-  --shadow-glow: 0 0 60px rgba(229, 57, 53, 0.3);
+  --shadow-glow: 0 0 30px rgba(229, 57, 53, 0.3);
 
   --font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -68,6 +68,10 @@
   --border: var(--color-base-200);
   --input: var(--color-base-200);
   --ring: var(--color-base-500);
+  --success: var(--color-green-600);
+  --warning: var(--color-amber-600);
+  --error: var(--color-red-600);
+  --info: var(--color-blue-600);
 }
 
 .dark {
@@ -84,6 +88,10 @@
   --border: var(--color-base-700);
   --input: var(--color-base-700);
   --ring: var(--color-base-400);
+  --success: var(--color-green-400);
+  --warning: var(--color-amber-400);
+  --error: var(--color-red-400);
+  --info: var(--color-blue-400);
 }
 
 body {

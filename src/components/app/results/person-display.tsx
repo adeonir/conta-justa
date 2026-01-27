@@ -35,12 +35,12 @@ export function PersonDisplay({
         </li>
         <li className="space-x-1 pt-2">
           <span
-            className={cn('font-semibold tabular-nums', remaining < 0 ? 'text-error' : 'text-success')}
+            className={cn('font-semibold tabular-nums', remaining < 0 && 'text-error')}
             data-balance={remaining < 0 ? 'negative' : 'positive'}
           >
             {formatCurrency(remaining / 100)}
           </span>
-          <span className="text-muted-foreground">sobra mensal</span>
+          <span className="text-muted-foreground">{remaining < 0 ? 'de déficit mensal' : 'de sobra mensal'}</span>
         </li>
       </ul>
     </div>
