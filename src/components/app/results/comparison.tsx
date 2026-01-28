@@ -12,7 +12,7 @@ export function Comparison() {
     <section>
       <h2 className="mb-6 font-bold text-xl">Compare os métodos</h2>
 
-      <div className="grid auto-rows-fr gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
         <MethodCard method="proportional" title="Proporcional simples" description="Baseado apenas na renda" />
 
         <MethodCard
