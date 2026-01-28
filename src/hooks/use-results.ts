@@ -10,11 +10,6 @@ import {
 } from '~/lib/calculations'
 import { useData, useMinimumWage, useSelectedMethod, useSetSelectedMethod } from '~/stores/expense-store'
 
-const methodTitles: Record<MethodType, string> = {
-  proportional: 'Proporcional',
-  equal: 'Divisão igual',
-}
-
 interface Names {
   nameA: string
   nameB: string
@@ -28,7 +23,6 @@ interface Results {
   hasHousework: boolean
   activeMethod: MethodType
   activeResult: CalculationResult
-  methodTitle: string
   isRecommended: boolean
   setSelectedMethod: (method: MethodType | null) => void
 }
@@ -80,7 +74,6 @@ export function useResults(): Results | null {
       hasHousework,
       activeMethod,
       activeResult,
-      methodTitle: methodTitles[activeMethod],
       isRecommended: activeMethod === recommendedMethod,
       setSelectedMethod,
     }

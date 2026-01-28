@@ -117,12 +117,6 @@ describe('useResults', () => {
       expect(result.current?.activeResult).toEqual(result.current?.proportional)
     })
 
-    it('returns correct methodTitle for proportional', () => {
-      const { result } = renderHook(() => useResults())
-
-      expect(result.current?.methodTitle).toBe('Proporcional')
-    })
-
     it('isRecommended is true when activeMethod matches recommendedMethod', () => {
       const { result } = renderHook(() => useResults())
 
@@ -218,12 +212,6 @@ describe('useResults', () => {
       // Adjusted should differ based on housework hours
       expect(result.current?.proportional.personA.contribution).not.toBe(125000)
     })
-
-    it('returns correct methodTitle for proportional', () => {
-      const { result } = renderHook(() => useResults())
-
-      expect(result.current?.methodTitle).toBe('Proporcional')
-    })
   })
 
   describe('when selectedMethod is set', () => {
@@ -256,14 +244,6 @@ describe('useResults', () => {
 
       expect(result.current?.activeMethod).toBe('equal')
       expect(result.current?.activeResult).toEqual(result.current?.equal)
-    })
-
-    it('returns correct methodTitle for equal', () => {
-      mockStoreState.selectedMethod = 'equal'
-
-      const { result } = renderHook(() => useResults())
-
-      expect(result.current?.methodTitle).toBe('Divisão igual')
     })
 
     it('isRecommended is false for equal method', () => {
