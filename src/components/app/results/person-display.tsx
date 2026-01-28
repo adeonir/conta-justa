@@ -15,7 +15,7 @@ export function PersonDisplay({ name, result }: PersonDisplayProps) {
 
       <div>
         <p className="font-black text-3xl tracking-tight">{formatCurrency(contribution / 100)}</p>
-        <p className="text-muted-foreground text-sm">Valor a pagar</p>
+        <p className="text-muted-foreground text-sm">Valor mensal</p>
       </div>
 
       <ul className="divide-y divide-border text-sm">
