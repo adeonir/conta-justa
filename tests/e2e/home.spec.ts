@@ -37,7 +37,7 @@ test.describe('Home', () => {
   })
 
   test('submit button is disabled when form is invalid', async ({ page }) => {
-    const button = page.getByRole('button', { name: 'Calcular divisão' })
+    const button = page.getByRole('button', { name: 'Ver resultados' })
 
     await expect(button).toBeVisible()
     await expect(button).toHaveAttribute('type', 'submit')
@@ -65,6 +65,17 @@ test.describe('Home', () => {
 
     await expect(page.getByText('Valor deve ser maior que zero')).toBeVisible()
   })
+
+  test('clicking "Limpar formulário" resets all fields', async ({ page }) => {
+    await page.locator('#nameA').fill('Ana')
+    await page.locator('#incomeA').click()
+    await page.locator('#incomeA').pressSequentially('5000')
+
+    await page.getByText('Limpar formulário').click()
+
+    await expect(page.locator('#nameA')).toHaveValue('')
+    await expect(page.locator('#incomeA')).toHaveValue('')
+  })
 })
 
 test.describe('Housework Section', () => {
@@ -74,7 +85,7 @@ test.describe('Housework Section', () => {
   })
 
   test('housework section is collapsed by default', async ({ page }) => {
-    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    const trigger = page.getByText('Considerar trabalho doméstico no cálculo')
     await expect(trigger).toBeVisible()
 
     const content = page.locator('[data-slot="collapsible-content"]')
@@ -82,10 +93,10 @@ test.describe('Housework Section', () => {
   })
 
   test('housework section expands when trigger is clicked', async ({ page }) => {
-    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    const trigger = page.getByText('Considerar trabalho doméstico no cálculo')
     await trigger.click()
 
-    await expect(page.getByText('Cuidar da casa é trabalho')).toBeVisible()
+    await expect(page.getByText('Cuidar da casa também é trabalho')).toBeVisible()
     await expect(page.locator('#houseworkA')).toBeVisible()
     await expect(page.locator('#houseworkB')).toBeVisible()
   })
@@ -94,7 +105,7 @@ test.describe('Housework Section', () => {
     await page.locator('#nameA').fill('Maria')
     await page.locator('#nameB').fill('Joao')
 
-    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    const trigger = page.getByText('Considerar trabalho doméstico no cálculo')
     await trigger.click()
 
     await expect(page.getByText('Horas semanais de Maria')).toBeVisible()
@@ -102,7 +113,7 @@ test.describe('Housework Section', () => {
   })
 
   test('housework section displays minimum wage hourly rate', async ({ page }) => {
-    const trigger = page.getByText('Incluir trabalho doméstico no cálculo')
+    const trigger = page.getByText('Considerar trabalho doméstico no cálculo')
     await trigger.click()
 
     await expect(page.getByText(/salário mínimo\/hora/)).toBeVisible()
@@ -148,7 +159,7 @@ test.describe('Responsive Layout', () => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/')
 
-    const hero = page.locator('section').filter({ hasText: 'Descubra a divisão' })
+    const hero = page.locator('section').filter({ hasText: 'Compare modelos' })
     const position = await hero.evaluate((el) => window.getComputedStyle(el).position)
 
     expect(position).toBe('sticky')
@@ -158,7 +169,7 @@ test.describe('Responsive Layout', () => {
     await page.setViewportSize({ width: 375, height: 667 })
     await page.goto('/')
 
-    const hero = page.locator('section').filter({ hasText: 'Descubra a divisão' })
+    const hero = page.locator('section').filter({ hasText: 'Compare modelos' })
     const position = await hero.evaluate((el) => window.getComputedStyle(el).position)
 
     expect(position).not.toBe('sticky')

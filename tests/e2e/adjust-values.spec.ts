@@ -37,7 +37,7 @@ async function fillFormAndSubmit(
   await page.locator('#expenses').pressSequentially(expenses)
 
   if (houseworkA || houseworkB) {
-    await page.getByText('Incluir trabalho doméstico no cálculo').click()
+    await page.getByText('Considerar trabalho doméstico no cálculo').click()
     if (houseworkA) {
       await page.locator('#houseworkA').fill(houseworkA)
     }
@@ -48,7 +48,7 @@ async function fillFormAndSubmit(
 
   await page.locator('#expenses').blur()
 
-  const button = page.getByRole('button', { name: 'Calcular divisão' })
+  const button = page.getByRole('button', { name: 'Ver resultados' })
   await expect(button).toBeEnabled()
   await button.click()
 
@@ -143,7 +143,7 @@ test.describe('Adjust Values Flow', () => {
     await incomeAInput.blur()
 
     // Submit again
-    const button = page.getByRole('button', { name: 'Calcular divisão' })
+    const button = page.getByRole('button', { name: 'Ver resultados' })
     await expect(button).toBeEnabled()
     await button.click()
 
@@ -176,7 +176,7 @@ test.describe('Adjust Values Flow', () => {
     await nameAInput.blur()
 
     // Submit button should be disabled
-    const submitButton = page.getByRole('button', { name: 'Calcular divisão' })
+    const submitButton = page.getByRole('button', { name: 'Ver resultados' })
     await expect(submitButton).toBeDisabled()
 
     // Error should appear
@@ -202,7 +202,7 @@ test.describe('Adjust Values Flow', () => {
     await nameAInput.fill('Carlos')
 
     // Step 4: Recalculate
-    const button = page.getByRole('button', { name: 'Calcular divisão' })
+    const button = page.getByRole('button', { name: 'Ver resultados' })
     await expect(button).toBeEnabled()
     await button.click()
 
