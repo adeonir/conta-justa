@@ -17,7 +17,9 @@ export function Summary() {
   return (
     <section className="sticky top-42 self-start max-md:static">
       <h1 className="mb-8 font-black text-4xl leading-tight tracking-tighter">
-        Divisão para{' '}
+        Divisão das despesas
+        <br />
+        de{' '}
         <span className="relative text-primary">
           {nameA}
           <span className="absolute right-0 bottom-0.5 left-0 h-0.75 rounded-sm bg-primary" />
@@ -50,7 +52,7 @@ export function Summary() {
 
         {hasHousework && (
           <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Trabalho doméstico</dt>
+            <dt className="text-muted-foreground">Trabalho doméstico considerado</dt>
             <dd className="font-semibold">{totalHousework}h/semana</dd>
           </div>
         )}
