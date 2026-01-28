@@ -18,6 +18,7 @@ vi.mock('~/stores/expense-store', () => ({
   useExpenseStore: (selector: (state: { minimumWage: number; setData: typeof mockSetData }) => unknown) =>
     selector({ minimumWage: 162100, setData: mockSetData }),
   useData: () => mockStoreData,
+  useReset: () => vi.fn(),
 }))
 
 async function fillFormWithValidData(user: ReturnType<typeof userEvent.setup>) {
@@ -65,7 +66,7 @@ describe('Form', () => {
   it('renders submit button with type="submit"', () => {
     render(<Form />)
 
-    const button = screen.getByRole('button', { name: 'Calcular divisão' })
+    const button = screen.getByRole('button', { name: 'Ver resultados' })
     expect(button).toBeInTheDocument()
     expect(button).toHaveAttribute('type', 'submit')
   })
@@ -83,7 +84,7 @@ describe('Form', () => {
     render(<Form />)
 
     expect(screen.getByLabelText('Total mensal')).toBeInTheDocument()
-    expect(screen.getByText('Aluguel, contas, mercado, etc.')).toBeInTheDocument()
+    expect(screen.getByText('Aluguel, contas, mercado e outros gastos em comum')).toBeInTheDocument()
   })
 
   describe('validation errors', () => {
@@ -137,7 +138,7 @@ describe('Form', () => {
       await waitFor(() => {
         expect(screen.getByText('Valor deve ser maior que zero')).toBeInTheDocument()
       })
-      expect(screen.queryByText('Aluguel, contas, mercado, etc.')).not.toBeInTheDocument()
+      expect(screen.queryByText('Aluguel, contas, mercado e outros gastos em comum')).not.toBeInTheDocument()
     })
 
     it('clears error when user corrects name field', async () => {
@@ -192,7 +193,7 @@ describe('Form', () => {
       fireEvent.blur(nameAInput)
 
       await waitFor(() => {
-        const button = screen.getByRole('button', { name: 'Calcular divisão' })
+        const button = screen.getByRole('button', { name: 'Ver resultados' })
         expect(button).toBeDisabled()
       })
     })
@@ -204,7 +205,7 @@ describe('Form', () => {
       await fillFormWithValidData(user)
 
       await waitFor(() => {
-        const button = screen.getByRole('button', { name: 'Calcular divisão' })
+        const button = screen.getByRole('button', { name: 'Ver resultados' })
         expect(button).not.toBeDisabled()
       })
     })
@@ -216,7 +217,7 @@ describe('Form', () => {
       await fillFormWithValidData(user)
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Calcular divisão' })).not.toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Ver resultados' })).not.toBeDisabled()
       })
 
       const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
@@ -224,7 +225,7 @@ describe('Form', () => {
       fireEvent.blur(nameAInput)
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Calcular divisão' })).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Ver resultados' })).toBeDisabled()
       })
     })
   })
@@ -233,18 +234,18 @@ describe('Form', () => {
     it('renders collapsible trigger for housework section', () => {
       render(<Form />)
 
-      expect(screen.getByText('Incluir trabalho doméstico no cálculo')).toBeInTheDocument()
+      expect(screen.getByText('Considerar trabalho doméstico no cálculo')).toBeInTheDocument()
     })
 
     it('expands housework section when trigger is clicked', async () => {
       const user = userEvent.setup()
       render(<Form />)
 
-      const trigger = screen.getByText('Incluir trabalho doméstico no cálculo')
+      const trigger = screen.getByText('Considerar trabalho doméstico no cálculo')
       await user.click(trigger)
 
       await waitFor(() => {
-        expect(screen.getByText(/Cuidar da casa é trabalho/)).toBeInTheDocument()
+        expect(screen.getByText(/Cuidar da casa também é trabalho/)).toBeInTheDocument()
         expect(screen.getByLabelText(/Horas semanais de Pessoa A/)).toBeInTheDocument()
         expect(screen.getByLabelText(/Horas semanais de Pessoa B/)).toBeInTheDocument()
       })
@@ -260,7 +261,7 @@ describe('Form', () => {
       await user.type(nameAInput, 'Ana')
       await user.type(nameBInput, 'Bob')
 
-      const trigger = screen.getByText('Incluir trabalho doméstico no cálculo')
+      const trigger = screen.getByText('Considerar trabalho doméstico no cálculo')
       await user.click(trigger)
 
       await waitFor(() => {
@@ -269,15 +270,15 @@ describe('Form', () => {
       })
     })
 
-    it('displays minimum wage hourly rate in InfoBox', async () => {
+    it('displays InfoBox with minimum wage reference text', async () => {
       const user = userEvent.setup()
       render(<Form />)
 
-      const trigger = screen.getByText('Incluir trabalho doméstico no cálculo')
+      const trigger = screen.getByText('Considerar trabalho doméstico no cálculo')
       await user.click(trigger)
 
       await waitFor(() => {
-        expect(screen.getByText(/R\$ 7,37/)).toBeInTheDocument()
+        expect(screen.getByText(/salário mínimo\/hora apenas como referência/)).toBeInTheDocument()
       })
     })
 
@@ -285,7 +286,7 @@ describe('Form', () => {
       const user = userEvent.setup()
       render(<Form />)
 
-      const trigger = screen.getByText('Incluir trabalho doméstico no cálculo')
+      const trigger = screen.getByText('Considerar trabalho doméstico no cálculo')
       await user.click(trigger)
 
       await waitFor(() => {
@@ -304,7 +305,7 @@ describe('Form', () => {
 
       await fillFormWithValidData(user)
 
-      const trigger = screen.getByText('Incluir trabalho doméstico no cálculo')
+      const trigger = screen.getByText('Considerar trabalho doméstico no cálculo')
       await user.click(trigger)
 
       await waitFor(() => {
@@ -317,7 +318,7 @@ describe('Form', () => {
       await user.type(houseworkAInput, '15')
       await user.type(houseworkBInput, '5')
 
-      await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
+      await user.click(screen.getByRole('button', { name: 'Ver resultados' }))
 
       await waitFor(() => {
         expect(mockSetData).toHaveBeenCalledWith(
@@ -338,10 +339,10 @@ describe('Form', () => {
       await fillFormWithValidData(user)
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Calcular divisão' })).not.toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Ver resultados' })).not.toBeDisabled()
       })
 
-      await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
+      await user.click(screen.getByRole('button', { name: 'Ver resultados' }))
 
       await waitFor(() => {
         expect(mockSetData).toHaveBeenCalledTimes(1)
@@ -376,10 +377,10 @@ describe('Form', () => {
       fireEvent.blur(expensesInput)
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Calcular divisão' })).not.toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Ver resultados' })).not.toBeDisabled()
       })
 
-      await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
+      await user.click(screen.getByRole('button', { name: 'Ver resultados' }))
 
       await waitFor(() => {
         expect(mockSetData).toHaveBeenCalledWith({
@@ -510,7 +511,7 @@ describe('Form', () => {
         render(<Form />)
 
         await waitFor(() => {
-          const button = screen.getByRole('button', { name: 'Calcular divisão' })
+          const button = screen.getByRole('button', { name: 'Ver resultados' })
           expect(button).not.toBeDisabled()
         })
       })
@@ -524,10 +525,10 @@ describe('Form', () => {
         await user.type(nameAInput, 'Ana')
 
         await waitFor(() => {
-          expect(screen.getByRole('button', { name: 'Calcular divisão' })).not.toBeDisabled()
+          expect(screen.getByRole('button', { name: 'Ver resultados' })).not.toBeDisabled()
         })
 
-        await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
+        await user.click(screen.getByRole('button', { name: 'Ver resultados' }))
 
         await waitFor(() => {
           expect(mockSetData).toHaveBeenCalledWith(
