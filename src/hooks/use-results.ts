@@ -6,15 +6,12 @@ import {
   type CalculationResult,
   calculateAdjusted,
   calculateEqual,
-  calculateHybrid,
   calculateProportional,
 } from '~/lib/calculations'
 import { useData, useMinimumWage, useSelectedMethod, useSetSelectedMethod } from '~/stores/expense-store'
 
 const methodTitles: Record<MethodType, string> = {
-  proportional: 'Proporcional simples',
-  adjusted: 'Proporcional + trabalho doméstico',
-  hybrid: 'Contribuição mínima',
+  proportional: 'Proporcional',
   equal: 'Divisão igual',
 }
 
@@ -26,10 +23,8 @@ interface Names {
 interface Results {
   names: Names
   proportional: CalculationResult
-  adjusted: CalculationResult | null
-  hybrid: CalculationResult
   equal: CalculationResult
-  recommendedMethod: 'proportional' | 'adjusted'
+  recommendedMethod: 'proportional'
   hasHousework: boolean
   activeMethod: MethodType
   activeResult: CalculationResult
@@ -58,23 +53,21 @@ export function useResults(): Results | null {
       minimumWage,
     }
 
-    const proportional = calculateProportional(input)
     const hasHousework = data.houseworkA > 0 || data.houseworkB > 0
-    const adjusted = hasHousework ? calculateAdjusted(input) : null
-    const hybrid = calculateHybrid(input)
+
+    // Proporcional auto-uses adjusted calculation when housework data exists
+    const proportionalResult = hasHousework ? calculateAdjusted(input) : calculateProportional(input)
+    const proportional: CalculationResult = {
+      ...proportionalResult,
+      method: 'proportional',
+    }
+
     const equal = calculateEqual(input)
 
-    const recommendedMethod = hasHousework ? 'adjusted' : 'proportional'
+    const recommendedMethod = 'proportional' as const
     const activeMethod = selectedMethod ?? recommendedMethod
 
-    const activeResult =
-      activeMethod === 'adjusted'
-        ? (adjusted ?? proportional)
-        : activeMethod === 'hybrid'
-          ? hybrid
-          : activeMethod === 'equal'
-            ? equal
-            : proportional
+    const activeResult = activeMethod === 'equal' ? equal : proportional
 
     return {
       names: {
@@ -82,8 +75,6 @@ export function useResults(): Results | null {
         nameB: data.nameB || 'Pessoa B',
       },
       proportional,
-      adjusted,
-      hybrid,
       equal,
       recommendedMethod,
       hasHousework,

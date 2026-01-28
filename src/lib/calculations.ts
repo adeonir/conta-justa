@@ -95,7 +95,7 @@ export function calculateAdjusted(input: CalculationInput): CalculationResult {
     return {
       personA: buildPersonResult(halfExpenses, incomeA, expenses),
       personB: buildPersonResult(expenses - halfExpenses, incomeB, expenses),
-      method: 'adjusted',
+      method: 'proportional',
     }
   }
 
@@ -105,58 +105,12 @@ export function calculateAdjusted(input: CalculationInput): CalculationResult {
   return {
     personA: buildPersonResult(contributionA, incomeA, expenses),
     personB: buildPersonResult(contributionB, incomeB, expenses),
-    method: 'adjusted',
-  }
-}
-
-const HYBRID_FLOOR_PERCENTAGE = 0.3 // 30% minimum contribution of income
-
-/**
- * Method 3: Hybrid Division (proportional with 30% income floor)
- * Ensures each person pays at least 30% of their own income
- */
-export function calculateHybrid(input: CalculationInput): CalculationResult {
-  const { incomeA, incomeB, expenses } = input
-  const totalIncome = incomeA + incomeB
-
-  // Edge case: zero total income - split 50/50
-  if (totalIncome === 0) {
-    const halfExpenses = Math.round(expenses / 2)
-    return {
-      personA: buildPersonResult(halfExpenses, incomeA, expenses),
-      personB: buildPersonResult(expenses - halfExpenses, incomeB, expenses),
-      method: 'hybrid',
-    }
-  }
-
-  // Calculate floors based on individual income (30% of each person's income)
-  const floorA = Math.round(incomeA * HYBRID_FLOOR_PERCENTAGE)
-  const floorB = Math.round(incomeB * HYBRID_FLOOR_PERCENTAGE)
-  const totalFloor = floorA + floorB
-
-  let contributionA: number
-  let contributionB: number
-
-  if (totalFloor > expenses) {
-    // When sum of floors exceeds expenses, adjust proportionally
-    contributionA = Math.round(expenses * (floorA / totalFloor))
-    contributionB = expenses - contributionA
-  } else {
-    // Normal case: use max of floor and proportional contribution
-    const proportionalA = Math.round(expenses * (incomeA / totalIncome))
-    contributionA = Math.max(floorA, proportionalA)
-    contributionB = expenses - contributionA
-  }
-
-  return {
-    personA: buildPersonResult(contributionA, incomeA, expenses),
-    personB: buildPersonResult(contributionB, incomeB, expenses),
-    method: 'hybrid',
+    method: 'proportional',
   }
 }
 
 /**
- * Method 4: Equal Division
+ * Method 3: Equal Division
  * Splits expenses equally (50/50) regardless of income
  */
 export function calculateEqual(input: CalculationInput): CalculationResult {

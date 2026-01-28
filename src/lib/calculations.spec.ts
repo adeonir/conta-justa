@@ -7,7 +7,6 @@ import {
   calculateEqual,
   calculateHourlyRate,
   calculateHouseworkValue,
-  calculateHybrid,
   calculateProportional,
   roundToTwoDecimals,
 } from './calculations'
@@ -213,7 +212,7 @@ describe('calculateAdjusted', () => {
     // A pays more because higher adjusted income
     const result = calculateAdjusted(baseInput)
 
-    expect(result.method).toBe('adjusted')
+    expect(result.method).toBe('proportional')
     expect(result.personA.contribution).toBeGreaterThan(result.personB.contribution)
     expect(result.personA.contribution + result.personB.contribution).toBe(200000)
   })
@@ -250,101 +249,6 @@ describe('calculateAdjusted', () => {
     // remaining is based on actual income, not adjusted
     expect(result.personA.remaining).toBe(baseInput.incomeA - result.personA.contribution)
     expect(result.personB.remaining).toBe(baseInput.incomeB - result.personB.contribution)
-  })
-})
-
-describe('calculateHybrid', () => {
-  const baseInput: CalculationInput = {
-    incomeA: 500000, // R$5000
-    incomeB: 300000, // R$3000
-    expenses: 400000, // R$4000
-    houseworkA: 0,
-    houseworkB: 0,
-    minimumWage: 162100,
-  }
-
-  it('calculates floor based on individual income', () => {
-    // Floor A = 5000 * 0.3 = R$1500 (150000 cents)
-    // Floor B = 3000 * 0.3 = R$900 (90000 cents)
-    // Total floor = R$2400, less than R$4000 expenses
-    // Proportional A = 4000 * (5000/8000) = R$2500
-    // Proportional A (250000) > Floor A (150000), so use proportional
-    const result = calculateHybrid(baseInput)
-
-    expect(result.method).toBe('hybrid')
-    expect(result.personA.contribution).toBe(250000) // R$2500 (proportional)
-    expect(result.personB.contribution).toBe(150000) // R$1500
-    expect(result.personA.contribution + result.personB.contribution).toBe(400000)
-  })
-
-  it('applies income-based floor when proportional is lower', () => {
-    // A earns R$8000, B earns R$2000
-    // Floor A = 8000 * 0.3 = R$2400 (240000 cents)
-    // Floor B = 2000 * 0.3 = R$600 (60000 cents)
-    // Proportional A = 4000 * (8000/10000) = R$3200
-    // Proportional A (320000) > Floor A (240000), so use proportional
-    const input = { ...baseInput, incomeA: 800000, incomeB: 200000 }
-    const result = calculateHybrid(input)
-
-    expect(result.personA.contribution).toBe(320000) // 80% proportional
-    expect(result.personB.contribution).toBe(80000) // 20% proportional
-  })
-
-  it('adjusts proportionally when sum of floors exceeds expenses', () => {
-    // A earns R$10000, B earns R$5000, expenses R$3000
-    // Floor A = 10000 * 0.3 = R$3000 (300000 cents)
-    // Floor B = 5000 * 0.3 = R$1500 (150000 cents)
-    // Total floor = R$4500 > R$3000 expenses
-    // A contribution = 3000 * (300000/450000) = R$2000
-    // B contribution = 3000 - 2000 = R$1000
-    const input = { ...baseInput, incomeA: 1000000, incomeB: 500000, expenses: 300000 }
-    const result = calculateHybrid(input)
-
-    expect(result.personA.contribution).toBe(200000) // R$2000
-    expect(result.personB.contribution).toBe(100000) // R$1000
-    expect(result.personA.contribution + result.personB.contribution).toBe(300000)
-  })
-
-  it('handles equal incomes (uses proportional 50/50)', () => {
-    const input = { ...baseInput, incomeA: 500000, incomeB: 500000 }
-    const result = calculateHybrid(input)
-
-    expect(result.personA.contribution).toBe(200000)
-    expect(result.personB.contribution).toBe(200000)
-  })
-
-  it('returns 50/50 when both incomes are zero', () => {
-    const input = { ...baseInput, incomeA: 0, incomeB: 0 }
-    const result = calculateHybrid(input)
-
-    expect(result.personA.contribution).toBe(200000)
-    expect(result.personB.contribution).toBe(200000)
-  })
-
-  it('ensures contributions sum to total expenses', () => {
-    const result = calculateHybrid(baseInput)
-
-    expect(result.personA.contribution + result.personB.contribution).toBe(400000)
-  })
-
-  it('matches AC-001: income A=R$5000, B=R$3000, expenses=R$4000', () => {
-    // Floor A = 5000 * 0.3 = 1500 (150000 cents)
-    // Floor B = 3000 * 0.3 = 900 (90000 cents)
-    const input: CalculationInput = {
-      incomeA: 500000,
-      incomeB: 300000,
-      expenses: 400000,
-      houseworkA: 0,
-      houseworkB: 0,
-      minimumWage: 162100,
-    }
-    const result = calculateHybrid(input)
-
-    const expectedFloorA = Math.round(500000 * 0.3)
-    const expectedFloorB = Math.round(300000 * 0.3)
-    expect(expectedFloorA).toBe(150000)
-    expect(expectedFloorB).toBe(90000)
-    expect(result.personA.contribution + result.personB.contribution).toBe(400000)
   })
 })
 

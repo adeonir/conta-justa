@@ -16,7 +16,7 @@ let mockStoreState = {
     houseworkB: number
   } | null,
   minimumWage: null as number | null,
-  selectedMethod: null as 'proportional' | 'adjusted' | 'hybrid' | 'equal' | null,
+  selectedMethod: null as 'proportional' | 'equal' | null,
 }
 
 vi.mock('~/stores/expense-store', () => ({
@@ -81,7 +81,6 @@ describe('useResults', () => {
 
       expect(result.current).not.toBeNull()
       expect(result.current?.proportional).toBeDefined()
-      expect(result.current?.hybrid).toBeDefined()
       expect(result.current?.equal).toBeDefined()
     })
 
@@ -92,21 +91,20 @@ describe('useResults', () => {
       expect(result.current?.equal.personB.contribution).toBe(100000)
     })
 
-    it('calculates proportional contributions based on income ratio', () => {
+    it('calculates proportional contributions based on income ratio (no housework)', () => {
       const { result } = renderHook(() => useResults())
 
       expect(result.current?.proportional.personA.contribution).toBe(125000)
       expect(result.current?.proportional.personB.contribution).toBe(75000)
     })
 
-    it('returns null for adjusted when no housework', () => {
+    it('has hasHousework false when no housework', () => {
       const { result } = renderHook(() => useResults())
 
-      expect(result.current?.adjusted).toBeNull()
       expect(result.current?.hasHousework).toBe(false)
     })
 
-    it('recommends proportional when no housework', () => {
+    it('always recommends proportional', () => {
       const { result } = renderHook(() => useResults())
 
       expect(result.current?.recommendedMethod).toBe('proportional')
@@ -122,7 +120,7 @@ describe('useResults', () => {
     it('returns correct methodTitle for proportional', () => {
       const { result } = renderHook(() => useResults())
 
-      expect(result.current?.methodTitle).toBe('Proporcional simples')
+      expect(result.current?.methodTitle).toBe('Proporcional')
     })
 
     it('isRecommended is true when activeMethod matches recommendedMethod', () => {
@@ -191,30 +189,40 @@ describe('useResults', () => {
       }
     })
 
-    it('calculates adjusted method', () => {
+    it('has hasHousework true', () => {
       const { result } = renderHook(() => useResults())
 
-      expect(result.current?.adjusted).not.toBeNull()
       expect(result.current?.hasHousework).toBe(true)
     })
 
-    it('recommends adjusted when housework is present', () => {
+    it('still recommends proportional (which now uses adjusted calculation internally)', () => {
       const { result } = renderHook(() => useResults())
 
-      expect(result.current?.recommendedMethod).toBe('adjusted')
+      expect(result.current?.recommendedMethod).toBe('proportional')
     })
 
-    it('uses adjusted as activeResult when recommended', () => {
+    it('uses proportional as activeResult which contains adjusted values', () => {
       const { result } = renderHook(() => useResults())
 
-      expect(result.current?.activeMethod).toBe('adjusted')
-      expect(result.current?.activeResult).toEqual(result.current?.adjusted)
+      expect(result.current?.activeMethod).toBe('proportional')
+      expect(result.current?.activeResult).toEqual(result.current?.proportional)
+      expect(result.current?.activeResult.method).toBe('proportional')
     })
 
-    it('returns correct methodTitle for adjusted', () => {
+    it('proportional result uses adjusted calculation when housework is present', () => {
       const { result } = renderHook(() => useResults())
 
-      expect(result.current?.methodTitle).toBe('Proporcional + trabalho doméstico')
+      // With housework, Person A (10hrs) contributes more housework value
+      // This should result in different values than simple proportional
+      // Simple proportional: A=125000, B=75000
+      // Adjusted should differ based on housework hours
+      expect(result.current?.proportional.personA.contribution).not.toBe(125000)
+    })
+
+    it('returns correct methodTitle for proportional', () => {
+      const { result } = renderHook(() => useResults())
+
+      expect(result.current?.methodTitle).toBe('Proporcional')
     })
   })
 
@@ -239,23 +247,6 @@ describe('useResults', () => {
 
       expect(result.current?.activeMethod).toBe('proportional')
       expect(result.current?.activeResult).toEqual(result.current?.proportional)
-    })
-
-    it('uses hybrid when selected', () => {
-      mockStoreState.selectedMethod = 'hybrid'
-
-      const { result } = renderHook(() => useResults())
-
-      expect(result.current?.activeMethod).toBe('hybrid')
-      expect(result.current?.activeResult).toEqual(result.current?.hybrid)
-    })
-
-    it('returns correct methodTitle for hybrid', () => {
-      mockStoreState.selectedMethod = 'hybrid'
-
-      const { result } = renderHook(() => useResults())
-
-      expect(result.current?.methodTitle).toBe('Contribuição mínima')
     })
 
     it('uses equal when selected', () => {
@@ -283,14 +274,14 @@ describe('useResults', () => {
       expect(result.current?.isRecommended).toBe(false)
     })
 
-    it('isRecommended is false when activeMethod differs from recommendedMethod', () => {
+    it('isRecommended is true when proportional is selected', () => {
       mockStoreState.selectedMethod = 'proportional'
 
       const { result } = renderHook(() => useResults())
 
-      expect(result.current?.recommendedMethod).toBe('adjusted')
+      expect(result.current?.recommendedMethod).toBe('proportional')
       expect(result.current?.activeMethod).toBe('proportional')
-      expect(result.current?.isRecommended).toBe(false)
+      expect(result.current?.isRecommended).toBe(true)
     })
   })
 
@@ -330,25 +321,8 @@ describe('useResults', () => {
       const { result } = renderHook(() => useResults())
 
       expect(result.current?.hasHousework).toBe(true)
-      expect(result.current?.adjusted).not.toBeNull()
-    })
-
-    it('falls back to proportional when adjusted is selected but not available', () => {
-      mockStoreState.data = {
-        nameA: 'Ana',
-        incomeA: 500000,
-        nameB: 'Bob',
-        incomeB: 300000,
-        expenses: 200000,
-        houseworkA: 0,
-        houseworkB: 0,
-      }
-      mockStoreState.selectedMethod = 'adjusted'
-
-      const { result } = renderHook(() => useResults())
-
-      expect(result.current?.adjusted).toBeNull()
-      expect(result.current?.activeResult).toEqual(result.current?.proportional)
+      // Proportional should use adjusted calculation
+      expect(result.current?.proportional.method).toBe('proportional')
     })
   })
 })

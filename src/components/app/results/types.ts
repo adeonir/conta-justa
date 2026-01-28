@@ -1,1 +1,1 @@
-export type MethodType = 'proportional' | 'adjusted' | 'hybrid' | 'equal'
+export type MethodType = 'proportional' | 'equal'
