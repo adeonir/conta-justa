@@ -93,10 +93,10 @@ describe('expense-store', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setSelectedMethod('hybrid')
+        result.current.setSelectedMethod('equal')
       })
 
-      expect(result.current.selectedMethod).toBe('hybrid')
+      expect(result.current.selectedMethod).toBe('equal')
 
       act(() => {
         result.current.setSelectedMethod(null)
@@ -109,7 +109,7 @@ describe('expense-store', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setSelectedMethod('adjusted')
+        result.current.setSelectedMethod('proportional')
       })
 
       const stored = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')
@@ -138,10 +138,10 @@ describe('expense-store', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
-        result.current.setSelectedMethod('hybrid')
+        result.current.setSelectedMethod('equal')
       })
 
-      expect(result.current.selectedMethod).toBe('hybrid')
+      expect(result.current.selectedMethod).toBe('equal')
 
       act(() => {
         result.current.reset()
@@ -192,7 +192,7 @@ describe('expense-store', () => {
       act(() => {
         result.current.setData(mockFormData)
         result.current.setMinimumWage(141200)
-        result.current.setSelectedMethod('hybrid')
+        result.current.setSelectedMethod('equal')
       })
 
       const stored = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')

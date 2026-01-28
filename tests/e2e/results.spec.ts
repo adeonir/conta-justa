@@ -107,14 +107,14 @@ test.describe('Results Page - Calculation Values', () => {
     await fillFormAndSubmit(page)
 
     await expect(page.getByText('Divisão recomendada')).toBeVisible()
-    await expect(page.locator('h2').filter({ hasText: 'Proporcional simples' })).toBeVisible()
+    await expect(page.locator('h2').filter({ hasText: 'Proporcional' })).toBeVisible()
   })
 
-  test('displays adjusted method as recommended with housework', async ({ page }) => {
+  test('displays proportional method as recommended with housework (uses adjusted calculation)', async ({ page }) => {
     await fillFormAndSubmit(page, { houseworkA: '15', houseworkB: '5' })
 
     await expect(page.getByText('Divisão recomendada')).toBeVisible()
-    await expect(page.locator('h2').filter({ hasText: 'Proporcional + trabalho doméstico' })).toBeVisible()
+    await expect(page.locator('h2').filter({ hasText: 'Proporcional' })).toBeVisible()
   })
 
   test('displays correct proportional contributions', async ({ page }) => {
@@ -183,95 +183,44 @@ test.describe('Results Page - Calculation Values', () => {
 })
 
 test.describe('Results Page - Method Comparison', () => {
-  test('shows comparison section with method cards', async ({ page }) => {
+  test('shows comparison section with 2 method cards', async ({ page }) => {
     await fillFormAndSubmit(page)
 
     const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
     await expect(comparisonSection).toBeVisible()
 
-    // Check for method cards - look for h3 within the comparison section
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Proporcional simples' })).toBeVisible()
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Contribuição mínima' })).toBeVisible()
+    // Should have exactly 2 cards
+    const methodCards = comparisonSection.locator('[data-slot="card"]')
+    await expect(methodCards).toHaveCount(2)
+
+    // Check for method cards
+    await expect(comparisonSection.locator('h3').filter({ hasText: 'Proporcional' })).toBeVisible()
+    await expect(comparisonSection.locator('h3').filter({ hasText: 'Divisão igual' })).toBeVisible()
   })
 
-  test('shows adjusted method card with housework', async ({ page }) => {
+  test('proportional card shows housework description when housework provided', async ({ page }) => {
     await fillFormAndSubmit(page, { houseworkA: '10', houseworkB: '5' })
 
     const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
-    await expect(comparisonSection.locator('h3').filter({ hasText: /trabalho doméstico/ })).toBeVisible()
+    const proportionalCard = comparisonSection.locator('[data-slot="card"]').filter({ hasText: 'Proporcional' })
+
+    await expect(proportionalCard.getByText(/trabalho em casa/)).toBeVisible()
   })
 
-  test('clicking method card updates main result', async ({ page }) => {
-    await fillFormAndSubmit(page)
-
-    // Initially shows proportional as recommended
-    await expect(page.locator('h2').filter({ hasText: 'Proporcional simples' })).toBeVisible()
-
-    // Click hybrid method card (it's a div with onClick, not a button)
-    const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
-    const hybridCard = comparisonSection.locator('[data-slot="card"]').filter({ hasText: 'Contribuição mínima' })
-    await hybridCard.click()
-
-    // Should show "Método selecionado" instead of "Divisão recomendada"
-    await expect(page.getByText('Método selecionado')).toBeVisible()
-    await expect(page.locator('h2').filter({ hasText: 'Contribuição mínima' })).toBeVisible()
-  })
-
-  test('shows equal method card', async ({ page }) => {
+  test('proportional card shows income-only description without housework', async ({ page }) => {
     await fillFormAndSubmit(page)
 
     const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Divisão igual' })).toBeVisible()
-    await expect(comparisonSection.getByText('metade das despesas')).toBeVisible()
-  })
+    const proportionalCard = comparisonSection.locator('[data-slot="card"]').filter({ hasText: 'Proporcional' })
 
-  test('displays 4 method cards with housework', async ({ page }) => {
-    await fillFormAndSubmit(page, { houseworkA: '10', houseworkB: '5' })
-
-    const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
-    const methodCards = comparisonSection.locator('[data-slot="card"]')
-
-    // Should have 4 cards
-    await expect(methodCards).toHaveCount(4)
-
-    // All 4 method titles should be visible
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Proporcional simples' })).toBeVisible()
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Proporcional + trabalho doméstico' })).toBeVisible()
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Contribuição mínima' })).toBeVisible()
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Divisão igual' })).toBeVisible()
-
-    // All cards should be clickable (no opacity-70)
-    for (const card of await methodCards.all()) {
-      await expect(card).not.toHaveClass(/opacity-70/)
-    }
-  })
-
-  test('displays 4 method cards without housework with adjusted disabled', async ({ page }) => {
-    await fillFormAndSubmit(page)
-
-    const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
-    const methodCards = comparisonSection.locator('[data-slot="card"]')
-
-    // Should still have 4 cards
-    await expect(methodCards).toHaveCount(4)
-
-    // All 4 method titles should be visible
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Proporcional simples' })).toBeVisible()
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Proporcional + trabalho doméstico' })).toBeVisible()
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Contribuição mínima' })).toBeVisible()
-    await expect(comparisonSection.locator('h3').filter({ hasText: 'Divisão igual' })).toBeVisible()
-
-    // The adjusted card should have opacity-70 (disabled state)
-    const adjustedCard = comparisonSection.locator('[data-slot="card"]').filter({ hasText: 'trabalho doméstico' })
-    await expect(adjustedCard).toHaveClass(/opacity-70/)
-    await expect(adjustedCard).toHaveAttribute('aria-disabled', 'true')
+    await expect(proportionalCard.getByText('Baseado apenas na renda')).toBeVisible()
   })
 
   test('clicking equal method card updates main result', async ({ page }) => {
     await fillFormAndSubmit(page, { incomeA: '5000', incomeB: '3000', expenses: '2000' })
 
     // Initially shows proportional as recommended
-    await expect(page.locator('h2').filter({ hasText: 'Proporcional simples' })).toBeVisible()
+    await expect(page.locator('h2').filter({ hasText: 'Proporcional' })).toBeVisible()
 
     // Click equal method card
     const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
@@ -286,6 +235,30 @@ test.describe('Results Page - Method Comparison', () => {
     const mainCard = page.locator('[data-slot="card"]').first()
     const contributions = mainCard.locator('text=R$ 1.000,00')
     await expect(contributions).toHaveCount(2)
+  })
+
+  test('displays 2 method cards with housework', async ({ page }) => {
+    await fillFormAndSubmit(page, { houseworkA: '10', houseworkB: '5' })
+
+    const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
+    const methodCards = comparisonSection.locator('[data-slot="card"]')
+
+    // Should have exactly 2 cards
+    await expect(methodCards).toHaveCount(2)
+
+    // Both method titles should be visible
+    await expect(comparisonSection.locator('h3').filter({ hasText: 'Proporcional' })).toBeVisible()
+    await expect(comparisonSection.locator('h3').filter({ hasText: 'Divisão igual' })).toBeVisible()
+  })
+
+  test('displays 2 method cards without housework', async ({ page }) => {
+    await fillFormAndSubmit(page)
+
+    const comparisonSection = page.locator('section').filter({ hasText: 'Compare os métodos' })
+    const methodCards = comparisonSection.locator('[data-slot="card"]')
+
+    // Should have exactly 2 cards
+    await expect(methodCards).toHaveCount(2)
   })
 })
 
@@ -378,18 +351,6 @@ test.describe('Results Page - Explanation Section', () => {
     await expect(page.getByText(/incluir trabalho doméstico/i)).toBeVisible()
   })
 
-  test('shows updated hybrid explanation with income-based text', async ({ page }) => {
-    await fillFormAndSubmit(page)
-
-    const explanationSection = page.locator('[data-slot="card"]').filter({ hasText: 'Como funciona' })
-
-    // Check for the hybrid method explanation title
-    await expect(explanationSection.getByText('Contribuição mínima')).toBeVisible()
-
-    // Check for the updated text mentioning 30% of income
-    await expect(explanationSection.getByText(/30% da própria renda/)).toBeVisible()
-  })
-
   test('shows equal method explanation', async ({ page }) => {
     await fillFormAndSubmit(page)
 
@@ -405,7 +366,7 @@ test.describe('Results Page - Explanation Section', () => {
 
 test.describe('Results Page - Disclaimer', () => {
   test('displays educational disclaimer', async ({ page }) => {
-    await fillFormAndSubmit(page)
+    await fillFormAndSubmit(page, { nameA: 'Ana', nameB: 'Bob' })
 
     await expect(page.getByText(/ferramenta educativa/)).toBeVisible()
   })

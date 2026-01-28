@@ -27,11 +27,6 @@ export function Explanation() {
         )}
 
         <ExplanationItem
-          title="Contribuição mínima"
-          text="Cada pessoa paga pelo menos 30% da própria renda. Útil quando a diferença de renda é muito grande e se quer manter algum equilíbrio."
-        />
-
-        <ExplanationItem
           title="Divisão igual"
           text="Cada pessoa paga exatamente metade das despesas, independente da renda. Simples, mas pode não ser justo quando há grande diferença de renda."
         />
