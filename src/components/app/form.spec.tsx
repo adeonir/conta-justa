@@ -2,10 +2,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { ExpenseFormData } from '~/schemas/expense-form'
+
 import { Form } from './form'
 
 const mockNavigate = vi.fn()
 const mockSetData = vi.fn()
+let mockStoreData: ExpenseFormData | null = null
 
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
@@ -14,7 +17,7 @@ vi.mock('@tanstack/react-router', () => ({
 vi.mock('~/stores/expense-store', () => ({
   useExpenseStore: (selector: (state: { minimumWage: number; setData: typeof mockSetData }) => unknown) =>
     selector({ minimumWage: 162100, setData: mockSetData }),
-  useData: () => null,
+  useData: () => mockStoreData,
 }))
 
 async function fillFormWithValidData(user: ReturnType<typeof userEvent.setup>) {
@@ -44,6 +47,7 @@ describe('Form', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
     mockSetData.mockClear()
+    mockStoreData = null
   })
 
   afterEach(() => {
@@ -386,6 +390,152 @@ describe('Form', () => {
           expenses: 200000,
           houseworkA: 0,
           houseworkB: 0,
+        })
+      })
+    })
+  })
+
+  describe('pre-fill behavior', () => {
+    describe('when store has existing data', () => {
+      const storeData: ExpenseFormData = {
+        nameA: 'Maria',
+        incomeA: 500000,
+        nameB: 'Joao',
+        incomeB: 300000,
+        expenses: 200000,
+        houseworkA: 0,
+        houseworkB: 0,
+      }
+
+      beforeEach(() => {
+        mockStoreData = storeData
+      })
+
+      it('pre-fills name fields with stored values', () => {
+        render(<Form />)
+
+        const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
+        const nameBInput = screen.getByLabelText('Nome', { selector: '#nameB' })
+
+        expect(nameAInput).toHaveValue('Maria')
+        expect(nameBInput).toHaveValue('Joao')
+      })
+
+      it('pre-fills currency fields with stored values', () => {
+        render(<Form />)
+
+        const incomeAInput = screen.getByLabelText('Renda mensal', { selector: '#incomeA' }) as HTMLInputElement
+        const incomeBInput = screen.getByLabelText('Renda mensal', { selector: '#incomeB' }) as HTMLInputElement
+        const expensesInput = screen.getByLabelText('Total mensal') as HTMLInputElement
+
+        expect(incomeAInput.value).toMatch(/R\$\s*5[.,]000/)
+        expect(incomeBInput.value).toMatch(/R\$\s*3[.,]000/)
+        expect(expensesInput.value).toMatch(/R\$\s*2[.,]000/)
+      })
+
+      it('keeps collapsible closed when no housework data', () => {
+        render(<Form />)
+
+        const houseworkInput = screen.getByLabelText(/Horas semanais de Maria/)
+        expect(houseworkInput.closest('[data-state]')).toHaveAttribute('data-state', 'closed')
+      })
+    })
+
+    describe('when store has housework data', () => {
+      const storeDataWithHousework: ExpenseFormData = {
+        nameA: 'Ana',
+        incomeA: 400000,
+        nameB: 'Carlos',
+        incomeB: 350000,
+        expenses: 180000,
+        houseworkA: 15,
+        houseworkB: 5,
+      }
+
+      beforeEach(() => {
+        mockStoreData = storeDataWithHousework
+      })
+
+      it('auto-opens collapsible when housework hours exist', async () => {
+        render(<Form />)
+
+        await waitFor(() => {
+          expect(screen.getByLabelText(/Horas semanais de Ana/)).toBeInTheDocument()
+          expect(screen.getByLabelText(/Horas semanais de Carlos/)).toBeInTheDocument()
+        })
+      })
+
+      it('pre-fills housework hours with stored values', async () => {
+        render(<Form />)
+
+        await waitFor(() => {
+          const houseworkAInput = screen.getByLabelText(/Horas semanais de Ana/)
+          const houseworkBInput = screen.getByLabelText(/Horas semanais de Carlos/)
+
+          expect(houseworkAInput).toHaveValue(15)
+          expect(houseworkBInput).toHaveValue(5)
+        })
+      })
+    })
+
+    describe('form remains functional after pre-fill', () => {
+      const storeData: ExpenseFormData = {
+        nameA: 'Maria',
+        incomeA: 500000,
+        nameB: 'Joao',
+        incomeB: 300000,
+        expenses: 200000,
+        houseworkA: 0,
+        houseworkB: 0,
+      }
+
+      beforeEach(() => {
+        mockStoreData = storeData
+      })
+
+      it('allows editing pre-filled fields', async () => {
+        const user = userEvent.setup()
+        render(<Form />)
+
+        const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
+        expect(nameAInput).toHaveValue('Maria')
+
+        await user.clear(nameAInput)
+        await user.type(nameAInput, 'Ana')
+
+        expect(nameAInput).toHaveValue('Ana')
+      })
+
+      it('submit button is enabled with valid pre-filled data', async () => {
+        render(<Form />)
+
+        await waitFor(() => {
+          const button = screen.getByRole('button', { name: 'Calcular divisão' })
+          expect(button).not.toBeDisabled()
+        })
+      })
+
+      it('submits updated values after editing', async () => {
+        const user = userEvent.setup()
+        render(<Form />)
+
+        const nameAInput = screen.getByLabelText('Nome', { selector: '#nameA' })
+        await user.clear(nameAInput)
+        await user.type(nameAInput, 'Ana')
+
+        await waitFor(() => {
+          expect(screen.getByRole('button', { name: 'Calcular divisão' })).not.toBeDisabled()
+        })
+
+        await user.click(screen.getByRole('button', { name: 'Calcular divisão' }))
+
+        await waitFor(() => {
+          expect(mockSetData).toHaveBeenCalledWith(
+            expect.objectContaining({
+              nameA: 'Ana',
+              incomeA: 500000,
+            }),
+          )
         })
       })
     })
