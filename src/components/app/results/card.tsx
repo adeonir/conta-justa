@@ -7,14 +7,19 @@ export function Card() {
 
   if (!results) return null
 
-  const { names, activeResult, methodTitle, isRecommended } = results
+  const { names, activeResult, isRecommended } = results
 
   return (
     <CardUI>
       <p className="mb-2 font-medium text-primary text-sm uppercase tracking-wider">
-        {isRecommended ? 'Divisão recomendada' : 'Método selecionado'}
+        {isRecommended ? 'Modelo em destaque' : 'Modelo selecionado'}
       </p>
-      <h2 className="mb-8 font-bold text-2xl">{methodTitle}</h2>
+      <h2 className="mb-2 font-bold text-2xl">{isRecommended ? 'Proporcional à renda' : 'Divisão igual'}</h2>
+      <p className="mb-4 min-h-10 text-muted-foreground text-sm">
+        {isRecommended
+          ? 'A divisão é feita com base na participação de cada pessoa na renda total do casal'
+          : 'Cada pessoa paga metade das despesas'}
+      </p>
 
       <div className="flex gap-8 max-sm:flex-col">
         <PersonDisplay name={names.nameA} result={activeResult.personA} />
