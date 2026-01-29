@@ -22,7 +22,7 @@ export function Explanation() {
         {hasHousework && (
           <ExplanationItem
             title="Trabalho doméstico no cálculo"
-            text="Tarefas domésticas e cuidados com a casa exigem tempo e energia. Ao incluir essas horas, o modelo proporcional reconhece uma contribuição que normalmente não aparece na renda."
+            text="Tarefas domésticas e cuidados com a casa exigem tempo e energia. Ao incluir essas horas, o modelo proporcional reconhece uma contribuição que normalmente não aparece na renda. O valor estimado ajusta apenas a proporção da divisão — não representa um pagamento entre o casal."
           />
         )}
 

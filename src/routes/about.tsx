@@ -67,7 +67,8 @@ function AboutPage() {
                       Cada pessoa contribui com uma porcentagem das despesas igual à sua participação na renda total do
                       casal. Se você representa 60% da renda, paga 60% das despesas. Quando horas de trabalho doméstico
                       são informadas, elas são convertidas em valor econômico e somadas à renda, representando a
-                      contribuição total de cada pessoa.
+                      contribuição total de cada pessoa. Esse valor ajusta apenas a proporção da divisão — não representa
+                      um pagamento entre o casal.
                     </p>
                   </div>
                 </div>

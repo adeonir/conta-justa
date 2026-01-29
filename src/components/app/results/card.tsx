@@ -9,12 +9,16 @@ export function Card() {
 
   if (!results || !data) return null
 
-  const { activeResult, isRecommended } = results
+  const { activeResult, isRecommended, hasHousework, proportionalBaseline } = results
   const nameA = data.nameA || 'Pessoa A'
   const nameB = data.nameB || 'Pessoa B'
 
+  const showHousework = hasHousework && isRecommended
+  const baselineA = showHousework ? (proportionalBaseline?.personA ?? null) : null
+  const baselineB = showHousework ? (proportionalBaseline?.personB ?? null) : null
+
   return (
-    <CardUI>
+    <CardUI className="min-h-124">
       <p className="mb-2 font-medium text-primary text-sm uppercase tracking-wider">
         {isRecommended ? 'Modelo recomendado' : 'Modelo selecionado'}
       </p>
@@ -26,9 +30,9 @@ export function Card() {
       </p>
 
       <div className="grid grid-cols-[1fr_1px_1fr] gap-8">
-        <PersonDisplay name={nameA} result={activeResult.personA} />
+        <PersonDisplay name={nameA} result={activeResult.personA} baseline={baselineA} hasHousework={showHousework} />
         <div className="w-px bg-border" />
-        <PersonDisplay name={nameB} result={activeResult.personB} />
+        <PersonDisplay name={nameB} result={activeResult.personB} baseline={baselineB} hasHousework={showHousework} />
       </div>
     </CardUI>
   )
