@@ -4,6 +4,7 @@ import { Info } from 'lucide-react'
 import { Collapsible } from '~/components/app/collapsible'
 import { Button, Card, Description, InfoBox, Title } from '~/components/ui'
 import { useExpenseFormSubmit } from '~/hooks/use-expense-form-submit'
+import { trackEvent } from '~/hooks/use-track-event'
 import { type ExpenseFormData, expenseFormSchema } from '~/schemas/expense-form'
 import { useData, useReset } from '~/stores/expense-store'
 import { FormField } from './form-field'
@@ -36,6 +37,8 @@ export function Form() {
   })
 
   const handleHouseworkToggle = (open: boolean) => {
+    trackEvent('housework_section_toggled', { action: open ? 'open' : 'close' })
+
     if (!open) {
       form.setFieldValue('houseworkA', 0)
       form.setFieldValue('houseworkB', 0)

@@ -565,14 +565,14 @@ test.describe('Results Page - Housework Toggle', () => {
     // Extract minimumWage from sessionStorage to compute expected values
     const minimumWageCents = await page.evaluate(() => {
       const storage = sessionStorage.getItem('expense-storage')
-      if (!storage) return null
+      if (!storage) return 0
       const parsed = JSON.parse(storage)
       return parsed.state.minimumWage as number
     })
-    expect(minimumWageCents).not.toBeNull()
+    expect(minimumWageCents).toBeGreaterThan(0)
 
     // Formula: minimumWage / 220 * weeklyHours * 4 (in cents, rounded)
-    const hourlyRate = minimumWageCents! / 220
+    const hourlyRate = minimumWageCents / 220
     const expectedA = Math.round(15 * 4 * hourlyRate)
     const expectedB = Math.round(5 * 4 * hourlyRate)
 

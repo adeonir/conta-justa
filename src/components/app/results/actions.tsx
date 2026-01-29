@@ -1,14 +1,19 @@
 import { useNavigate } from '@tanstack/react-router'
 
 import { Button, Card } from '~/components/ui'
+import { trackEvent } from '~/hooks/use-track-event'
 import { useReset } from '~/stores/expense-store'
 
 export function Actions() {
   const navigate = useNavigate()
   const reset = useReset()
 
-  function handleNavigation(shouldReset: boolean) {
-    if (shouldReset) reset()
+  const handleNavigation = (shouldReset: boolean) => {
+    if (shouldReset) {
+      trackEvent('new_calculation_clicked')
+      reset()
+    }
+
     navigate({ to: '/' })
   }
 

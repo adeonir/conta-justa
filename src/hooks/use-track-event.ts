@@ -1,6 +1,10 @@
 import posthog from 'posthog-js'
 import { useEffect, useRef } from 'react'
 
+export function trackEvent(eventName: string, properties?: Record<string, unknown>) {
+  posthog.capture(eventName, properties)
+}
+
 export function useTrackEvent(eventName: string, properties: Record<string, unknown> | null, isReady: boolean) {
   const hasTracked = useRef(false)
 

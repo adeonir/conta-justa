@@ -1,5 +1,6 @@
 import { Card as CardUI, Label, Switch } from '~/components/ui'
 import { useResults } from '~/hooks/use-results'
+import { trackEvent } from '~/hooks/use-track-event'
 import { useData, useIncludeHousework, useSetIncludeHousework } from '~/stores/expense-store'
 import { PersonDisplay } from './person-display'
 
@@ -14,6 +15,11 @@ export function Card() {
   const { activeResult, isRecommended, showHousework } = results
   const nameA = data.nameA || 'Pessoa A'
   const nameB = data.nameB || 'Pessoa B'
+
+  const handleHouseworkToggle = (checked: boolean) => {
+    setIncludeHousework(checked)
+    trackEvent('housework_toggle_changed', { include: checked })
+  }
 
   return (
     <CardUI>
@@ -37,7 +43,7 @@ export function Card() {
         <Switch
           id="include-housework"
           checked={includeHousework}
-          onCheckedChange={setIncludeHousework}
+          onCheckedChange={handleHouseworkToggle}
           disabled={!showHousework}
         />
         <Label htmlFor="include-housework" className="mb-0 cursor-pointer font-normal text-sm">
