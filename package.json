@@ -14,7 +14,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "lint": "biome check --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@tailwindcss/vite": "4.1.18",
@@ -52,9 +53,11 @@
     "@vitejs/plugin-react": "5.1.2",
     "@vitest/coverage-v8": "4.0.18",
     "jsdom": "27.4.0",
+    "lefthook": "2.0.16",
     "typescript": "5.9.3",
     "vite": "7.3.1",
     "vitest": "4.0.18",
     "web-vitals": "5.1.0"
-  }
+  },
+  "packageManager": "pnpm@10.28.2"
 }
