@@ -47,8 +47,8 @@ function ResultsPage() {
         <div className="flex flex-col gap-8">
           <Card />
           <Comparison />
-          <Explanation />
           <Actions />
+          <Explanation />
         </div>
       </main>
       <Footer />

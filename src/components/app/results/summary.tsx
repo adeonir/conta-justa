@@ -58,7 +58,12 @@ export function Summary() {
         )}
       </dl>
 
-      <div className="mt-8 h-0.75 w-15 rounded-sm bg-primary" />
+      <div className="my-8 h-0.75 w-15 rounded-sm bg-primary" />
+
+      <p className="text-muted-foreground text-xs leading-relaxed">
+        Esta ferramenta ajuda a visualizar diferentes modelos de divisão de despesas. Os valores servem como base para
+        conversa e ajuste entre as pessoas envolvidas.
+      </p>
     </section>
   )
 }
