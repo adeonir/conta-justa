@@ -15,15 +15,17 @@ export function Footer({ className, ...props }: FooterProps) {
         <span className="text-[13px] text-muted-foreground">
           {currentYear}
           <span className="mx-1">•</span>
-          <Link
-            to="/"
+          <a
+            href="https://github.com/adeonir/conta-justa"
+            target="_blank"
+            rel="noopener noreferrer"
             className={cn(
               'rounded-sm transition-colors hover:text-foreground',
               'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             )}
           >
-            Sobre
-          </Link>
+            GitHub
+          </a>
         </span>
       </div>
     </footer>

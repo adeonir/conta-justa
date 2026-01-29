@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouterState } from '@tanstack/react-router'
 import type { ComponentProps } from 'react'
 
 import { buttonVariants, ThemeToggle } from '~/components/ui'
@@ -7,6 +7,8 @@ import { cn } from '~/lib/utils'
 export interface HeaderProps extends ComponentProps<'header'> {}
 
 export function Header({ className, ...props }: HeaderProps) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+
   return (
     <header
       data-slot="header"
@@ -16,10 +18,25 @@ export function Header({ className, ...props }: HeaderProps) {
       <div className="mx-auto flex max-w-300 items-center justify-between">
         <Logo />
         <nav className="flex items-center gap-4">
-          <ThemeToggle />
-          <Link to="/" className={buttonVariants({ variant: 'outline', size: 'md' })}>
+          <Link
+            to="/"
+            className={buttonVariants({
+              variant: pathname === '/' ? 'secondary' : 'outline',
+              size: 'md',
+            })}
+          >
+            Início
+          </Link>
+          <Link
+            to="/about"
+            className={buttonVariants({
+              variant: pathname === '/about' ? 'secondary' : 'outline',
+              size: 'md',
+            })}
+          >
             Sobre
           </Link>
+          <ThemeToggle />
         </nav>
       </div>
     </header>
