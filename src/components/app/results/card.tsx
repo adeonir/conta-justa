@@ -1,13 +1,17 @@
 import { Card as CardUI } from '~/components/ui'
 import { useResults } from '~/hooks/use-results'
+import { useData } from '~/stores/expense-store'
 import { PersonDisplay } from './person-display'
 
 export function Card() {
   const results = useResults()
+  const data = useData()
 
-  if (!results) return null
+  if (!results || !data) return null
 
-  const { names, activeResult, isRecommended } = results
+  const { activeResult, isRecommended } = results
+  const nameA = data.nameA || 'Pessoa A'
+  const nameB = data.nameB || 'Pessoa B'
 
   return (
     <CardUI>
@@ -21,12 +25,10 @@ export function Card() {
           : 'Cada pessoa paga metade das despesas'}
       </p>
 
-      <div className="flex gap-8 max-sm:flex-col">
-        <PersonDisplay name={names.nameA} result={activeResult.personA} />
-
-        <div className="w-px bg-border max-sm:h-px max-sm:w-full" />
-
-        <PersonDisplay name={names.nameB} result={activeResult.personB} />
+      <div className='grid grid-cols-[1fr_1px_1fr] gap-8'>
+        <PersonDisplay name={nameA} result={activeResult.personA} />
+        <div className="w-px bg-border" />
+        <PersonDisplay name={nameB} result={activeResult.personB} />
       </div>
     </CardUI>
   )
