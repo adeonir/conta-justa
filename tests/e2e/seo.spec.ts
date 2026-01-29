@@ -19,14 +19,14 @@ test.describe('SEO Meta Tags', () => {
   test('homepage has og:image meta tag', async ({ page }) => {
     await page.goto('/')
     const ogImage = page.locator('meta[property="og:image"]')
-    await expect(ogImage).toHaveAttribute('content', /og-image\.png/)
+    await expect(ogImage).toHaveAttribute('content', /og-image\.jpg/)
   })
 
   test('homepage has twitter card meta tags', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image')
     await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', /Conta Justa/)
-    await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /og-image\.png/)
+    await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /og-image\.jpg/)
   })
 
   test('each route has unique meta description', async ({ page }) => {

@@ -27,7 +27,7 @@ export const Route = createRootRoute({
       },
       { property: 'og:type', content: 'website' },
       { property: 'og:locale', content: 'pt_BR' },
-      { property: 'og:image', content: `${siteUrl}/og-image.png` },
+      { property: 'og:image', content: `${siteUrl}/og-image.jpg` },
       { property: 'og:url', content: siteUrl },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: 'Conta Justa - Divisão de Despesas para Casais' },
@@ -35,7 +35,7 @@ export const Route = createRootRoute({
         name: 'twitter:description',
         content: 'Calcule a divisão justa das despesas do casal considerando renda e trabalho doméstico.',
       },
-      { name: 'twitter:image', content: `${siteUrl}/og-image.png` },
+      { name: 'twitter:image', content: `${siteUrl}/og-image.jpg` },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
