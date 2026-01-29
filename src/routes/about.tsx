@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { Footer } from '~/components/layout/footer'
-import { Header } from '~/components/layout/header'
+import { Footer, Header } from '~/components/layout'
 
 export const Route = createFileRoute('/about')({
   component: AboutPage,

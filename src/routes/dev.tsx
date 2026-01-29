@@ -2,8 +2,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 
 import { Info } from 'lucide-react'
 
-import { Footer } from '~/components/layout/footer'
-import { Header } from '~/components/layout/header'
+import { Footer, Header } from '~/components/layout'
 import { Button, Card, Collapsible, Description, InfoBox, Input, Label, ThemeToggle, Title } from '~/components/ui'
 import { Tooltip } from '~/components/ui/tooltip'
 import { useTheme } from '~/providers/theme-provider'

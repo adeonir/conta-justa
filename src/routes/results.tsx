@@ -2,8 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 
 import { Actions, Card, Comparison, Explanation, Summary } from '~/components/app/results'
-import { Footer } from '~/components/layout/footer'
-import { Header } from '~/components/layout/header'
+import { Footer, Header, PageLayout } from '~/components/layout'
 import { useTrackEvent } from '~/hooks/use-track-event'
 import { useData, useMinimumWage } from '~/stores/expense-store'
 
@@ -57,7 +56,7 @@ function ResultsPage() {
   return (
     <>
       <Header />
-      <main className="mx-auto grid max-w-275 flex-1 grid-cols-[1fr_1.6fr] items-start gap-20 px-6 py-20 max-md:max-w-140 max-md:grid-cols-1 max-md:gap-12 max-md:py-12">
+      <PageLayout>
         <Summary />
 
         <div className="flex flex-col gap-8">
@@ -66,7 +65,7 @@ function ResultsPage() {
           <Actions />
           <Explanation />
         </div>
-      </main>
+      </PageLayout>
       <Footer />
     </>
   )
