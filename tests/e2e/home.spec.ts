@@ -129,8 +129,8 @@ test.describe('Housework Section', () => {
     await trigger.click()
     await trigger.click()
 
-    await expect(page.locator('#houseworkA')).toHaveValue('0')
-    await expect(page.locator('#houseworkB')).toHaveValue('0')
+    await expect(page.locator('#houseworkA')).toHaveValue('')
+    await expect(page.locator('#houseworkB')).toHaveValue('')
   })
 })
 
