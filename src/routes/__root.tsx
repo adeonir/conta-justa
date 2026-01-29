@@ -6,6 +6,8 @@ import { PostHogProvider } from '~/providers/posthog-provider'
 import { ThemeProvider } from '~/providers/theme-provider'
 import appCss from '~/styles.css?url'
 
+const siteUrl = import.meta.env.VITE_SITE_URL
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -25,6 +27,15 @@ export const Route = createRootRoute({
       },
       { property: 'og:type', content: 'website' },
       { property: 'og:locale', content: 'pt_BR' },
+      { property: 'og:image', content: `${siteUrl}/og-image.png` },
+      { property: 'og:url', content: siteUrl },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Conta Justa - Divisão de Despesas para Casais' },
+      {
+        name: 'twitter:description',
+        content: 'Calcule a divisão justa das despesas do casal considerando renda e trabalho doméstico.',
+      },
+      { name: 'twitter:image', content: `${siteUrl}/og-image.png` },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },

@@ -1,10 +1,28 @@
-import { Link } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { Footer } from '~/components/layout/footer'
 import { Header } from '~/components/layout/header'
 import { buttonVariants } from '~/components/ui'
 
-export function NotFound() {
+export const Route = createFileRoute('/$')({
+  component: NotFoundPage,
+  head: () => ({
+    meta: [
+      { title: 'Página não encontrada - Conta Justa' },
+      {
+        name: 'description',
+        content: 'A página que você tentou acessar não existe ou mudou de lugar.',
+      },
+      { property: 'og:title', content: 'Página não encontrada - Conta Justa' },
+      {
+        property: 'og:description',
+        content: 'A página que você tentou acessar não existe ou mudou de lugar.',
+      },
+    ],
+  }),
+})
+
+function NotFoundPage() {
   return (
     <>
       <Header />

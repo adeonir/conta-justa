@@ -10,6 +10,21 @@ import { useMinimumWage, useSetMinimumWage } from '~/stores/expense-store'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
+  head: () => ({
+    meta: [
+      { title: 'Conta Justa - Divisão de Despesas para Casais' },
+      {
+        name: 'description',
+        content:
+          'Calculadora que divide despesas de forma justa entre casais, considerando renda e trabalho doméstico. Descubra quanto cada pessoa deve contribuir.',
+      },
+      { property: 'og:title', content: 'Conta Justa - Divisão de Despesas para Casais' },
+      {
+        property: 'og:description',
+        content: 'Calcule a divisão justa das despesas do casal considerando renda e trabalho doméstico.',
+      },
+    ],
+  }),
   loader: async () => {
     const minimumWage = await getMinimumWage()
     return { minimumWage }

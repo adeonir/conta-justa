@@ -9,6 +9,22 @@ import { useData, useMinimumWage } from '~/stores/expense-store'
 
 export const Route = createFileRoute('/results')({
   component: ResultsPage,
+  head: () => ({
+    meta: [
+      { title: 'Resultados - Conta Justa' },
+      {
+        name: 'description',
+        content:
+          'Veja como dividir as despesas de forma justa entre o casal, com base na renda e no trabalho doméstico.',
+      },
+      { property: 'og:title', content: 'Resultados - Conta Justa' },
+      {
+        property: 'og:description',
+        content:
+          'Veja como dividir as despesas de forma justa entre o casal, com base na renda e no trabalho doméstico.',
+      },
+    ],
+  }),
 })
 
 function ResultsPage() {

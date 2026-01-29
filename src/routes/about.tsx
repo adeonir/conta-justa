@@ -5,6 +5,20 @@ import { Header } from '~/components/layout/header'
 
 export const Route = createFileRoute('/about')({
   component: AboutPage,
+  head: () => ({
+    meta: [
+      { title: 'Sobre - Conta Justa' },
+      {
+        name: 'description',
+        content: 'Saiba mais sobre o Conta Justa, uma calculadora de divisão justa de despesas para casais.',
+      },
+      { property: 'og:title', content: 'Sobre - Conta Justa' },
+      {
+        property: 'og:description',
+        content: 'Saiba mais sobre o Conta Justa, uma calculadora de divisão justa de despesas para casais.',
+      },
+    ],
+  }),
 })
 
 function AboutPage() {

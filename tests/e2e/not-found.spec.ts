@@ -32,6 +32,10 @@ test.describe('404 Not Found Page', () => {
     await expect(page.locator('footer')).toBeVisible()
   })
 
+  test('has custom page title', async ({ page }) => {
+    await expect(page).toHaveTitle(/não encontrada/i)
+  })
+
   test('does not contain forbidden error words', async ({ page }) => {
     const mainText = await page.locator('main').innerText()
     const lowerText = mainText.toLowerCase()
