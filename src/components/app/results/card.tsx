@@ -25,7 +25,7 @@ export function Card() {
           : 'Cada pessoa paga metade das despesas'}
       </p>
 
-      <div className='grid grid-cols-[1fr_1px_1fr] gap-8'>
+      <div className="grid grid-cols-[1fr_1px_1fr] gap-8">
         <PersonDisplay name={nameA} result={activeResult.personA} />
         <div className="w-px bg-border" />
         <PersonDisplay name={nameB} result={activeResult.personB} />

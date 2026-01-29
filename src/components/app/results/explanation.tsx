@@ -11,24 +11,24 @@ export function Explanation() {
 
   return (
     <Card accent={false} className="p-6">
-      <h2 className="mb-6 font-bold text-xl">Como funciona</h2>
+      <h2 className="mb-6 font-bold text-xl">Entenda os modelos</h2>
 
       <div className="flex flex-col gap-6">
         <ExplanationItem
-          title="Divisão proporcional"
-          text="Quem ganha mais, paga mais em valor absoluto, mas ambos comprometem a mesma porcentagem da renda. É considerada justa porque respeita a capacidade de cada um."
+          title="Modelo proporcional"
+          text="Cada pessoa contribui de forma proporcional à própria renda. Quem ganha mais paga mais em valor absoluto, mantendo uma relação direta com a capacidade financeira."
         />
 
         {hasHousework && (
           <ExplanationItem
-            title="Por que incluir trabalho doméstico?"
-            text="Cuidar da casa, cozinhar, limpar e cuidar de filhos é trabalho. Incluir essas horas no cálculo reconhece essa contribuição econômica invisível."
+            title="Trabalho doméstico no cálculo"
+            text="Tarefas domésticas e cuidados com a casa exigem tempo e energia. Ao incluir essas horas, o modelo proporcional reconhece uma contribuição que normalmente não aparece na renda."
           />
         )}
 
         <ExplanationItem
           title="Divisão igual"
-          text="Cada pessoa paga exatamente metade das despesas, independente da renda. Simples, mas pode não ser justo quando há grande diferença de renda."
+          text="Simples e direto: cada pessoa paga metade. Pode ser desequilibrado quando há diferença grande de renda, comprometendo mais o orçamento de quem ganha menos."
         />
       </div>
     </Card>
