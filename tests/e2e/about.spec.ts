@@ -24,9 +24,7 @@ test.describe('About Page', () => {
   })
 
   test('displays housework section with ENEM 2023 quote', async ({ page }) => {
-    await expect(
-      page.getByRole('heading', { name: 'Trabalho doméstico também é trabalho' }),
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Trabalho doméstico também é trabalho' })).toBeVisible()
     await expect(page.getByText('foi tema da redação do ENEM 2023')).toBeVisible()
   })
 
