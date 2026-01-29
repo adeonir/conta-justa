@@ -4,17 +4,24 @@ import { describe, expect, it } from 'vitest'
 import { Hero } from './hero'
 
 describe('Hero', () => {
-  it('renders headline with correct Portuguese text', () => {
-    render(<Hero />)
-
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Compare modelos de divisão justa das contas do casal',
+  it('renders children content', () => {
+    render(
+      <Hero>
+        <h1>Test heading</h1>
+      </Hero>,
     )
+
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Test heading')
   })
 
-  it('renders subheadline', () => {
-    render(<Hero />)
+  it('merges custom className with default sticky classes', () => {
+    const { container } = render(
+      <Hero className="max-md:text-center">
+        <p>Content</p>
+      </Hero>,
+    )
 
-    expect(screen.getByText(/Veja como diferentes formas de dividir despesas/)).toBeInTheDocument()
+    const section = container.querySelector('section')
+    expect(section).toHaveClass('sticky', 'top-42', 'self-start', 'max-md:static', 'max-md:text-center')
   })
 })

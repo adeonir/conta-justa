@@ -15,7 +15,7 @@ export function Summary() {
   const totalHousework = houseworkA + houseworkB
 
   return (
-    <section className="sticky top-42 self-start max-md:static">
+    <>
       <h1 className="mb-8 font-black text-4xl leading-tight tracking-tighter">
         Divisão das despesas
         <br />
@@ -64,6 +64,6 @@ export function Summary() {
         Esta ferramenta ajuda a visualizar diferentes modelos de divisão de despesas. Os valores servem como base para
         conversa e ajuste entre as pessoas envolvidas.
       </p>
-    </section>
+    </>
   )
 }

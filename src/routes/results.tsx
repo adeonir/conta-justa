@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 
+import { Hero } from '~/components/app/hero'
 import { Actions, Card, Comparison, Explanation, Summary } from '~/components/app/results'
 import { Footer, Header, PageLayout } from '~/components/layout'
 import { useTrackEvent } from '~/hooks/use-track-event'
@@ -57,7 +58,9 @@ function ResultsPage() {
     <>
       <Header />
       <PageLayout>
-        <Summary />
+        <Hero>
+          <Summary />
+        </Hero>
 
         <div className="flex flex-col gap-8">
           <Card />
