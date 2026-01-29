@@ -12,6 +12,7 @@ import { useData, useMinimumWage, useSelectedMethod, useSetSelectedMethod } from
 
 interface Results {
   proportional: CalculationResult
+  proportionalBaseline: CalculationResult | null
   equal: CalculationResult
   recommendedMethod: 'proportional'
   hasHousework: boolean
@@ -42,6 +43,7 @@ export function useResults(): Results | null {
     }
 
     const hasHousework = data.houseworkA > 0 || data.houseworkB > 0
+    const proportionalBaseline = hasHousework ? calculateProportional(input) : null
 
     // Proporcional auto-uses adjusted calculation when housework data exists
     const proportionalResult = hasHousework ? calculateAdjusted(input) : calculateProportional(input)
@@ -59,6 +61,7 @@ export function useResults(): Results | null {
 
     return {
       proportional,
+      proportionalBaseline,
       equal,
       recommendedMethod,
       hasHousework,

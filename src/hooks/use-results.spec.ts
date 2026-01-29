@@ -104,6 +104,12 @@ describe('useResults', () => {
       expect(result.current?.hasHousework).toBe(false)
     })
 
+    it('returns null proportionalBaseline when no housework', () => {
+      const { result } = renderHook(() => useResults())
+
+      expect(result.current?.proportionalBaseline).toBeNull()
+    })
+
     it('always recommends proportional', () => {
       const { result } = renderHook(() => useResults())
 
@@ -187,6 +193,23 @@ describe('useResults', () => {
       // Simple proportional: A=125000, B=75000
       // Adjusted should differ based on housework hours
       expect(result.current?.proportional.personA.contribution).not.toBe(125000)
+    })
+
+    it('returns proportionalBaseline with pure income-based calculation', () => {
+      const { result } = renderHook(() => useResults())
+
+      expect(result.current?.proportionalBaseline).not.toBeNull()
+      // Pure proportional: A=5000/(5000+3000)*2000=125000, B=75000
+      expect(result.current?.proportionalBaseline?.personA.contribution).toBe(125000)
+      expect(result.current?.proportionalBaseline?.personB.contribution).toBe(75000)
+    })
+
+    it('proportionalBaseline differs from adjusted proportional result', () => {
+      const { result } = renderHook(() => useResults())
+
+      expect(result.current?.proportional.personA.contribution).not.toBe(
+        result.current?.proportionalBaseline?.personA.contribution,
+      )
     })
   })
 
