@@ -14,6 +14,7 @@ export interface PersonResult {
   expensePercentage: number // Percentage of total expenses (0-100, 2 decimals)
   incomePercentage: number // Percentage of income committed (0-100, 2 decimals)
   remaining: number // Monthly remaining after contribution in cents
+  houseworkValue: number // Monthly housework monetary value in cents
 }
 
 export interface CalculationResult {
@@ -37,12 +38,18 @@ export function roundToTwoDecimals(value: number) {
   return Math.round(value * 100) / 100
 }
 
-export function buildPersonResult(contribution: number, income: number, expenses: number): PersonResult {
+export function buildPersonResult(
+  contribution: number,
+  income: number,
+  expenses: number,
+  houseworkValue = 0,
+): PersonResult {
   return {
     contribution,
     expensePercentage: roundToTwoDecimals(expenses > 0 ? (contribution / expenses) * 100 : 0),
     incomePercentage: roundToTwoDecimals(income > 0 ? (contribution / income) * 100 : 0),
     remaining: income - contribution,
+    houseworkValue,
   }
 }
 
@@ -93,8 +100,8 @@ export function calculateAdjusted(input: CalculationInput): CalculationResult {
   if (totalAdjustedIncome === 0) {
     const halfExpenses = Math.round(expenses / 2)
     return {
-      personA: buildPersonResult(halfExpenses, incomeA, expenses),
-      personB: buildPersonResult(expenses - halfExpenses, incomeB, expenses),
+      personA: buildPersonResult(halfExpenses, incomeA, expenses, houseworkValueA),
+      personB: buildPersonResult(expenses - halfExpenses, incomeB, expenses, houseworkValueB),
       method: 'proportional',
     }
   }
@@ -103,8 +110,8 @@ export function calculateAdjusted(input: CalculationInput): CalculationResult {
   const contributionB = expenses - contributionA
 
   return {
-    personA: buildPersonResult(contributionA, incomeA, expenses),
-    personB: buildPersonResult(contributionB, incomeB, expenses),
+    personA: buildPersonResult(contributionA, incomeA, expenses, houseworkValueA),
+    personB: buildPersonResult(contributionB, incomeB, expenses, houseworkValueB),
     method: 'proportional',
   }
 }

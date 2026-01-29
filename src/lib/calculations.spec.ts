@@ -126,6 +126,18 @@ describe('helper functions', () => {
 
       expect(result.remaining).toBe(-50000)
     })
+
+    it('defaults houseworkValue to 0 when not provided', () => {
+      const result = buildPersonResult(125000, 500000, 200000)
+
+      expect(result.houseworkValue).toBe(0)
+    })
+
+    it('includes houseworkValue when provided', () => {
+      const result = buildPersonResult(125000, 500000, 200000, 14736)
+
+      expect(result.houseworkValue).toBe(14736)
+    })
   })
 })
 
@@ -190,6 +202,13 @@ describe('calculateProportional', () => {
     expect(result.personA.incomePercentage).toBe(25) // 125000/500000 * 100
     expect(result.personB.incomePercentage).toBe(25) // 75000/300000 * 100
   })
+
+  it('returns houseworkValue of 0 for both persons', () => {
+    const result = calculateProportional(baseInput)
+
+    expect(result.personA.houseworkValue).toBe(0)
+    expect(result.personB.houseworkValue).toBe(0)
+  })
 })
 
 describe('calculateAdjusted', () => {
@@ -249,6 +268,27 @@ describe('calculateAdjusted', () => {
     // remaining is based on actual income, not adjusted
     expect(result.personA.remaining).toBe(baseInput.incomeA - result.personA.contribution)
     expect(result.personB.remaining).toBe(baseInput.incomeB - result.personB.contribution)
+  })
+
+  it('includes houseworkValue in person results', () => {
+    const result = calculateAdjusted(baseInput)
+    // hourlyRate: 162100 / 220 = 736.818...
+    // houseworkValueA: round(5 * 4 * 736.818...) = 14736
+    // houseworkValueB: round(15 * 4 * 736.818...) = 44209
+    const hourlyRate = 162100 / 220
+    const expectedA = Math.round(5 * 4 * hourlyRate)
+    const expectedB = Math.round(15 * 4 * hourlyRate)
+
+    expect(result.personA.houseworkValue).toBe(expectedA)
+    expect(result.personB.houseworkValue).toBe(expectedB)
+  })
+
+  it('returns houseworkValue of 0 when person has no housework hours', () => {
+    const input = { ...baseInput, houseworkA: 0 }
+    const result = calculateAdjusted(input)
+
+    expect(result.personA.houseworkValue).toBe(0)
+    expect(result.personB.houseworkValue).toBeGreaterThan(0)
   })
 })
 
@@ -319,5 +359,39 @@ describe('calculateEqual', () => {
     expect(result.personB.contribution).toBe(100000)
     expect(result.personA.remaining).toBe(-100000)
     expect(result.personB.remaining).toBe(-100000)
+  })
+
+  it('returns houseworkValue of 0 for both persons', () => {
+    const result = calculateEqual(baseInput)
+
+    expect(result.personA.houseworkValue).toBe(0)
+    expect(result.personB.houseworkValue).toBe(0)
+  })
+})
+
+describe('proportional baseline comparison', () => {
+  const baseInput: CalculationInput = {
+    incomeA: 500000,
+    incomeB: 300000,
+    expenses: 200000,
+    houseworkA: 5,
+    houseworkB: 15,
+    minimumWage: 162100,
+  }
+
+  it('produces different contributions when housework differs between persons', () => {
+    const proportional = calculateProportional(baseInput)
+    const adjusted = calculateAdjusted(baseInput)
+
+    expect(adjusted.personA.contribution).not.toBe(proportional.personA.contribution)
+    expect(adjusted.personB.contribution).not.toBe(proportional.personB.contribution)
+  })
+
+  it('produces different expense percentages between baseline and adjusted', () => {
+    const proportional = calculateProportional(baseInput)
+    const adjusted = calculateAdjusted(baseInput)
+
+    expect(adjusted.personA.expensePercentage).not.toBe(proportional.personA.expensePercentage)
+    expect(adjusted.personB.expensePercentage).not.toBe(proportional.personB.expensePercentage)
   })
 })
