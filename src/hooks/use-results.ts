@@ -8,7 +8,13 @@ import {
   calculateEqual,
   calculateProportional,
 } from '~/lib/calculations'
-import { useData, useMinimumWage, useSelectedMethod, useSetSelectedMethod } from '~/stores/expense-store'
+import {
+  useData,
+  useIncludeHousework,
+  useMinimumWage,
+  useSelectedMethod,
+  useSetSelectedMethod,
+} from '~/stores/expense-store'
 
 interface Results {
   proportional: CalculationResult
@@ -19,6 +25,7 @@ interface Results {
   activeMethod: MethodType
   activeResult: CalculationResult
   isRecommended: boolean
+  showHousework: boolean
   setSelectedMethod: (method: MethodType | null) => void
 }
 
@@ -27,6 +34,7 @@ export function useResults(): Results | null {
   const minimumWage = useMinimumWage()
   const selectedMethod = useSelectedMethod()
   const setSelectedMethod = useSetSelectedMethod()
+  const includeHousework = useIncludeHousework()
 
   return useMemo(() => {
     if (!data || !minimumWage) {
@@ -56,8 +64,15 @@ export function useResults(): Results | null {
 
     const recommendedMethod = 'proportional' as const
     const activeMethod = selectedMethod ?? recommendedMethod
+    const isRecommended = activeMethod === recommendedMethod
+    const showHousework = hasHousework && isRecommended
 
-    const activeResult = activeMethod === 'equal' ? equal : proportional
+    const activeResult =
+      activeMethod === 'equal'
+        ? equal
+        : showHousework && !includeHousework
+          ? (proportionalBaseline ?? proportional)
+          : proportional
 
     return {
       proportional,
@@ -67,8 +82,9 @@ export function useResults(): Results | null {
       hasHousework,
       activeMethod,
       activeResult,
-      isRecommended: activeMethod === recommendedMethod,
+      isRecommended,
+      showHousework,
       setSelectedMethod,
     }
-  }, [data, minimumWage, selectedMethod, setSelectedMethod])
+  }, [data, minimumWage, selectedMethod, setSelectedMethod, includeHousework])
 }

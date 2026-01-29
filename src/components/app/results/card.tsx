@@ -1,24 +1,22 @@
-import { Card as CardUI } from '~/components/ui'
+import { Card as CardUI, Label, Switch } from '~/components/ui'
 import { useResults } from '~/hooks/use-results'
-import { useData } from '~/stores/expense-store'
+import { useData, useIncludeHousework, useSetIncludeHousework } from '~/stores/expense-store'
 import { PersonDisplay } from './person-display'
 
 export function Card() {
   const results = useResults()
   const data = useData()
+  const includeHousework = useIncludeHousework()
+  const setIncludeHousework = useSetIncludeHousework()
 
   if (!results || !data) return null
 
-  const { activeResult, isRecommended, hasHousework, proportionalBaseline } = results
+  const { activeResult, isRecommended, showHousework } = results
   const nameA = data.nameA || 'Pessoa A'
   const nameB = data.nameB || 'Pessoa B'
 
-  const showHousework = hasHousework && isRecommended
-  const baselineA = showHousework ? (proportionalBaseline?.personA ?? null) : null
-  const baselineB = showHousework ? (proportionalBaseline?.personB ?? null) : null
-
   return (
-    <CardUI className="min-h-124">
+    <CardUI>
       <p className="mb-2 font-medium text-primary text-sm uppercase tracking-wider">
         {isRecommended ? 'Modelo recomendado' : 'Modelo selecionado'}
       </p>
@@ -30,9 +28,21 @@ export function Card() {
       </p>
 
       <div className="grid grid-cols-[1fr_1px_1fr] gap-8">
-        <PersonDisplay name={nameA} result={activeResult.personA} baseline={baselineA} hasHousework={showHousework} />
+        <PersonDisplay name={nameA} result={activeResult.personA} />
         <div className="w-px bg-border" />
-        <PersonDisplay name={nameB} result={activeResult.personB} baseline={baselineB} hasHousework={showHousework} />
+        <PersonDisplay name={nameB} result={activeResult.personB} />
+      </div>
+
+      <div className="flex items-center gap-3 pt-8">
+        <Switch
+          id="include-housework"
+          checked={includeHousework}
+          onCheckedChange={setIncludeHousework}
+          disabled={!showHousework}
+        />
+        <Label htmlFor="include-housework" className="mb-0 cursor-pointer font-normal text-sm">
+          Incluir trabalho doméstico
+        </Label>
       </div>
     </CardUI>
   )

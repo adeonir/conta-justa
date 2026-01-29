@@ -446,35 +446,34 @@ test.describe('Results Page - Responsive Layout', () => {
   })
 })
 
-test.describe('Results Page - Housework Detail', () => {
-  test('shows housework monetary value per person when housework is provided', async ({ page }) => {
-    await fillFormAndSubmit(page, { houseworkA: '15', houseworkB: '5' })
-
-    const mainCard = page.locator('[data-slot="card"]').first()
-    const houseworkRows = mainCard.getByText(/\bem trabalho doméstico/)
-    await expect(houseworkRows).toHaveCount(2)
-  })
-
-  test('shows baseline expense percentage comparison when housework is provided', async ({ page }) => {
-    await fillFormAndSubmit(page, { houseworkA: '15', houseworkB: '5' })
-
-    const mainCard = page.locator('[data-slot="card"]').first()
-    const baselineRows = mainCard.getByText('sem trabalho doméstico')
-    await expect(baselineRows).toHaveCount(2)
-  })
-
-  test('does not show housework detail when no housework hours', async ({ page }) => {
+test.describe('Results Page - Housework Toggle', () => {
+  test('switch is always visible', async ({ page }) => {
     await fillFormAndSubmit(page)
 
     const mainCard = page.locator('[data-slot="card"]').first()
-    await expect(mainCard.getByText(/\bem trabalho doméstico/)).not.toBeVisible()
-    await expect(mainCard.getByText('sem trabalho doméstico')).not.toBeVisible()
+    await expect(mainCard.getByRole('switch')).toBeVisible()
+    await expect(mainCard.getByText('Incluir trabalho doméstico')).toBeVisible()
   })
 
-  test('does not show housework detail when equal method is selected', async ({ page }) => {
+  test('switch is enabled and checked when housework exists and proportional method active', async ({ page }) => {
     await fillFormAndSubmit(page, { houseworkA: '15', houseworkB: '5' })
 
-    // Switch to equal method
+    const mainCard = page.locator('[data-slot="card"]').first()
+    const toggle = mainCard.getByRole('switch')
+    await expect(toggle).toBeEnabled()
+    await expect(toggle).toHaveAttribute('aria-checked', 'true')
+  })
+
+  test('switch is disabled when no housework hours', async ({ page }) => {
+    await fillFormAndSubmit(page)
+
+    const mainCard = page.locator('[data-slot="card"]').first()
+    await expect(mainCard.getByRole('switch')).toBeDisabled()
+  })
+
+  test('switch is disabled when equal method is selected', async ({ page }) => {
+    await fillFormAndSubmit(page, { houseworkA: '15', houseworkB: '5' })
+
     const comparisonSection = page
       .locator('section')
       .filter({ has: page.locator('h2', { hasText: 'Modelos de divisão' }) })
@@ -482,31 +481,10 @@ test.describe('Results Page - Housework Detail', () => {
     await equalCard.click()
 
     const mainCard = page.locator('[data-slot="card"]').first()
-    await expect(mainCard.getByText(/\bem trabalho doméstico/)).not.toBeVisible()
-    await expect(mainCard.getByText('sem trabalho doméstico')).not.toBeVisible()
+    await expect(mainCard.getByRole('switch')).toBeDisabled()
   })
 
-  test('housework detail reappears when switching back to proportional', async ({ page }) => {
-    await fillFormAndSubmit(page, { houseworkA: '15', houseworkB: '5' })
-
-    const mainCard = page.locator('[data-slot="card"]').first()
-    const comparisonSection = page
-      .locator('section')
-      .filter({ has: page.locator('h2', { hasText: 'Modelos de divisão' }) })
-
-    // Switch to equal
-    const equalCard = comparisonSection.locator('[data-slot="card"]').filter({ hasText: 'Divisão igual' })
-    await equalCard.click()
-    await expect(mainCard.getByText(/\bem trabalho doméstico/)).not.toBeVisible()
-
-    // Switch back to proportional
-    const proportionalCard = comparisonSection.locator('[data-slot="card"]').filter({ hasText: 'Proporcional' })
-    await proportionalCard.click()
-    const houseworkRows = mainCard.getByText(/\bem trabalho doméstico/)
-    await expect(houseworkRows).toHaveCount(2)
-  })
-
-  test('displays correct housework values for known inputs', async ({ page }) => {
+  test('toggle OFF changes contribution values to baseline (proportional without housework)', async ({ page }) => {
     await fillFormAndSubmit(page, {
       incomeA: '5000',
       incomeB: '3000',
@@ -517,17 +495,62 @@ test.describe('Results Page - Housework Detail', () => {
 
     const mainCard = page.locator('[data-slot="card"]').first()
 
-    // Both persons should show housework value rows
-    const houseworkRows = mainCard.getByText(/\bem trabalho doméstico/)
-    await expect(houseworkRows).toHaveCount(2)
+    // With housework ON (default), percentages are adjusted (not 62.50%/37.50%)
+    await expect(mainCard.getByText('62.50%')).not.toBeVisible()
+    await expect(mainCard.getByText('37.50%')).not.toBeVisible()
 
-    // Both persons should show baseline comparison
-    const baselineRows = mainCard.getByText('sem trabalho doméstico')
-    await expect(baselineRows).toHaveCount(2)
+    // Toggle OFF
+    const toggle = mainCard.getByRole('switch')
+    await toggle.click()
+    await expect(toggle).toHaveAttribute('aria-checked', 'false')
 
-    // The baseline percentages should be the pure proportional ones: 62.50% and 37.50%
-    await expect(mainCard.getByText('(62.50%')).toBeVisible()
-    await expect(mainCard.getByText('(37.50%')).toBeVisible()
+    // Without housework, baseline proportional is 62.50%/37.50%
+    await expect(mainCard.getByText('62.50%')).toBeVisible()
+    await expect(mainCard.getByText('37.50%')).toBeVisible()
+  })
+
+  test('toggle ON restores adjusted values', async ({ page }) => {
+    await fillFormAndSubmit(page, {
+      incomeA: '5000',
+      incomeB: '3000',
+      expenses: '2000',
+      houseworkA: '15',
+      houseworkB: '5',
+    })
+
+    const mainCard = page.locator('[data-slot="card"]').first()
+    const toggle = mainCard.getByRole('switch')
+
+    // Toggle OFF
+    await toggle.click()
+    await expect(mainCard.getByText('62.50%')).toBeVisible()
+
+    // Toggle back ON
+    await toggle.click()
+    await expect(toggle).toHaveAttribute('aria-checked', 'true')
+
+    // Adjusted percentages should be back (not 62.50%/37.50%)
+    await expect(mainCard.getByText('62.50%')).not.toBeVisible()
+    await expect(mainCard.getByText('37.50%')).not.toBeVisible()
+  })
+
+  test('switch re-enables when switching back to proportional', async ({ page }) => {
+    await fillFormAndSubmit(page, { houseworkA: '15', houseworkB: '5' })
+
+    const mainCard = page.locator('[data-slot="card"]').first()
+    const comparisonSection = page
+      .locator('section')
+      .filter({ has: page.locator('h2', { hasText: 'Modelos de divisão' }) })
+
+    // Switch to equal - toggle should be disabled
+    const equalCard = comparisonSection.locator('[data-slot="card"]').filter({ hasText: 'Divisão igual' })
+    await equalCard.click()
+    await expect(mainCard.getByRole('switch')).toBeDisabled()
+
+    // Switch back to proportional - toggle should be enabled
+    const proportionalCard = comparisonSection.locator('[data-slot="card"]').filter({ hasText: 'Proporcional' })
+    await proportionalCard.click()
+    await expect(mainCard.getByRole('switch')).toBeEnabled()
   })
 
   test('housework values match calculation formula (minimumWage / 220 * weeklyHours * 4)', async ({ page }) => {
@@ -553,25 +576,22 @@ test.describe('Results Page - Housework Detail', () => {
     const expectedA = Math.round(15 * 4 * hourlyRate)
     const expectedB = Math.round(5 * 4 * hourlyRate)
 
-    // Format using Intl.NumberFormat to match the app's formatCurrency
-    const formatBRL = (cents: number) =>
-      new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100)
-
-    const mainCard = page.locator('[data-slot="card"]').first()
-
-    // Verify housework monetary values match the formula
-    await expect(mainCard.getByText(formatBRL(expectedA)).first()).toBeVisible()
-    await expect(mainCard.getByText(formatBRL(expectedB)).first()).toBeVisible()
-
-    // Verify adjusted percentages differ from baseline (62.50% / 37.50%)
+    // Verify adjusted percentages with housework ON (default)
     const adjustedIncomeA = 500000 + expectedA
     const adjustedIncomeB = 300000 + expectedB
     const totalAdjusted = adjustedIncomeA + adjustedIncomeB
-    const expectedPercentA = Math.round(((adjustedIncomeA / totalAdjusted) * 100) * 100) / 100
-    const expectedPercentB = Math.round(((adjustedIncomeB / totalAdjusted) * 100) * 100) / 100
+    const expectedPercentA = Math.round((adjustedIncomeA / totalAdjusted) * 100 * 100) / 100
+    const expectedPercentB = Math.round((adjustedIncomeB / totalAdjusted) * 100 * 100) / 100
 
+    const mainCard = page.locator('[data-slot="card"]').first()
     await expect(mainCard.getByText(`${expectedPercentA.toFixed(2)}%`).first()).toBeVisible()
     await expect(mainCard.getByText(`${expectedPercentB.toFixed(2)}%`).first()).toBeVisible()
+
+    // Toggle OFF and verify baseline percentages (62.50% / 37.50%)
+    const toggle = mainCard.getByRole('switch')
+    await toggle.click()
+    await expect(mainCard.getByText('62.50%')).toBeVisible()
+    await expect(mainCard.getByText('37.50%')).toBeVisible()
   })
 })
 

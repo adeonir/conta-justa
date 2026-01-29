@@ -19,16 +19,20 @@ let mockStoreState = {
   selectedMethod: null as 'proportional' | 'equal' | null,
 }
 
+let mockIncludeHousework = true
+
 vi.mock('~/stores/expense-store', () => ({
   useData: () => mockStoreState.data,
   useMinimumWage: () => mockStoreState.minimumWage,
   useSelectedMethod: () => mockStoreState.selectedMethod,
   useSetSelectedMethod: () => mockSetSelectedMethod,
+  useIncludeHousework: () => mockIncludeHousework,
 }))
 
 describe('useResults', () => {
   beforeEach(() => {
     mockSetSelectedMethod.mockClear()
+    mockIncludeHousework = true
     mockStoreState = {
       data: null,
       minimumWage: null,
