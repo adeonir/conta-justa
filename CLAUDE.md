@@ -380,7 +380,7 @@ createServerFn().handler(async () => {
 // Client code
 import.meta.env.DEV; // true in development
 import.meta.env.PROD; // true in production
-import.meta.env.VITE_POSTHOG_KEY; // Public key only
+import.meta.env.VITE_PUBLIC_POSTHOG_KEY; // Public key only
 ```
 
 ## Testing

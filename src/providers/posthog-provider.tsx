@@ -1,8 +1,8 @@
 import posthog from 'posthog-js'
 import { type ReactNode, useEffect } from 'react'
 
-const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
-const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST
+const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY
+const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST
 const IS_PRODUCTION = import.meta.env.PROD
 
 export function PostHogProvider({ children }: { children: ReactNode }) {
@@ -13,6 +13,7 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
 
     posthog.init(POSTHOG_KEY, {
       api_host: POSTHOG_HOST || 'https://us.i.posthog.com',
+      defaults: '2025-11-30',
       capture_pageview: true,
       capture_pageleave: true,
       autocapture: true,
