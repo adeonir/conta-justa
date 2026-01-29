@@ -63,11 +63,11 @@ test.describe('Adjust Values Flow', () => {
     await expect(adjustButton).toBeVisible()
   })
 
-  test('"Ajustar valores" button appears beside "Fazer novo cálculo"', async ({ page }) => {
+  test('"Ajustar valores" button appears beside "Novo cálculo"', async ({ page }) => {
     await fillFormAndSubmit(page)
 
     const adjustButton = page.getByRole('button', { name: 'Ajustar valores' })
-    const newCalcButton = page.getByRole('button', { name: 'Fazer novo cálculo' })
+    const newCalcButton = page.getByRole('button', { name: 'Novo cálculo' })
 
     await expect(adjustButton).toBeVisible()
     await expect(newCalcButton).toBeVisible()
@@ -153,10 +153,10 @@ test.describe('Adjust Values Flow', () => {
     await expect(page.getByText('R$ 9.000,00')).toBeVisible()
   })
 
-  test('"Fazer novo cálculo" still clears store and shows empty form', async ({ page }) => {
+  test('"Novo cálculo" still clears store and shows empty form', async ({ page }) => {
     await fillFormAndSubmit(page, { nameA: 'Maria', nameB: 'Joao' })
 
-    await page.getByRole('button', { name: 'Fazer novo cálculo' }).click()
+    await page.getByRole('button', { name: 'Novo cálculo' }).click()
     await expect(page).toHaveURL('/')
 
     // Form should be empty

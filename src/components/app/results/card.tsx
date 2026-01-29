@@ -16,7 +16,7 @@ export function Card() {
   return (
     <CardUI>
       <p className="mb-2 font-medium text-primary text-sm uppercase tracking-wider">
-        {isRecommended ? 'Modelo em destaque' : 'Modelo selecionado'}
+        {isRecommended ? 'Modelo recomendado' : 'Modelo selecionado'}
       </p>
       <h2 className="mb-2 font-bold text-2xl">{isRecommended ? 'Proporcional à renda' : 'Divisão igual'}</h2>
       <p className="mb-4 min-h-10 text-muted-foreground text-sm">
