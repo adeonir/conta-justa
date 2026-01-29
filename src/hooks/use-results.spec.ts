@@ -143,30 +143,6 @@ describe('useResults', () => {
         houseworkB: 0,
       }
     })
-
-    it('returns names from data', () => {
-      const { result } = renderHook(() => useResults())
-
-      expect(result.current?.names.nameA).toBe('Ana')
-      expect(result.current?.names.nameB).toBe('Bob')
-    })
-
-    it('returns default names when data names are empty', () => {
-      mockStoreState.data = {
-        nameA: '',
-        incomeA: 500000,
-        nameB: '',
-        incomeB: 300000,
-        expenses: 200000,
-        houseworkA: 0,
-        houseworkB: 0,
-      }
-
-      const { result } = renderHook(() => useResults())
-
-      expect(result.current?.names.nameA).toBe('Pessoa A')
-      expect(result.current?.names.nameB).toBe('Pessoa B')
-    })
   })
 
   describe('when housework is present', () => {

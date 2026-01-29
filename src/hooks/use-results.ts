@@ -10,13 +10,7 @@ import {
 } from '~/lib/calculations'
 import { useData, useMinimumWage, useSelectedMethod, useSetSelectedMethod } from '~/stores/expense-store'
 
-interface Names {
-  nameA: string
-  nameB: string
-}
-
 interface Results {
-  names: Names
   proportional: CalculationResult
   equal: CalculationResult
   recommendedMethod: 'proportional'
@@ -64,10 +58,6 @@ export function useResults(): Results | null {
     const activeResult = activeMethod === 'equal' ? equal : proportional
 
     return {
-      names: {
-        nameA: data.nameA || 'Pessoa A',
-        nameB: data.nameB || 'Pessoa B',
-      },
       proportional,
       equal,
       recommendedMethod,
