@@ -1,9 +1,20 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-
 import { Info } from 'lucide-react'
+import { useState } from 'react'
 
 import { Footer, Header } from '~/components/layout'
-import { Button, Card, Collapsible, Description, InfoBox, Input, Label, ThemeToggle, Title } from '~/components/ui'
+import {
+  Button,
+  Card,
+  Collapsible,
+  Description,
+  InfoBox,
+  Input,
+  Label,
+  Switch,
+  ThemeToggle,
+  Title,
+} from '~/components/ui'
 import { Tooltip } from '~/components/ui/tooltip'
 import { useTheme } from '~/providers/theme-provider'
 
@@ -18,6 +29,8 @@ export const Route = createFileRoute('/dev')({
 
 function DevPage() {
   const { theme, resolvedTheme, setTheme } = useTheme()
+  const [switchOn, setSwitchOn] = useState(false)
+  const [switchChecked, setSwitchChecked] = useState(true)
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -149,6 +162,33 @@ function DevPage() {
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Full Width</h3>
               <Button fullWidth>Full Width Button</Button>
+            </div>
+          </div>
+        </Section>
+
+        {/* Switch Section */}
+        <Section title="Switch">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">States</h3>
+              <div className="flex flex-wrap items-center gap-8">
+                <div className="flex items-center gap-3">
+                  <Switch checked={switchOn} onCheckedChange={setSwitchOn} id="switch-demo" />
+                  <Label htmlFor="switch-demo">{switchOn ? 'On' : 'Off'}</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Switch checked={switchChecked} onCheckedChange={setSwitchChecked} id="switch-checked" />
+                  <Label htmlFor="switch-checked">{switchChecked ? 'Checked' : 'Unchecked'}</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Switch disabled id="switch-disabled" />
+                  <Label htmlFor="switch-disabled">Disabled</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Switch checked disabled id="switch-disabled-checked" />
+                  <Label htmlFor="switch-disabled-checked">Disabled checked</Label>
+                </div>
+              </div>
             </div>
           </div>
         </Section>
