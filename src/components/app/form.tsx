@@ -35,6 +35,13 @@ export function Form() {
     onSubmit: ({ value }) => handleSubmit(value),
   })
 
+  const handleHouseworkToggle = (open: boolean) => {
+    if (!open) {
+      form.setFieldValue('houseworkA', 0)
+      form.setFieldValue('houseworkB', 0)
+    }
+  }
+
   return (
     <Card>
       <form
@@ -87,6 +94,7 @@ export function Form() {
             trigger="Considerar trabalho doméstico no cálculo"
             description="Cuidar da casa também é trabalho. Informe as horas semanais dedicadas a tarefas domésticas — muitas vezes invisíveis e não remuneradas."
             defaultOpen={hasHouseworkData}
+            onOpenChange={handleHouseworkToggle}
           >
             <form.Subscribe selector={(state) => [state.values.nameA, state.values.nameB]}>
               {([nameA, nameB]) => (

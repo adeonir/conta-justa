@@ -118,6 +118,20 @@ test.describe('Housework Section', () => {
 
     await expect(page.getByText(/salário mínimo\/hora/)).toBeVisible()
   })
+
+  test('closing and reopening collapsible clears housework fields', async ({ page }) => {
+    const trigger = page.getByText('Considerar trabalho doméstico no cálculo')
+    await trigger.click()
+
+    await page.locator('#houseworkA').fill('10')
+    await page.locator('#houseworkB').fill('5')
+
+    await trigger.click()
+    await trigger.click()
+
+    await expect(page.locator('#houseworkA')).toHaveValue('0')
+    await expect(page.locator('#houseworkB')).toHaveValue('0')
+  })
 })
 
 test.describe('Responsive Layout', () => {

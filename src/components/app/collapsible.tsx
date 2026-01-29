@@ -7,11 +7,12 @@ interface CollapsibleProps {
   description?: string
   defaultOpen?: boolean
   children: ReactNode
+  onOpenChange?: (open: boolean) => void
 }
 
-export function Collapsible({ trigger, description, defaultOpen = false, children }: CollapsibleProps) {
+export function Collapsible({ trigger, description, defaultOpen = false, onOpenChange, children }: CollapsibleProps) {
   return (
-    <CollapsibleUI.Root defaultOpen={defaultOpen}>
+    <CollapsibleUI.Root defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <CollapsibleUI.Trigger>{trigger}</CollapsibleUI.Trigger>
       <CollapsibleUI.Content>
         {description && <CollapsibleUI.Description>{description}</CollapsibleUI.Description>}
