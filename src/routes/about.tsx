@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, Calculator, Equal, ExternalLink, Quote, Scale } from 'lucide-react'
+import { Calculator, Equal, ExternalLink, Quote, Scale } from 'lucide-react'
 
 import { Hero } from '~/components/app/hero'
 import { Footer, Header, PageLayout } from '~/components/layout'
@@ -184,7 +184,6 @@ function AboutPage() {
             <p className="mb-8 text-muted-foreground leading-relaxed">Descubra a divisão justa para vocês</p>
             <Link to="/" className={buttonVariants({ variant: 'primary', size: 'lg' })}>
               Ir para calculadora
-              <ArrowRight className="size-5" />
             </Link>
           </section>
         </div>
