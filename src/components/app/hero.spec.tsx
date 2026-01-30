@@ -22,6 +22,6 @@ describe('Hero', () => {
     )
 
     const section = container.querySelector('section')
-    expect(section).toHaveClass('sticky', 'top-42', 'self-start', 'max-md:static', 'max-md:text-center')
+    expect(section).toHaveClass('sticky', 'top-42', 'self-start', 'max-lg:static', 'max-md:text-center')
   })
 })

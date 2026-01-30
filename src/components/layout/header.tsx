@@ -13,7 +13,7 @@ export function Header({ className, ...props }: HeaderProps) {
     <header
       data-slot="header"
       className={cn(
-        'sticky top-0 z-100 border-border border-b bg-background/85 px-6 py-5 backdrop-blur-md max-md:px-4 max-md:py-3',
+        'sticky top-0 z-100 border-border border-b bg-background/50 px-6 py-5 backdrop-blur-md max-md:px-4 max-md:py-3',
         className,
       )}
       {...props}
