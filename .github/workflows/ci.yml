@@ -7,10 +7,6 @@ on:
     branches: ["*"]
   workflow_call:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   lint:
     name: Lint
@@ -40,6 +36,7 @@ jobs:
           cache: "pnpm"
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm tsr generate
       - run: pnpm typecheck
 
   test:
