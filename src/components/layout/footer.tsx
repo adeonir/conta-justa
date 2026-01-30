@@ -40,7 +40,7 @@ function Logo() {
         'flex items-center gap-1.5 rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
       )}
     >
-      <span className="font-bold text-[13px] tracking-tight">Conta Justa</span>
+      <span className="whitespace-nowrap font-bold text-sm tracking-tight">Conta Justa</span>
       <span className="mt-0.5 size-1.5 rounded-full bg-primary" />
     </Link>
   )
