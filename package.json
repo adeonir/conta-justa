@@ -14,8 +14,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "lint": "biome check --write .",
-    "typecheck": "tsc --noEmit",
-    "prepare": "lefthook install"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@tailwindcss/vite": "4.1.18",
