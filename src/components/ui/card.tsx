@@ -11,7 +11,7 @@ export function Card({ className, accent = true, children, ...props }: CardProps
     <div
       data-slot="card"
       className={cn(
-        'relative rounded-2xl border border-border bg-card p-10',
+        'relative rounded-2xl border border-border bg-card p-10 max-md:p-6',
         accent && [
           'before:absolute before:top-0 before:left-1/2 before:h-0.75 before:w-36 before:-translate-x-1/2',
           'before:rounded-b-sm before:bg-primary',
