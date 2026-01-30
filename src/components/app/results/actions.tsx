@@ -18,12 +18,12 @@ export function Actions() {
   }
 
   return (
-    <Card accent={false} className="p-6">
-      <div className="flex gap-4">
-        <Button onClick={() => handleNavigation(false)} variant="secondary" className="flex-1">
+    <Card accent={false} className="p-6 max-md:p-4">
+      <div className="flex gap-4 max-md:flex-col">
+        <Button onClick={() => handleNavigation(false)} variant="secondary" className="w-full">
           Ajustar valores
         </Button>
-        <Button onClick={() => handleNavigation(true)} className="flex-1">
+        <Button onClick={() => handleNavigation(true)} className="w-full">
           Novo cálculo
         </Button>
       </div>

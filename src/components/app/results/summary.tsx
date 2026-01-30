@@ -31,8 +31,8 @@ export function Summary() {
         </span>
       </h1>
 
-      <dl className="space-y-4">
-        <div className="flex items-center justify-between border-border border-b pb-4">
+      <dl className="space-y-4 max-xs:space-y-2">
+        <div className="flex items-center justify-between gap-4 border-border border-b pb-4">
           <dt className="flex items-center gap-1.5 text-muted-foreground">
             Renda total do casal
             <Tooltip
