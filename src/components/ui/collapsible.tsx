@@ -71,7 +71,7 @@ function CollapsibleTrigger({ icon = 'plus', className, children, ...props }: Co
       aria-controls={contentId}
       onClick={toggle}
       className={cn(
-        'flex cursor-pointer items-center gap-3 bg-transparent p-0 font-bold text-primary text-sm uppercase tracking-wide',
+        'flex cursor-pointer items-center gap-2 bg-transparent p-0 text-left font-bold text-primary text-sm uppercase tracking-wide',
         'rounded-sm transition-colors hover:text-primary/80',
         'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
         className,
