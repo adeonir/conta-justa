@@ -2,6 +2,8 @@
 
 Calculadora de divisão justa de despesas para casais, considerando renda e trabalho doméstico.
 
+![](.github/screenshot.png)
+
 ## Sobre
 
 O Conta Justa é uma calculadora gratuita que ajuda casais a comparar modelos de divisão de despesas, considerando a renda e o trabalho doméstico de cada pessoa.
@@ -64,4 +66,4 @@ tests/
 
 ## Licença
 
-Projeto privado.
+MIT
