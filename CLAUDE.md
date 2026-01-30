@@ -35,7 +35,8 @@ pnpm preview          # Preview production build
 
 - **Framework**: TanStack Start + TanStack Router (file-based routing)
 - **Styling**: Tailwind CSS v4 (CSS-based config with `@theme` directive)
-- **State**: nuqs for type-safe URL search params
+- **State**: Zustand (sessionStorage persistence) + nuqs (URL search params)
+- **Forms**: TanStack Form + Zod validation
 - **Testing**: Vitest (unit) + Playwright (E2E)
 - **Linting**: Biome (replaces ESLint + Prettier)
 - **Icons**: lucide-react
@@ -44,35 +45,87 @@ pnpm preview          # Preview production build
 ### Key Directories
 
 - `src/routes/` - File-based routing (TanStack Router auto-generates `routeTree.gen.ts`)
-- `src/providers/` - React context providers
-- `src/components/` - Reusable components (`ui/` for atoms, `layout/` for structure)
+- `src/stores/` - Zustand stores with sessionStorage persistence
+- `src/lib/` - Calculation engine and utility functions
+- `src/schemas/` - Zod validation schemas (form data, env vars)
+- `src/hooks/` - Custom hooks (form submission, results computation, analytics)
+- `src/server/` - Server functions (`createServerFn`)
+- `src/providers/` - React context providers (Theme, PostHog)
+- `src/components/` - Reusable components (`ui/` for atoms, `layout/` for structure, `app/` for features)
 - `docs/` - Documentation, research, and design references
 - `.specs/` - Feature specifications (spec-driven development workflow)
 
+### Data Flow
+
+```
+Form (/) -> Zustand store (sessionStorage) -> Results page (/results)
+                                                 |
+                                           useResults() hook
+                                           computes all calculations
+```
+
+The form saves data to the Zustand store, which persists to `sessionStorage`. The results page reads from the store and computes calculations via `useResults()`. If no data exists in store, `/results` redirects to `/`.
+
+The minimum wage is fetched server-side via `createServerFn` (from Brazil's Central Bank API with env var fallback) and stored in the Zustand store on first load.
+
+### Monetary Values (Centavos)
+
+**All monetary values are stored and calculated in centavos (integer cents).** This avoids floating-point precision issues.
+
+- Form currency inputs display reais but store centavos: `onValueChange` returns cents
+- Display converts back: `formatCurrency(value / 100)` with BRL locale
+- Minimum wage from server is in reais, converted on store: `setMinimumWage(loaderWage * 100)`
+- Brazilian formatting: thousands separator `.`, decimal separator `,`
+
+### Calculation Engine
+
+Three division methods in `src/lib/calculations.ts`:
+
+- **Proportional** (`calculateProportional`): divides expenses by income ratio
+- **Adjusted** (`calculateAdjusted`): adds housework monetary value to income before ratio calculation. Uses `minimumWage / 220` hourly rate, multiplied by weekly hours \* 4 weeks
+- **Equal** (`calculateEqual`): 50/50 split regardless of income
+
+Edge case: when both incomes are zero, all methods fall back to 50/50.
+
+### Zustand Store Pattern
+
+The store (`src/stores/expense-store.ts`) uses `persist` middleware with `sessionStorage`. It exports individual selector hooks (not the raw store):
+
+```tsx
+// USE selector hooks
+const data = useData();
+const setData = useSetData();
+
+// NOT raw store access
+const store = useExpenseStore();
+```
+
+Only `data` and `minimumWage` persist. Computed state (`selectedMethod`, `includeHousework`) resets on reload.
+
+### Provider Stack
+
+Root layout wraps routes with providers in this order:
+
+```
+ThemeProvider -> PostHogProvider -> NuqsAdapter -> Outlet
+```
+
+- **ThemeProvider**: localStorage-based dark/light/system theme with anti-FOUC inline script
+- **PostHogProvider**: initializes only in production when API key exists
+
 ### Routing Pattern
 
-Routes use `createFileRoute()` or `createRootRoute()`:
+Routes use `createFileRoute()` with optional `loader` for SSR data and `head()` for meta tags:
 
 ```tsx
-// src/routes/example.tsx
-import { createFileRoute } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/example")({
-  component: ExamplePage,
+export const Route = createFileRoute("/")({
+  loader: async () => ({ minimumWage: await getMinimumWage() }),
+  head: () => ({ meta: [{ title: "Conta Justa" }] }),
+  component: HomePage,
 });
-
-function ExamplePage() {
-  return <div>Content</div>;
-}
 ```
 
-### Root Layout
-
-`src/routes/__root.tsx` wraps all routes with providers. CSS is imported with `?url` suffix:
-
-```tsx
-import appCss from "../styles.css?url";
-```
+CSS is imported in root with `?url` suffix: `import appCss from "../styles.css?url"`
 
 ### Styling (Tailwind v4)
 
@@ -138,29 +191,12 @@ className = "w-[var(--my-width)] text-[var(--my-color)]";
 Only use `[value]` when no canonical class exists:
 
 ```tsx
-// OK - no canonical class for 22px (closest: text-xl=20px, text-2xl=24px)
+// OK - no canonical class for 22px
 className = "text-[22px]";
-
-// OK - specific design value
-className = "tracking-[0.15em]";
 
 // BAD - use canonical z-100 instead
 className = "z-[100]";
-
-// BAD - use canonical max-w-300 instead
-className = "max-w-[1200px]";
 ```
-
-#### Common Conversions
-
-| Pixels      | Canonical Class      |
-| ----------- | -------------------- |
-| 1200px      | `w-300`, `max-w-300` |
-| 1100px      | `w-275`, `max-w-275` |
-| 1024px      | `w-256`, `max-w-256` |
-| 768px       | `w-192`, `max-w-192` |
-| 12px blur   | `backdrop-blur-md`   |
-| z-index 100 | `z-100`              |
 
 ## React 19 Best Practices
 
@@ -168,10 +204,9 @@ className = "max-w-[1200px]";
 
 ### Refs as Props (No forwardRef)
 
-React 19 eliminates the need for `forwardRef`. Pass `ref` as a regular prop:
+Pass `ref` as a regular prop using `ComponentProps<"element">`:
 
 ```tsx
-// React 19 - USE THIS
 function Button({ ref, children, ...props }: ComponentProps<"button">) {
   return (
     <button ref={ref} {...props}>
@@ -179,150 +214,21 @@ function Button({ ref, children, ...props }: ComponentProps<"button">) {
     </button>
   );
 }
-
-// React 18 (deprecated) - AVOID
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, ...props }, ref) => (
-    <button ref={ref} {...props}>
-      {children}
-    </button>
-  ),
-);
 ```
-
-### Form Actions with useActionState
-
-Use `useActionState` for async form submissions:
-
-```tsx
-import { useActionState } from "react";
-
-function Form() {
-  const [error, submitAction, isPending] = useActionState(
-    async (previousState, formData) => {
-      const error = await updateData(formData.get("name"));
-      if (error) return error;
-      return null;
-    },
-    null,
-  );
-
-  return (
-    <form action={submitAction}>
-      <input type="text" name="name" />
-      <button type="submit" disabled={isPending}>
-        Submit
-      </button>
-      {error && <p>{error}</p>}
-    </form>
-  );
-}
-```
-
-### useFormStatus for Nested Components
-
-Access parent form status without prop drilling:
-
-```tsx
-import { useFormStatus } from "react-dom";
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button type="submit" disabled={pending}>
-      Submit
-    </button>
-  );
-}
-```
-
-### useOptimistic for Optimistic Updates
-
-```tsx
-import { useOptimistic } from "react";
-
-function Component({ currentName, onUpdate }) {
-  const [optimisticName, setOptimisticName] = useOptimistic(currentName);
-
-  const submitAction = async (formData) => {
-    const newName = formData.get("name");
-    setOptimisticName(newName); // Immediate UI update
-    const result = await updateName(newName);
-    onUpdate(result);
-  };
-
-  return <form action={submitAction}>...</form>;
-}
-```
-
-## TanStack Start Best Practices
 
 ### Server Functions
 
-Use `createServerFn` for server-side logic:
+Use `createServerFn` for server-side logic (see `src/server/` for examples):
 
 ```tsx
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 
 const fetchData = createServerFn()
   .validator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
-    // Server-only code - safe for secrets
-    const response = await fetch(`${process.env.API_URL}/${data.id}`, {
-      headers: { Authorization: `Bearer ${process.env.API_SECRET}` },
-    });
-    return response.json();
+    const secret = process.env.API_SECRET; // safe here
+    return result;
   });
-```
-
-### Server Routes
-
-Define API endpoints in route files:
-
-```tsx
-import { createFileRoute } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/api/hello")({
-  server: {
-    handlers: {
-      GET: async ({ request }) => {
-        return new Response(JSON.stringify({ message: "Hello" }), {
-          headers: { "Content-Type": "application/json" },
-        });
-      },
-    },
-  },
-});
-```
-
-## nuqs Best Practices
-
-### Type-Safe Search Params with TanStack Router
-
-```tsx
-import { createFileRoute } from "@tanstack/react-router";
-import {
-  createStandardSchemaV1,
-  parseAsString,
-  parseAsInteger,
-  useQueryStates,
-} from "nuqs";
-
-const searchParams = {
-  query: parseAsString.withDefault(""),
-  page: parseAsInteger.withDefault(1),
-};
-
-export const Route = createFileRoute("/search")({
-  component: SearchPage,
-  validateSearch: createStandardSchemaV1(searchParams, { partialOutput: true }),
-});
-
-function SearchPage() {
-  const [{ query, page }, setParams] = useQueryStates(searchParams);
-  // ...
-}
 ```
 
 ## Code Conventions
@@ -370,40 +276,26 @@ import { Button } from "~/components/ui/button";
 
 - **Server-only**: Use `process.env.SECRET` inside `createServerFn`
 - **Client-side**: Prefix with `VITE_` for browser access
-
-```tsx
-// Server function - safe for secrets
-createServerFn().handler(async () => {
-  const secret = process.env.API_SECRET; // OK
-});
-
-// Client code
-import.meta.env.DEV; // true in development
-import.meta.env.PROD; // true in production
-import.meta.env.VITE_PUBLIC_POSTHOG_KEY; // Public key only
-```
+- Server env vars validated with Zod in `src/schemas/env.ts`
 
 ## Testing
 
 ### Unit Tests (Vitest)
 
-Place tests next to source files as `*.test.tsx` or `*.spec.tsx`:
-
-```tsx
-// src/lib/calc.test.ts
-import { describe, it, expect } from "vitest";
-import { calculate } from "./calc";
-
-describe("calculate", () => {
-  it("should return correct value", () => {
-    expect(calculate(100, 50)).toBe(150);
-  });
-});
-```
+Place tests next to source files as `*.test.ts` or `*.spec.ts`. Vitest globals are enabled (`describe`, `it`, `expect` available without import). Setup file at `src/test/setup.ts` configures `@testing-library/jest-dom`.
 
 ### E2E Tests (Playwright)
 
-Located in `tests/` directory.
+Located in `tests/e2e/`. Use semantic locators: `page.getByRole()`, `page.getByText()`, `page.locator()`.
+
+### Testing Monetary Values
+
+Always use centavos in test assertions. Include calculation comments for clarity:
+
+```tsx
+// R$1621.00 = 162100 cents / 220 hours = 737 cents/hour
+expect(calculateHourlyRate(162100)).toBe(737);
+```
 
 ## Feature Development
 
