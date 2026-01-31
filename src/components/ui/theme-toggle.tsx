@@ -1,9 +1,10 @@
 import { Monitor, Moon, Sun } from 'lucide-react'
 import type { ComponentProps } from 'react'
 
-import { Tooltip } from '~/components/ui'
 import { cn } from '~/lib/utils'
 import { useTheme } from '~/providers/theme-provider'
+
+import { Tooltip } from './tooltip'
 
 export interface ThemeToggleProps extends Omit<ComponentProps<'button'>, 'children'> {}
 
