@@ -1,9 +1,21 @@
-import { type ComponentProps, type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
+import {
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
 
 import { cn } from '~/lib/utils'
 
-export interface TooltipProps extends Omit<ComponentProps<'div'>, 'content'> {
+export interface TooltipProps {
+  children: ReactElement
   content: ReactNode
   side?: 'top' | 'bottom' | 'left' | 'right'
   delay?: 'none' | 'short' | 'long'
@@ -22,11 +34,11 @@ const arrowClasses = {
   right: 'right-full top-1/2 -translate-y-1/2 border-r-foreground border-y-transparent border-l-transparent',
 }
 
-export function Tooltip({ content, side = 'top', delay = 'short', className, children, ...props }: TooltipProps) {
+export function Tooltip({ content, side = 'top', delay = 'short', children }: TooltipProps) {
   const id = useId()
   const tooltipId = `tooltip-${id}`
 
-  const triggerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLElement>(null)
   const tooltipRef = useRef<HTMLSpanElement>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 
@@ -39,19 +51,19 @@ export function Tooltip({ content, side = 'top', delay = 'short', className, chi
     setMounted(true)
   }, [])
 
-  const showTooltip = () => {
+  const showTooltip = useCallback(() => {
     timeoutRef.current = setTimeout(() => {
       setIsVisible(true)
     }, delayMs[delay])
-  }
+  }, [delay])
 
-  const hideTooltip = () => {
+  const hideTooltip = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
     setIsVisible(false)
     setIsPositioned(false)
-  }
+  }, [])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: content changes tooltip width, needs repositioning
   useLayoutEffect(() => {
@@ -103,24 +115,22 @@ export function Tooltip({ content, side = 'top', delay = 'short', className, chi
     }
   }, [])
 
+  if (!isValidElement(children)) {
+    return children
+  }
+
   const shouldShow = isVisible && isPositioned
 
   return (
     <>
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: tooltip trigger delegates events to children */}
-      <div
-        ref={triggerRef}
-        data-slot="tooltip-wrapper"
-        aria-describedby={shouldShow ? tooltipId : undefined}
-        className={cn('inline-flex', className)}
-        onMouseEnter={showTooltip}
-        onMouseLeave={hideTooltip}
-        onFocusCapture={showTooltip}
-        onBlurCapture={hideTooltip}
-        {...props}
-      >
-        {children}
-      </div>
+      {cloneElement(children, {
+        ref: triggerRef,
+        'aria-describedby': shouldShow ? tooltipId : undefined,
+        onMouseEnter: showTooltip,
+        onMouseLeave: hideTooltip,
+        onFocus: showTooltip,
+        onBlur: hideTooltip,
+      } as Record<string, unknown>)}
       {mounted &&
         createPortal(
           <span

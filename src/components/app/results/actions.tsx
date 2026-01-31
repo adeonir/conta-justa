@@ -34,17 +34,17 @@ export function Actions() {
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex gap-4">
-          <Tooltip content="Copiar link do resultado" className="w-full">
+          <Tooltip content="Copiar link do resultado">
             <Button onClick={copyLink} variant="outline" className="w-full bg-muted">
               {isCopied ? <Loader2 size={16} className="animate-spin" /> : <Copy size={16} />}
             </Button>
           </Tooltip>
-          <Tooltip content="Compartilhar resultado" className="w-full">
+          <Tooltip content="Compartilhar resultado">
             <Button onClick={shareResult} variant="outline" className="w-full bg-muted">
               <Share2 size={16} />
             </Button>
           </Tooltip>
-          <Tooltip content="Baixar imagem" className="w-full">
+          <Tooltip content="Baixar imagem">
             <Button onClick={downloadImage} variant="outline" className="w-full bg-muted" disabled={isDownloading}>
               {isDownloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
             </Button>
