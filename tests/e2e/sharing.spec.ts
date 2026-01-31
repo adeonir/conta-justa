@@ -15,9 +15,9 @@ async function fillFormAndSubmit(
   const {
     nameA = 'Ana',
     nameB = 'Bob',
-    incomeA = '5000',
-    incomeB = '3000',
-    expenses = '2000',
+    incomeA = '500000',
+    incomeB = '300000',
+    expenses = '200000',
     houseworkA,
     houseworkB,
   } = options
@@ -53,17 +53,26 @@ async function fillFormAndSubmit(
   await button.click()
 
   await page.waitForURL('/results')
+  await page.getByText('Modelo recomendado').first().waitFor()
 }
 
 function getSharingButtons(page: import('@playwright/test').Page) {
-  // The actions card has two groups: navigation buttons (top) and sharing icon buttons (bottom).
-  // The sharing group is identified by having 3 outline buttons with bg-muted class.
-  const actionsCard = page.locator('[data-slot="card"]').filter({ hasText: 'Ajustar valores' })
-  const sharingGroup = actionsCard.locator('div.flex.gap-4').last()
-  const copyButton = sharingGroup.locator('[data-slot="button"]').nth(0)
-  const shareButton = sharingGroup.locator('[data-slot="button"]').nth(1)
-  const downloadButton = sharingGroup.locator('[data-slot="button"]').nth(2)
-  return { actionsCard, sharingGroup, copyButton, shareButton, downloadButton }
+  const copyButton = page.getByRole('button', { name: 'Copiar link do resultado' })
+  const shareButton = page.getByRole('button', { name: 'Compartilhar resultado' })
+  const downloadButton = page.getByRole('button', { name: 'Baixar imagem' })
+  return { copyButton, shareButton, downloadButton }
+}
+
+async function clickClipboardButton(page: import('@playwright/test').Page) {
+  const { copyButton, shareButton } = getSharingButtons(page)
+
+  if (await copyButton.isVisible()) {
+    await copyButton.click()
+    return copyButton
+  }
+
+  await shareButton.click()
+  return shareButton
 }
 
 test.describe('Sharing - Copy Link', () => {
@@ -71,7 +80,7 @@ test.describe('Sharing - Copy Link', () => {
     permissions: ['clipboard-read', 'clipboard-write'],
   })
 
-  test('copy link button writes share URL to clipboard with expected query params', async ({ page }) => {
+  test('clipboard button writes share URL with expected query params', async ({ page }) => {
     await fillFormAndSubmit(page, {
       nameA: 'Ana',
       nameB: 'Bob',
@@ -80,12 +89,10 @@ test.describe('Sharing - Copy Link', () => {
       expenses: '2000',
     })
 
-    const { copyButton } = getSharingButtons(page)
-    await copyButton.click()
+    await clickClipboardButton(page)
 
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText())
 
-    // URL should contain /results with query params
     expect(clipboardText).toContain('/results?')
 
     const url = new URL(clipboardText)
@@ -98,7 +105,7 @@ test.describe('Sharing - Copy Link', () => {
     expect(url.searchParams.get('e')).toBe('200000')
   })
 
-  test('copy link includes housework params when housework data exists', async ({ page }) => {
+  test('clipboard URL includes housework params when housework data exists', async ({ page }) => {
     await fillFormAndSubmit(page, {
       nameA: 'Ana',
       nameB: 'Bob',
@@ -109,8 +116,7 @@ test.describe('Sharing - Copy Link', () => {
       houseworkB: '5',
     })
 
-    const { copyButton } = getSharingButtons(page)
-    await copyButton.click()
+    await clickClipboardButton(page)
 
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText())
     const url = new URL(clipboardText)
@@ -119,11 +125,10 @@ test.describe('Sharing - Copy Link', () => {
     expect(url.searchParams.get('hb')).toBe('5')
   })
 
-  test('copy link omits housework params when no housework data', async ({ page }) => {
+  test('clipboard URL omits housework params when no housework data', async ({ page }) => {
     await fillFormAndSubmit(page)
 
-    const { copyButton } = getSharingButtons(page)
-    await copyButton.click()
+    await clickClipboardButton(page)
 
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText())
     const url = new URL(clipboardText)
@@ -136,12 +141,12 @@ test.describe('Sharing - Copy Link', () => {
 test.describe('Sharing - Share Button Fallback', () => {
   test.use({
     permissions: ['clipboard-read', 'clipboard-write'],
+    viewport: { width: 375, height: 812 },
   })
 
   test('share button falls back to clipboard copy when navigator.share is unavailable', async ({ page }) => {
     await fillFormAndSubmit(page)
 
-    // Playwright Chromium does not support navigator.share, so it will fall back to clipboard
     const { shareButton } = getSharingButtons(page)
     await shareButton.click()
 
@@ -156,73 +161,69 @@ test.describe('Sharing - Share Button Fallback', () => {
   test('share button produces the same URL as copy link button', async ({ page }) => {
     await fillFormAndSubmit(page)
 
-    const { copyButton, shareButton } = getSharingButtons(page)
+    const { shareButton } = getSharingButtons(page)
 
-    // Copy via copy button
-    await copyButton.click()
-    const copyClipboard = await page.evaluate(() => navigator.clipboard.readText())
-
-    // Reset clipboard
-    await page.evaluate(() => navigator.clipboard.writeText(''))
-
-    // Wait for isCopied state to reset (2s timeout)
-    await page.waitForTimeout(2100)
-
-    // Copy via share button
     await shareButton.click()
     const shareClipboard = await page.evaluate(() => navigator.clipboard.readText())
+
+    await page.evaluate(() => navigator.clipboard.writeText(''))
+    await page.waitForTimeout(2100)
+
+    // Switch to desktop viewport to access copy button
+    await page.setViewportSize({ width: 1280, height: 720 })
+
+    const { copyButton } = getSharingButtons(page)
+    await copyButton.click()
+    const copyClipboard = await page.evaluate(() => navigator.clipboard.readText())
 
     expect(copyClipboard).toBe(shareClipboard)
   })
 })
 
 test.describe('Sharing - Visual Feedback', () => {
-  test('copy button shows spinner icon while copied state is active', async ({ page }) => {
+  test.use({
+    permissions: ['clipboard-read', 'clipboard-write'],
+  })
+
+  test('clipboard button shows spinner icon while copied state is active', async ({ page }) => {
     await fillFormAndSubmit(page)
 
-    const { copyButton } = getSharingButtons(page)
+    const clickedButton = await clickClipboardButton(page)
 
-    // Before clicking: should show Copy icon (no spinning animation)
-    const spinnerBefore = copyButton.locator('svg.animate-spin')
-    await expect(spinnerBefore).toHaveCount(0)
-
-    await copyButton.click()
-
-    // After clicking: should show Loader2 icon with animate-spin class
-    const spinnerAfter = copyButton.locator('svg.animate-spin')
+    const spinnerAfter = clickedButton.locator('svg.animate-spin')
     await expect(spinnerAfter).toBeVisible()
   })
 
-  test('copy button spinner reverts to copy icon after 2 seconds', async ({ page }) => {
+  test('clipboard button spinner reverts to original icon after 2 seconds', async ({ page }) => {
     await fillFormAndSubmit(page)
 
-    const { copyButton } = getSharingButtons(page)
+    const clickedButton = await clickClipboardButton(page)
 
-    await copyButton.click()
-
-    // Spinner should be visible immediately after click
-    const spinner = copyButton.locator('svg.animate-spin')
+    const spinner = clickedButton.locator('svg.animate-spin')
     await expect(spinner).toBeVisible()
 
-    // Wait for the 2s timeout to expire plus buffer
     await page.waitForTimeout(2200)
 
-    // Spinner should be gone, copy icon should be back
     await expect(spinner).toHaveCount(0)
-    const svgIcon = copyButton.locator('svg')
+    const svgIcon = clickedButton.locator('svg')
     await expect(svgIcon).toBeVisible()
     await expect(svgIcon).not.toHaveClass(/animate-spin/)
   })
 
-  test('three sharing icon buttons are visible on results page', async ({ page }) => {
+  test('shows correct sharing buttons based on viewport', async ({ page }) => {
     await fillFormAndSubmit(page)
 
-    const { sharingGroup } = getSharingButtons(page)
-    const buttons = sharingGroup.locator('[data-slot="button"]')
+    const { copyButton, shareButton, downloadButton } = getSharingButtons(page)
+    const viewportWidth = page.viewportSize()?.width ?? 0
 
-    await expect(buttons).toHaveCount(3)
-    for (const button of await buttons.all()) {
-      await expect(button).toBeVisible()
+    if (viewportWidth >= 640) {
+      await expect(copyButton).toBeVisible()
+      await expect(shareButton).toBeHidden()
+    } else {
+      await expect(shareButton).toBeVisible()
+      await expect(copyButton).toBeHidden()
     }
+
+    await expect(downloadButton).toBeVisible()
   })
 })
