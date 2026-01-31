@@ -3,9 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { Hero } from '~/components/app/hero'
 import { Actions, Card, Comparison, Explanation, Summary } from '~/components/app/results'
-import { ShareCard } from '~/components/app/results/share-card'
 import { Footer, Header, PageLayout } from '~/components/layout'
-import { useShare } from '~/hooks/use-share'
 import { useTrackEvent } from '~/hooks/use-track-event'
 import { useData, useMinimumWage } from '~/stores/expense-store'
 
@@ -71,8 +69,6 @@ function ResultsPage() {
   const [mounted, setMounted] = useState(false)
   const data = useData()
   const minimumWage = useMinimumWage()
-  const { shareCardRef } = useShare()
-
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -110,8 +106,6 @@ function ResultsPage() {
         </div>
       </PageLayout>
       <Footer />
-
-      <ShareCard ref={shareCardRef} />
     </>
   )
 }

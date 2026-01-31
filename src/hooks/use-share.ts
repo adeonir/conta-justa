@@ -1,3 +1,4 @@
+import { toPng } from 'html-to-image'
 import { useCallback, useRef, useState } from 'react'
 
 import { buildShareUrl } from '~/lib/share-url'
@@ -59,9 +60,25 @@ export function useShare() {
   }, [getShareUrl, copyToClipboard])
 
   const downloadImage = useCallback(async () => {
-    // Stub for Phase 2 (T009)
-    setIsDownloading(false)
-  }, [])
+    if (!shareCardRef.current || isDownloading) return
+
+    setIsDownloading(true)
+    try {
+      const dataUrl = await toPng(shareCardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+      })
+      const link = document.createElement('a')
+      link.download = 'conta-justa.png'
+      link.href = dataUrl
+      link.click()
+      trackEvent('result_shared', { channel: 'image_download' })
+    } catch (error) {
+      console.error('Failed to generate image:', error)
+    } finally {
+      setIsDownloading(false)
+    }
+  }, [isDownloading])
 
   return {
     copyLink,

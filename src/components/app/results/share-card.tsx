@@ -52,8 +52,8 @@ export function ShareCard({ ref, ...props }: ComponentProps<'div'>) {
   const nameB = data.nameB || 'Pessoa B'
 
   return (
-    <div ref={ref} aria-hidden="true" className="fixed -top-2500 -left-2500 w-180" {...props}>
-      <div className="flex flex-col bg-background">
+    <div aria-hidden="true" className="fixed -top-2500 -left-2500">
+      <div ref={ref} className="flex w-180 flex-col bg-background" {...props}>
         <div className="h-1.5 w-full bg-primary" />
 
         <div className="flex flex-col gap-7 px-12 py-10">
