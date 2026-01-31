@@ -7,7 +7,7 @@ import { Footer, Header, PageLayout } from '~/components/layout'
 import { useShareParams } from '~/hooks/use-share-params'
 import { useTrackEvent } from '~/hooks/use-track-event'
 import { getMinimumWage } from '~/server/get-minimum-wage'
-import { useData, useMinimumWage, useSetMinimumWage } from '~/stores/expense-store'
+import { useData, useMinimumWage, useReset, useSetMinimumWage } from '~/stores/expense-store'
 
 const siteUrl = import.meta.env.VITE_SITE_URL
 
@@ -77,7 +77,9 @@ function ResultsPage() {
   const minimumWage = useMinimumWage()
   const setMinimumWage = useSetMinimumWage()
 
-  const { isFromShareLink } = useShareParams()
+  const reset = useReset()
+
+  const { isFromShareLink, hasInvalidShareParams } = useShareParams()
 
   useEffect(() => {
     setMounted(true)
@@ -90,10 +92,18 @@ function ResultsPage() {
   }, [minimumWage, loaderWage, setMinimumWage])
 
   useEffect(() => {
-    if (mounted && !data && !isFromShareLink) {
+    if (!mounted) return
+
+    if (hasInvalidShareParams) {
+      reset()
+      navigate({ to: '/' })
+      return
+    }
+
+    if (!data && !isFromShareLink) {
       navigate({ to: '/' })
     }
-  }, [mounted, data, isFromShareLink, navigate])
+  }, [mounted, data, isFromShareLink, hasInvalidShareParams, reset, navigate])
 
   const hasHousework = data ? data.houseworkA > 0 || data.houseworkB > 0 : false
   useTrackEvent(

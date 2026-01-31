@@ -94,16 +94,17 @@ describe('useShareParams', () => {
   })
 
   describe('missing required params', () => {
-    it('returns isFromShareLink false when no params', () => {
+    it('returns isFromShareLink false and hasInvalidShareParams false when no params', () => {
       const { result } = renderHook(() => useShareParams(), {
         wrapper: withNuqsTestingAdapter({ searchParams: '' }),
       })
 
       expect(result.current.isFromShareLink).toBe(false)
+      expect(result.current.hasInvalidShareParams).toBe(false)
       expect(useExpenseStore.getState().data).toBeNull()
     })
 
-    it('returns isFromShareLink false when name a is missing', () => {
+    it('returns hasInvalidShareParams true when name a is missing', () => {
       const { result } = renderHook(() => useShareParams(), {
         wrapper: withNuqsTestingAdapter({
           searchParams: 'ra=450000&b=Joao&rb=300000&e=200000',
@@ -111,10 +112,11 @@ describe('useShareParams', () => {
       })
 
       expect(result.current.isFromShareLink).toBe(false)
+      expect(result.current.hasInvalidShareParams).toBe(true)
       expect(useExpenseStore.getState().data).toBeNull()
     })
 
-    it('returns isFromShareLink false when expenses is missing', () => {
+    it('returns hasInvalidShareParams true when expenses is missing', () => {
       const { result } = renderHook(() => useShareParams(), {
         wrapper: withNuqsTestingAdapter({
           searchParams: 'a=Maria&ra=450000&b=Joao&rb=300000',
@@ -122,6 +124,7 @@ describe('useShareParams', () => {
       })
 
       expect(result.current.isFromShareLink).toBe(false)
+      expect(result.current.hasInvalidShareParams).toBe(true)
       expect(useExpenseStore.getState().data).toBeNull()
     })
   })

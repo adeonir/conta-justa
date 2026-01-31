@@ -14,12 +14,14 @@ const shareParamsParsers = {
   hb: parseAsInteger,
 }
 
-export function useShareParams(): { isFromShareLink: boolean } {
+export function useShareParams(): { isFromShareLink: boolean; hasInvalidShareParams: boolean } {
   const [params] = useQueryStates(shareParamsParsers)
   const hasProcessed = useRef(false)
 
   const setData = useSetData()
 
+  const hasAnyShareParam =
+    params.a !== null || params.ra !== null || params.b !== null || params.rb !== null || params.e !== null
   const hasRequiredParams = Boolean(params.a && params.ra && params.b && params.rb && params.e)
 
   const validatedData = useMemo(() => {
@@ -44,5 +46,8 @@ export function useShareParams(): { isFromShareLink: boolean } {
     hasProcessed.current = true
   }, [validatedData, setData])
 
-  return { isFromShareLink: validatedData !== null }
+  const isFromShareLink = validatedData !== null
+  const hasInvalidShareParams = hasAnyShareParam && !isFromShareLink
+
+  return { isFromShareLink, hasInvalidShareParams }
 }

@@ -82,8 +82,9 @@ test.describe('Results Page - Complete Flow', () => {
   test('displays correct total expenses', async ({ page }) => {
     await fillFormAndSubmit(page, { expenses: '2500' })
 
-    await expect(page.getByText('Despesas compartilhadas')).toBeVisible()
-    await expect(page.getByText('R$ 2.500,00')).toBeVisible()
+    const summary = page.locator('section').filter({ hasText: 'Renda total do casal' })
+    await expect(summary.getByText('Despesas compartilhadas')).toBeVisible()
+    await expect(summary.getByText('R$ 2.500,00')).toBeVisible()
   })
 
   test('shows housework section when housework hours provided', async ({ page }) => {
