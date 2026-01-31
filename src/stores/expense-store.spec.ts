@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useExpenseStore } from './expense-store'
+import { useExpenseStore, useSetData } from './expense-store'
 
 const mockFormData = {
   nameA: 'Ana',
@@ -266,6 +266,24 @@ describe('expense-store', () => {
       await vi.waitFor(() => {
         expect(useExpenseStore.getState().minimumWage).toBe(141200)
       })
+    })
+  })
+
+  describe('useSetData selector', () => {
+    it('returns the setData function', () => {
+      const { result } = renderHook(() => useSetData())
+
+      expect(result.current).toBe(useExpenseStore.getState().setData)
+    })
+
+    it('updates data when called', () => {
+      const { result } = renderHook(() => useSetData())
+
+      act(() => {
+        result.current(mockFormData)
+      })
+
+      expect(useExpenseStore.getState().data).toEqual(mockFormData)
     })
   })
 
