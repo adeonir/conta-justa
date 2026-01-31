@@ -11,6 +11,12 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  optimizeDeps: {
+    exclude: ['@resvg/resvg-js', 'satori'],
+  },
+  ssr: {
+    external: ['@resvg/resvg-js'],
+  },
   resolve: {
     alias: {
       '~': fileURLToPath(new URL('./src', import.meta.url)),
