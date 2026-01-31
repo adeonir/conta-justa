@@ -15,9 +15,9 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 
 vi.mock('~/stores/expense-store', () => ({
-  useExpenseStore: (selector: (state: { minimumWage: number; setData: typeof mockSetData }) => unknown) =>
-    selector({ minimumWage: 162100, setData: mockSetData }),
+  useExpenseStore: (selector: (state: { minimumWage: number }) => unknown) => selector({ minimumWage: 162100 }),
   useData: () => mockStoreData,
+  useSetData: () => mockSetData,
   useReset: () => vi.fn(),
 }))
 

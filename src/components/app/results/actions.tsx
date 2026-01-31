@@ -6,6 +6,7 @@ import { useReset } from '~/stores/expense-store'
 
 export function Actions() {
   const navigate = useNavigate()
+
   const reset = useReset()
 
   const handleNavigation = (shouldReset: boolean) => {

@@ -43,6 +43,7 @@ function PersonSection({ name, result }: PersonSectionProps) {
 
 export function ShareCard({ ref, ...props }: ComponentProps<'div'>) {
   const data = useData()
+
   const results = useResults()
 
   if (!data || !results) return null

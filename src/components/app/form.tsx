@@ -22,6 +22,7 @@ const emptyDefaults: ExpenseFormData = {
 export function Form() {
   const storeData = useData()
   const resetStore = useReset()
+
   const handleSubmit = useExpenseFormSubmit()
 
   const defaultValues = storeData ?? emptyDefaults

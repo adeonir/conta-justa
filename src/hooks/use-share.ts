@@ -8,10 +8,11 @@ import { trackEvent } from './use-track-event'
 const siteUrl = import.meta.env.VITE_SITE_URL as string
 
 export function useShare() {
-  const data = useData()
   const [isCopied, setIsCopied] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const shareCardRef = useRef<HTMLDivElement>(null)
+
+  const data = useData()
 
   const getShareUrl = useCallback(() => {
     if (!data) return ''

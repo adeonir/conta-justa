@@ -1,11 +1,12 @@
 import { useNavigate } from '@tanstack/react-router'
 
 import type { ExpenseFormData } from '~/schemas/expense-form'
-import { useExpenseStore } from '~/stores/expense-store'
+import { useSetData } from '~/stores/expense-store'
 
 export function useExpenseFormSubmit() {
   const navigate = useNavigate()
-  const setData = useExpenseStore((state) => state.setData)
+
+  const setData = useSetData()
 
   return (value: ExpenseFormData) => {
     setData(value)

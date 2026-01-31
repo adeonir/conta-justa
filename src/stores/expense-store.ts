@@ -60,13 +60,12 @@ export const useExpenseStore = create<ExpenseState>()(
 )
 
 export const useData = () => useExpenseStore((s) => s.data)
+export const useReset = () => useExpenseStore((s) => s.reset)
 export const useMinimumWage = () => useExpenseStore((s) => s.minimumWage)
 export const useSelectedMethod = () => useExpenseStore((s) => s.selectedMethod)
-
 export const useIncludeHousework = () => useExpenseStore((s) => s.includeHousework)
 
 export const useSetData = () => useExpenseStore((s) => s.setData)
 export const useSetMinimumWage = () => useExpenseStore((s) => s.setMinimumWage)
 export const useSetSelectedMethod = () => useExpenseStore((s) => s.setSelectedMethod)
 export const useSetIncludeHousework = () => useExpenseStore((s) => s.setIncludeHousework)
-export const useReset = () => useExpenseStore((s) => s.reset)

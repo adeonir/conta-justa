@@ -11,8 +11,7 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 
 vi.mock('~/stores/expense-store', () => ({
-  useExpenseStore: (selector: (state: { setData: typeof mockSetData }) => unknown) =>
-    selector({ setData: mockSetData }),
+  useSetData: () => mockSetData,
 }))
 
 describe('useExpenseFormSubmit', () => {

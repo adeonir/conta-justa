@@ -13,8 +13,9 @@ interface MethodCardProps {
 }
 
 export function MethodCard({ method, title, description, disabled = false }: MethodCardProps) {
-  const results = useResults()
   const data = useData()
+
+  const results = useResults()
 
   if (!results) return null
 

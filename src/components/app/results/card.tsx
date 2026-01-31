@@ -9,10 +9,11 @@ import { PersonDisplay } from './person-display'
 import { ShareCard } from './share-card'
 
 export function Card() {
-  const results = useResults()
   const data = useData()
   const includeHousework = useIncludeHousework()
   const setIncludeHousework = useSetIncludeHousework()
+
+  const results = useResults()
   const { copyLink, shareResult, downloadImage, isCopied, isDownloading, shareCardRef } = useShare()
 
   if (!results || !data) return null

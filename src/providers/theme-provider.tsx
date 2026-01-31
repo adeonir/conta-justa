@@ -26,6 +26,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(DEFAULT_RESOLVED)
   const [mounted, setMounted] = useState(false)
 
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme)
+    localStorage.setItem(STORAGE_KEY, newTheme)
+
+    const resolved = newTheme === 'system' ? getSystemTheme() : newTheme
+    setResolvedTheme(resolved)
+
+    document.documentElement.classList.remove('light', 'dark')
+    document.documentElement.classList.add(resolved)
+  }
+
   useEffect(() => {
     const storedTheme = (localStorage.getItem(STORAGE_KEY) as Theme) || DEFAULT_THEME
     setThemeState(storedTheme)
@@ -38,17 +49,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     setMounted(true)
   }, [])
-
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme)
-    localStorage.setItem(STORAGE_KEY, newTheme)
-
-    const resolved = newTheme === 'system' ? getSystemTheme() : newTheme
-    setResolvedTheme(resolved)
-
-    document.documentElement.classList.remove('light', 'dark')
-    document.documentElement.classList.add(resolved)
-  }
 
   useEffect(() => {
     if (!mounted || theme !== 'system') return

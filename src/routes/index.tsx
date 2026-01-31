@@ -32,6 +32,7 @@ export const Route = createFileRoute('/')({
 
 function HomePage() {
   const { minimumWage: loaderWage } = Route.useLoaderData()
+
   const storedWage = useMinimumWage()
   const setMinimumWage = useSetMinimumWage()
 

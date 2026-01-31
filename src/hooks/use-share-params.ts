@@ -16,8 +16,9 @@ const shareParamsParsers = {
 
 export function useShareParams(): { isFromShareLink: boolean } {
   const [params] = useQueryStates(shareParamsParsers)
-  const setData = useSetData()
   const hasProcessed = useRef(false)
+
+  const setData = useSetData()
 
   const hasRequiredParams = Boolean(params.a && params.ra && params.b && params.rb && params.e)
 
