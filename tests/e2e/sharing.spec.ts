@@ -227,3 +227,62 @@ test.describe('Sharing - Visual Feedback', () => {
     await expect(downloadButton).toBeVisible()
   })
 })
+
+test.describe('Sharing - Image Download', () => {
+  test('download button triggers a PNG file download', async ({ page }) => {
+    await fillFormAndSubmit(page)
+
+    const { downloadButton } = getSharingButtons(page)
+
+    const downloadPromise = page.waitForEvent('download')
+    await downloadButton.click()
+    const download = await downloadPromise
+
+    expect(download.suggestedFilename()).toBe('conta-justa.png')
+  })
+
+  test('download button shows spinner while generating image', async ({ page }) => {
+    await fillFormAndSubmit(page)
+
+    const { downloadButton } = getSharingButtons(page)
+
+    await downloadButton.click()
+
+    const spinner = downloadButton.locator('svg.animate-spin')
+    await expect(spinner).toBeVisible()
+
+    await page.waitForEvent('download')
+
+    await expect(spinner).toHaveCount(0)
+  })
+})
+
+test.describe('Sharing - OG Image Endpoint', () => {
+  test('GET /api/og returns a PNG image with valid params', async ({ request }) => {
+    const response = await request.get('/api/og?a=Maria&ra=450000&b=Joao&rb=300000&e=200000')
+
+    expect(response.status()).toBe(200)
+    expect(response.headers()['content-type']).toBe('image/png')
+
+    const body = await response.body()
+    // PNG magic bytes: 0x89 0x50 0x4E 0x47
+    expect(body[0]).toBe(0x89)
+    expect(body[1]).toBe(0x50)
+    expect(body[2]).toBe(0x4e)
+    expect(body[3]).toBe(0x47)
+  })
+
+  test('GET /api/og returns a fallback image when params are missing', async ({ request }) => {
+    const response = await request.get('/api/og')
+
+    expect(response.status()).toBe(200)
+    expect(response.headers()['content-type']).toBe('image/png')
+  })
+
+  test('GET /api/og sets immutable cache headers', async ({ request }) => {
+    const response = await request.get('/api/og?a=Maria&ra=450000&b=Joao&rb=300000&e=200000')
+
+    expect(response.headers()['cache-control']).toContain('public')
+    expect(response.headers()['cache-control']).toContain('immutable')
+  })
+})
