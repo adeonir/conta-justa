@@ -15,6 +15,7 @@ Diferente de outras ferramentas, reconhecemos que contribuir vai além do dinhei
 - Compare dois modelos de divisão: proporcional (por renda) e igual (50/50)
 - Inclua horas de trabalho doméstico para uma visão mais completa
 - Visualize o impacto de cada modelo em tempo real
+- Compartilhe ou baixe os resultados
 - Responsivo para qualquer dispositivo
 - Tema claro e escuro
 

@@ -27,7 +27,16 @@ pnpm typecheck        # TypeScript type checking
 # Build
 pnpm build            # Production build
 pnpm preview          # Preview production build
+
+# Route generation
+pnpm tsr generate     # Regenerate src/routeTree.gen.ts after adding/removing routes
 ```
+
+### Tooling
+
+- **Package manager**: pnpm 10 (enforced via `packageManager` field, exact version pinning via `.npmrc`)
+- **Node**: v25 (pinned in `.node-version`)
+- **Biome**: Enforces `useSortedClasses` for className attributes (supports `cn`, `clsx`, `cva` functions)
 
 ## Architecture
 
@@ -102,12 +111,26 @@ const store = useExpenseStore();
 
 Only `data` and `minimumWage` persist. Computed state (`selectedMethod`, `includeHousework`) resets on reload.
 
+### Toast System
+
+Custom toast notifications in `src/lib/toast.ts` using a singleton `ToastState` class with observer pattern. Usage:
+
+```tsx
+import { toast } from '~/lib/toast'
+
+toast.success('Link copiado!')
+toast.error('Erro ao compartilhar')
+toast.info('Mensagem informativa')
+```
+
+Default durations: success 3s, error/info 5s. The `<Toaster />` component is rendered in root layout.
+
 ### Provider Stack
 
 Root layout wraps routes with providers in this order:
 
 ```
-ThemeProvider -> PostHogProvider -> NuqsAdapter -> Outlet
+ThemeProvider -> PostHogProvider -> NuqsAdapter -> Outlet -> Toaster
 ```
 
 - **ThemeProvider**: localStorage-based dark/light/system theme with anti-FOUC inline script
@@ -278,6 +301,12 @@ import { Button } from "~/components/ui/button";
 - **Client-side**: Prefix with `VITE_` for browser access
 - Server env vars validated with Zod in `src/schemas/env.ts`
 
+Key variables (see `.env.example`):
+
+- `VITE_APP_NAME`, `VITE_SITE_URL` - App identity and OG image generation
+- `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST` - Analytics (client)
+- `MINIMUM_WAGE` - Fallback value in reais (server-only)
+
 ## Testing
 
 ### Unit Tests (Vitest)
@@ -286,7 +315,7 @@ Place tests next to source files as `*.test.ts` or `*.spec.ts`. Vitest globals a
 
 ### E2E Tests (Playwright)
 
-Located in `tests/e2e/`. Use semantic locators: `page.getByRole()`, `page.getByText()`, `page.locator()`.
+Located in `tests/e2e/`. Runs against Desktop Chrome and Mobile (Pixel 5). Use semantic locators: `page.getByRole()`, `page.getByText()`, `page.locator()`.
 
 ### Testing Monetary Values
 
