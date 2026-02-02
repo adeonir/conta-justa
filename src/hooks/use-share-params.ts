@@ -44,9 +44,10 @@ export function useShareParams(): { isFromShareLink: boolean; hasInvalidSharePar
     if (hasProcessed.current || !validatedData) return
     setData(validatedData)
     hasProcessed.current = true
+    window.history.replaceState(null, '', '/results')
   }, [validatedData, setData])
 
-  const isFromShareLink = validatedData !== null
+  const isFromShareLink = hasProcessed.current || validatedData !== null
   const hasInvalidShareParams = hasAnyShareParam && !isFromShareLink
 
   return { isFromShareLink, hasInvalidShareParams }
