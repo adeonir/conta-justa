@@ -243,7 +243,7 @@ function DevPage() {
                 <Button variant="outline" onClick={() => toast.error('Erro ao gerar imagem')}>
                   Error
                 </Button>
-                <Button variant="outline" onClick={() => toast.info('Link de compartilhamento invalido')}>
+                <Button variant="outline" onClick={() => toast.info('Link de compartilhamento inválido')}>
                   Info
                 </Button>
               </div>

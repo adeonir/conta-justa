@@ -34,7 +34,7 @@ function PersonSection({ name, result }: PersonSectionProps) {
           <span className={cn('font-semibold tabular-nums', remaining < 0 && 'text-error')}>
             {formatCurrency(remaining / 100)}
           </span>
-          <span className="text-muted-foreground">{remaining < 0 ? 'de deficit mensal' : 'de sobra mensal'}</span>
+          <span className="text-muted-foreground">{remaining < 0 ? 'de déficit mensal' : 'de sobra mensal'}</span>
         </li>
       </ul>
     </div>
@@ -64,7 +64,7 @@ export function ShareCard({ ref, ...props }: ComponentProps<'div'>) {
               <div className="size-1.5 rounded-full bg-primary" />
             </div>
             <p className="font-black text-3xl tracking-tight">
-              <span>Divisao das despesas de </span>
+              <span>Divisão das despesas de </span>
               <span className="text-primary underline">{nameA}</span>
               <span> e </span>
               <span className="text-primary underline">{nameB}</span>

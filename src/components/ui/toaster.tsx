@@ -127,7 +127,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
     }
   }, [pauseTimer, startTimer])
 
-  // Fallback timeout for exit
+  // Fallback timeout for exit; 500ms opacity + 500ms grid collapse + 100ms safety margin
   useEffect(() => {
     if (!exiting) return
 

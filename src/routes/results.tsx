@@ -41,7 +41,7 @@ export const Route = createFileRoute('/results')({
           ...baseMeta,
           {
             property: 'og:title',
-            content: `Divisao de despesas de ${nameA} e ${nameB} - Conta Justa`,
+            content: `Divisão de despesas de ${nameA} e ${nameB} - Conta Justa`,
           },
           {
             property: 'og:description',
