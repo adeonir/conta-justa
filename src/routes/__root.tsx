@@ -2,6 +2,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-r
 import { NuqsAdapter } from 'nuqs/adapters/tanstack-router'
 import type { ReactNode } from 'react'
 
+import { Toaster } from '~/components/ui/toaster'
 import { PostHogProvider } from '~/providers/posthog-provider'
 import { ThemeProvider } from '~/providers/theme-provider'
 import appCss from '~/styles.css?url'
@@ -60,6 +61,7 @@ function RootComponent() {
           </NuqsAdapter>
         </PostHogProvider>
       </ThemeProvider>
+      <Toaster />
     </RootDocument>
   )
 }

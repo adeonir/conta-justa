@@ -14,6 +14,7 @@ import {
   Switch,
   ThemeToggle,
   Title,
+  toast,
 } from '~/components/ui'
 import { Tooltip } from '~/components/ui/tooltip'
 import { useTheme } from '~/providers/theme-provider'
@@ -226,6 +227,39 @@ function DevPage() {
                   <Button variant="outline">Long</Button>
                 </Tooltip>
               </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* Toast Section */}
+        <Section title="Toast">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Variants</h3>
+              <div className="flex flex-wrap items-center gap-4">
+                <Button variant="outline" onClick={() => toast.success('Link copiado!')}>
+                  Success
+                </Button>
+                <Button variant="outline" onClick={() => toast.error('Erro ao gerar imagem')}>
+                  Error
+                </Button>
+                <Button variant="outline" onClick={() => toast.info('Link de compartilhamento invalido')}>
+                  Info
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-sm">Stacking</h3>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  toast.success('Primeiro toast')
+                  toast.error('Segundo toast')
+                  toast.info('Terceiro toast')
+                }}
+              >
+                Disparar 3 toasts
+              </Button>
             </div>
           </div>
         </Section>
