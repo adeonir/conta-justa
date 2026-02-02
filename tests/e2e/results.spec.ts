@@ -13,7 +13,7 @@ test.describe('Results Page - Complete Flow', () => {
   test('displays summary with correct names', async ({ page }) => {
     await fillFormAndSubmit(page, { nameA: 'Maria', nameB: 'Joao' })
 
-    await expect(page.getByText('Divisão das despesas')).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Divisão das despesas' })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Maria')
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Joao')
   })
