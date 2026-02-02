@@ -14,6 +14,8 @@ const mockData = {
 }
 
 const mockTrackEvent = vi.fn()
+const mockToastSuccess = vi.fn()
+const mockToastError = vi.fn()
 
 vi.mock('~/stores/expense-store', () => ({
   useData: () => mockData,
@@ -21,6 +23,24 @@ vi.mock('~/stores/expense-store', () => ({
 
 vi.mock('./use-track-event', () => ({
   trackEvent: (...args: unknown[]) => mockTrackEvent(...args),
+}))
+
+const mockToPng = vi.fn()
+
+vi.mock('html-to-image', () => ({
+  toPng: (...args: unknown[]) => mockToPng(...args),
+}))
+
+vi.mock('~/lib/toast', () => ({
+  toast: Object.assign(vi.fn(), {
+    success: (...args: unknown[]) => mockToastSuccess(...args),
+    error: (...args: unknown[]) => mockToastError(...args),
+    info: vi.fn(),
+    dismiss: vi.fn(),
+    dismissAll: vi.fn(),
+  }),
+  subscribe: vi.fn(),
+  getToasts: vi.fn(() => []),
 }))
 
 const mockClipboardWriteText = vi.fn().mockResolvedValue(undefined)
@@ -68,6 +88,16 @@ describe('useShare', () => {
       expect(mockClipboardWriteText.mock.calls[0][0]).toContain('ra=450000')
     })
 
+    it('shows success toast after copying link', async () => {
+      const { result } = renderHook(() => useShare())
+
+      await act(async () => {
+        await result.current.copyLink()
+      })
+
+      expect(mockToastSuccess).toHaveBeenCalledWith('Link copiado!')
+    })
+
     it('sets isCopied to true then resets after 2 seconds', async () => {
       const { result } = renderHook(() => useShare())
 
@@ -96,7 +126,6 @@ describe('useShare', () => {
 
     it('handles clipboard write failure gracefully', async () => {
       mockClipboardWriteText.mockRejectedValueOnce(new Error('Not allowed'))
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
       const { result } = renderHook(() => useShare())
 
@@ -106,7 +135,7 @@ describe('useShare', () => {
 
       expect(result.current.isCopied).toBe(false)
       expect(mockTrackEvent).not.toHaveBeenCalled()
-      warnSpy.mockRestore()
+      expect(mockToastError).toHaveBeenCalledWith('Erro ao copiar link')
     })
   })
 
@@ -168,7 +197,7 @@ describe('useShare', () => {
   })
 
   describe('downloadImage', () => {
-    it('is a stub that sets isDownloading to false', async () => {
+    it('does nothing when shareCardRef is null', async () => {
       const { result } = renderHook(() => useShare())
 
       await act(async () => {
@@ -176,6 +205,41 @@ describe('useShare', () => {
       })
 
       expect(result.current.isDownloading).toBe(false)
+      expect(mockToastSuccess).not.toHaveBeenCalled()
+      expect(mockToastError).not.toHaveBeenCalled()
+    })
+
+    it('shows success toast after downloading image', async () => {
+      mockToPng.mockResolvedValueOnce('data:image/png;base64,abc')
+      const mockClick = vi.fn()
+
+      const { result } = renderHook(() => useShare())
+      result.current.shareCardRef.current = document.createElement('div')
+
+      vi.spyOn(document, 'createElement').mockReturnValueOnce({
+        set download(_v: string) {},
+        set href(_v: string) {},
+        click: mockClick,
+      } as unknown as HTMLAnchorElement)
+
+      await act(async () => {
+        await result.current.downloadImage()
+      })
+
+      expect(mockToastSuccess).toHaveBeenCalledWith('Imagem salva!')
+    })
+
+    it('shows error toast when image download fails', async () => {
+      mockToPng.mockRejectedValueOnce(new Error('Canvas error'))
+
+      const { result } = renderHook(() => useShare())
+      result.current.shareCardRef.current = document.createElement('div')
+
+      await act(async () => {
+        await result.current.downloadImage()
+      })
+
+      expect(mockToastError).toHaveBeenCalledWith('Erro ao gerar imagem')
     })
   })
 })

@@ -1,6 +1,6 @@
 import { toPng } from 'html-to-image'
 import { useCallback, useRef, useState } from 'react'
-
+import { toast } from '~/components/ui'
 import { buildShareUrl } from '~/lib/share-url'
 import { useData } from '~/stores/expense-store'
 import { trackEvent } from './use-track-event'
@@ -28,9 +28,10 @@ export function useShare() {
         await navigator.clipboard.writeText(url)
         setIsCopied(true)
         trackEvent('result_shared', { channel })
+        toast.success('Link copiado!')
         setTimeout(() => setIsCopied(false), 2000)
-      } catch (error) {
-        console.warn('Clipboard write failed:', error)
+      } catch {
+        toast.error('Erro ao copiar link')
       }
     },
     [getShareUrl],
@@ -74,8 +75,9 @@ export function useShare() {
       link.href = dataUrl
       link.click()
       trackEvent('result_shared', { channel: 'image_download' })
-    } catch (error) {
-      console.error('Failed to generate image:', error)
+      toast.success('Imagem salva!')
+    } catch {
+      toast.error('Erro ao gerar imagem')
     } finally {
       setIsDownloading(false)
     }

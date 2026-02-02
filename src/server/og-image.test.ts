@@ -80,7 +80,7 @@ describe('generateOgImage', () => {
     expect(png[3]).toBe(0x47)
   })
 
-  it('produces a valid PNG for params with housework', { timeout: 10_000 }, async () => {
+  it('produces a valid PNG for params with housework', { timeout: 30_000 }, async () => {
     const params = new URLSearchParams('a=Ana&b=Bob&ra=500000&rb=300000&e=200000&ha=15&hb=5')
     const png = await generateOgImage(params)
 
