@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import { createRequire } from 'node:module'
 import { join } from 'node:path'
 import { initWasm, Resvg } from '@resvg/resvg-wasm'
 import type { ReactNode } from 'react'
@@ -39,7 +40,8 @@ let wasmInitialized = false
 
 async function waitWasmInit() {
   if (wasmInitialized) return
-  const wasmPath = join(require.resolve('@resvg/resvg-wasm'), '..', 'index_bg.wasm')
+  const esmRequire = createRequire(import.meta.url)
+  const wasmPath = join(esmRequire.resolve('@resvg/resvg-wasm'), '..', 'index_bg.wasm')
   await initWasm(await readFile(wasmPath))
   wasmInitialized = true
 }
