@@ -1,62 +1,5 @@
 import { expect, test } from '@playwright/test'
-
-const SHARED_URL = '/results?a=Maria&ra=450000&b=Joao&rb=300000&e=200000'
-const SHARED_URL_WITH_HOUSEWORK = '/results?a=Maria&ra=450000&b=Joao&rb=300000&e=200000&ha=10&hb=5'
-
-async function fillFormAndSubmit(
-  page: import('@playwright/test').Page,
-  options: {
-    nameA?: string
-    nameB?: string
-    incomeA?: string
-    incomeB?: string
-    expenses?: string
-    houseworkA?: string
-    houseworkB?: string
-  } = {},
-) {
-  const {
-    nameA = 'Ana',
-    nameB = 'Bob',
-    incomeA = '500000',
-    incomeB = '300000',
-    expenses = '200000',
-    houseworkA,
-    houseworkB,
-  } = options
-
-  await page.goto('/')
-  await page.waitForLoadState('networkidle')
-
-  await page.locator('#nameA').fill(nameA)
-  await page.locator('#incomeA').click()
-  await page.locator('#incomeA').pressSequentially(incomeA)
-
-  await page.locator('#nameB').fill(nameB)
-  await page.locator('#incomeB').click()
-  await page.locator('#incomeB').pressSequentially(incomeB)
-
-  await page.locator('#expenses').click()
-  await page.locator('#expenses').pressSequentially(expenses)
-
-  if (houseworkA || houseworkB) {
-    await page.getByText('Considerar trabalho doméstico no cálculo').click()
-    if (houseworkA) {
-      await page.locator('#houseworkA').fill(houseworkA)
-    }
-    if (houseworkB) {
-      await page.locator('#houseworkB').fill(houseworkB)
-    }
-  }
-
-  await page.locator('#expenses').blur()
-
-  const button = page.getByRole('button', { name: 'Ver resultados' })
-  await expect(button).toBeEnabled()
-  await button.click()
-
-  await page.waitForURL('/results')
-}
+import { fillFormAndSubmit, SHARED_URL, SHARED_URL_WITH_HOUSEWORK } from '../utils/helpers'
 
 test.describe('URL Pre-fill - Valid Shared Links', () => {
   // AC-001: Fresh session with valid params shows results
@@ -109,9 +52,9 @@ test.describe('URL Pre-fill - Valid Shared Links', () => {
     await fillFormAndSubmit(page, {
       nameA: 'Ana',
       nameB: 'Bob',
-      incomeA: '500000',
-      incomeB: '300000',
-      expenses: '200000',
+      incomeA: '5000',
+      incomeB: '3000',
+      expenses: '2000',
     })
 
     // Verify initial results show Ana and Bob
@@ -144,12 +87,13 @@ test.describe('URL Pre-fill - Invalid Params', () => {
     await expect(page).toHaveURL('/')
   })
 
-  // AC-004: Negative income -> redirect
+  // AC-004: Negative income -> redirect with toast
   test('redirects to home with negative income param', async ({ page }) => {
     await page.goto('/results?a=Maria&ra=-100&b=Joao&rb=300000&e=200000')
     await page.waitForLoadState('networkidle')
 
     await expect(page).toHaveURL('/')
+    await expect(page.getByLabel('Notificações').getByText('Link de compartilhamento inválido')).toBeVisible()
   })
 
   // AC-005: Empty name -> redirect

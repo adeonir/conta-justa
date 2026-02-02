@@ -1,79 +1,5 @@
 import { expect, test } from '@playwright/test'
-
-async function fillFormAndSubmit(
-  page: import('@playwright/test').Page,
-  options: {
-    nameA?: string
-    nameB?: string
-    incomeA?: string
-    incomeB?: string
-    expenses?: string
-    houseworkA?: string
-    houseworkB?: string
-  } = {},
-) {
-  const {
-    nameA = 'Ana',
-    nameB = 'Bob',
-    incomeA = '500000',
-    incomeB = '300000',
-    expenses = '200000',
-    houseworkA,
-    houseworkB,
-  } = options
-
-  await page.goto('/')
-  await page.waitForLoadState('networkidle')
-
-  await page.locator('#nameA').fill(nameA)
-  await page.locator('#incomeA').click()
-  await page.locator('#incomeA').pressSequentially(incomeA)
-
-  await page.locator('#nameB').fill(nameB)
-  await page.locator('#incomeB').click()
-  await page.locator('#incomeB').pressSequentially(incomeB)
-
-  await page.locator('#expenses').click()
-  await page.locator('#expenses').pressSequentially(expenses)
-
-  if (houseworkA || houseworkB) {
-    await page.getByText('Considerar trabalho doméstico no cálculo').click()
-    if (houseworkA) {
-      await page.locator('#houseworkA').fill(houseworkA)
-    }
-    if (houseworkB) {
-      await page.locator('#houseworkB').fill(houseworkB)
-    }
-  }
-
-  await page.locator('#expenses').blur()
-
-  const button = page.getByRole('button', { name: 'Ver resultados' })
-  await expect(button).toBeEnabled()
-  await button.click()
-
-  await page.waitForURL('/results')
-  await page.getByText('Modelo recomendado').first().waitFor()
-}
-
-function getSharingButtons(page: import('@playwright/test').Page) {
-  const copyButton = page.getByRole('button', { name: 'Copiar link do resultado' })
-  const shareButton = page.getByRole('button', { name: 'Compartilhar resultado' })
-  const downloadButton = page.getByRole('button', { name: 'Baixar imagem' })
-  return { copyButton, shareButton, downloadButton }
-}
-
-async function clickClipboardButton(page: import('@playwright/test').Page) {
-  const { copyButton, shareButton } = getSharingButtons(page)
-
-  if (await copyButton.isVisible()) {
-    await copyButton.click()
-    return copyButton
-  }
-
-  await shareButton.click()
-  return shareButton
-}
+import { clickClipboardButton, fillFormAndSubmit, getSharingButtons } from '../utils/helpers'
 
 test.describe('Sharing - Copy Link', () => {
   test.use({
@@ -103,6 +29,14 @@ test.describe('Sharing - Copy Link', () => {
     expect(url.searchParams.get('ra')).toBe('500000')
     expect(url.searchParams.get('rb')).toBe('300000')
     expect(url.searchParams.get('e')).toBe('200000')
+  })
+
+  test('clipboard button shows "Link copiado!" toast', async ({ page }) => {
+    await fillFormAndSubmit(page)
+
+    await clickClipboardButton(page)
+
+    await expect(page.getByLabel('Notificações').getByText('Link copiado!')).toBeVisible()
   })
 
   test('clipboard URL includes housework params when housework data exists', async ({ page }) => {
@@ -239,6 +173,18 @@ test.describe('Sharing - Image Download', () => {
     const download = await downloadPromise
 
     expect(download.suggestedFilename()).toBe('conta-justa.png')
+  })
+
+  test('download button shows "Imagem salva!" toast after download', async ({ page }) => {
+    await fillFormAndSubmit(page)
+
+    const { downloadButton } = getSharingButtons(page)
+
+    const downloadPromise = page.waitForEvent('download')
+    await downloadButton.click()
+    await downloadPromise
+
+    await expect(page.getByLabel('Notificações').getByText('Imagem salva!')).toBeVisible()
   })
 
   test('download button shows spinner while generating image', async ({ page }) => {
