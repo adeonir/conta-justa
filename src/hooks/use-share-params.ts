@@ -2,7 +2,7 @@ import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs'
 import { useEffect, useMemo, useRef } from 'react'
 
 import { shareParamsSchema } from '~/schemas/share-params'
-import { useSetData } from '~/stores/expense-store'
+import { useData, useSetData } from '~/stores/expense-store'
 
 const shareParamsParsers = {
   a: parseAsString,
@@ -18,6 +18,7 @@ export function useShareParams(): { isFromShareLink: boolean; hasInvalidSharePar
   const [params] = useQueryStates(shareParamsParsers)
   const hasProcessed = useRef(false)
 
+  const data = useData()
   const setData = useSetData()
 
   const hasAnyShareParam =
@@ -41,11 +42,16 @@ export function useShareParams(): { isFromShareLink: boolean; hasInvalidSharePar
   }, [params, hasRequiredParams])
 
   useEffect(() => {
-    if (hasProcessed.current || !validatedData) return
+    // Only process if:
+    // 1. Not already processed
+    // 2. Has valid data from URL
+    // 3. Store doesn't already have data (prevents overwriting user's form data)
+    if (hasProcessed.current || !validatedData || data) return
+
     setData(validatedData)
     hasProcessed.current = true
     window.history.replaceState(null, '', '/results')
-  }, [validatedData, setData])
+  }, [validatedData, setData, data])
 
   const isFromShareLink = hasProcessed.current || validatedData !== null
   const hasInvalidShareParams = hasAnyShareParam && !isFromShareLink
