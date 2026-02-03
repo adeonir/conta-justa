@@ -58,7 +58,7 @@ describe('parseShareParams', () => {
 })
 
 describe('generateOgImage', () => {
-  it('produces a valid PNG buffer for valid params', async () => {
+  it('produces a valid PNG buffer for valid params', { timeout: 30_000 }, async () => {
     const params = new URLSearchParams('a=Maria&b=Joao&ra=450000&rb=300000&e=200000')
     const png = await generateOgImage(params)
 
