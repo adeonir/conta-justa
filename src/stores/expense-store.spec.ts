@@ -105,7 +105,7 @@ describe('expense-store', () => {
       expect(result.current.selectedMethod).toBeNull()
     })
 
-    it('does not persist selectedMethod to sessionStorage', () => {
+    it('persists selectedMethod to sessionStorage', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
@@ -113,7 +113,7 @@ describe('expense-store', () => {
       })
 
       const stored = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')
-      expect(stored.state.selectedMethod).toBeUndefined()
+      expect(stored.state.selectedMethod).toBe('proportional')
     })
   })
 
@@ -186,20 +186,22 @@ describe('expense-store', () => {
   })
 
   describe('partialize', () => {
-    it('only persists data and minimumWage', () => {
+    it('persists data, minimumWage, selectedMethod and includeHousework', () => {
       const { result } = renderHook(() => useExpenseStore())
 
       act(() => {
         result.current.setData(mockFormData)
         result.current.setMinimumWage(141200)
         result.current.setSelectedMethod('equal')
+        result.current.setIncludeHousework(false)
       })
 
       const stored = JSON.parse(sessionStorage.getItem('expense-storage') || '{}')
 
       expect(stored.state).toHaveProperty('data')
       expect(stored.state).toHaveProperty('minimumWage')
-      expect(stored.state).not.toHaveProperty('selectedMethod')
+      expect(stored.state).toHaveProperty('selectedMethod')
+      expect(stored.state).toHaveProperty('includeHousework')
       expect(stored.state).not.toHaveProperty('_hasHydrated')
     })
 

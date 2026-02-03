@@ -49,6 +49,8 @@ export const useExpenseStore = create<ExpenseState>()(
       partialize: (state) => ({
         data: state.data,
         minimumWage: state.minimumWage,
+        selectedMethod: state.selectedMethod,
+        includeHousework: state.includeHousework,
       }),
       onRehydrateStorage: () => {
         return () => {
