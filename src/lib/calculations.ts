@@ -71,6 +71,8 @@ export function calculateProportional(input: CalculationInput): CalculationResul
     }
   }
 
+  // Calculate person A's contribution, then derive B's to ensure A + B = expenses exactly
+  // This prevents 1-cent rounding bias where one person always pays the extra cent
   const contributionA = Math.round(expenses * (incomeA / totalIncome))
   const contributionB = expenses - contributionA
 
@@ -106,6 +108,8 @@ export function calculateAdjusted(input: CalculationInput): CalculationResult {
     }
   }
 
+  // Calculate person A's contribution, then derive B's to ensure A + B = expenses exactly
+  // This prevents 1-cent rounding bias where one person always pays the extra cent
   const contributionA = Math.round(expenses * (adjustedIncomeA / totalAdjustedIncome))
   const contributionB = expenses - contributionA
 
@@ -123,9 +127,11 @@ export function calculateAdjusted(input: CalculationInput): CalculationResult {
 export function calculateEqual(input: CalculationInput): CalculationResult {
   const { incomeA, incomeB, expenses } = input
 
+  // Calculate person A's contribution, then derive B's to ensure A + B = expenses exactly
+  // This prevents 1-cent rounding bias where person A always pays the extra cent in odd values
   const halfExpenses = Math.round(expenses / 2)
   const contributionA = halfExpenses
-  const contributionB = expenses - halfExpenses
+  const contributionB = expenses - contributionA
 
   return {
     personA: buildPersonResult(contributionA, incomeA, expenses),
