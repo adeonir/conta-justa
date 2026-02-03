@@ -127,13 +127,15 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
     }
   }, [pauseTimer, startTimer])
 
-  // Fallback timeout for exit; 500ms opacity + 500ms grid collapse + 100ms safety margin
+  // Fallback timeout for exit animation completion
+  // Breakdown: 500ms opacity transition + 500ms grid-template-rows transition + 100ms safety margin
   useEffect(() => {
     if (!exiting) return
 
+    const EXIT_ANIMATION_DURATION_MS = 1100 // Ensures toast is fully removed after all transitions
     const fallbackTimer = setTimeout(() => {
       onDismiss(toast.id)
-    }, 1100)
+    }, EXIT_ANIMATION_DURATION_MS)
 
     return () => clearTimeout(fallbackTimer)
   }, [exiting, onDismiss, toast.id])

@@ -29,7 +29,7 @@ export function useShare() {
         setIsCopied(true)
         trackEvent('result_shared', { channel })
         toast.success('Link copiado!')
-        setTimeout(() => setIsCopied(false), 2000)
+        setTimeout(() => setIsCopied(false), 2000) // 2s - quick visual feedback without disrupting navigation flow
       } catch {
         toast.error('Erro ao copiar link')
       }

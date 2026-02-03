@@ -10,9 +10,9 @@ export interface ToastData {
 type Subscriber = (toasts: ToastData[]) => void
 
 const DEFAULT_DURATIONS: Record<ToastVariant, number> = {
-  success: 3000,
-  error: 5000,
-  info: 5000,
+  success: 3000, // 3s for success - enough time to read without interrupting user flow
+  error: 5000, // 5s for errors - longer duration because errors require more attention
+  info: 5000, // 5s for info - same as error since info messages are also important
 }
 
 class ToastState {
