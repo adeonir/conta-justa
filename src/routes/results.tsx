@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Hero } from '~/components/app/hero'
 import { Actions, Card, Comparison, Explanation, Summary } from '~/components/app/results'
 import { Footer, Header, PageLayout } from '~/components/layout'
-import { toast } from '~/components/ui'
+import { AriaLiveRegion, toast } from '~/components/ui'
 import { useShareParams } from '~/hooks/use-share-params'
 import { useTrackEvent } from '~/hooks/use-track-event'
 import { getMinimumWage } from '~/server/get-minimum-wage'
@@ -138,6 +138,7 @@ function ResultsPage() {
         </div>
       </PageLayout>
       <Footer />
+      <AriaLiveRegion>{/* Calculation results announced here for screen readers */}</AriaLiveRegion>
     </>
   )
 }

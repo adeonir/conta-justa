@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { Form } from '~/components/app/form'
 import { Hero } from '~/components/app/hero'
 import { Footer, Header, PageLayout } from '~/components/layout'
+import { AriaLiveRegion } from '~/components/ui'
 import { getMinimumWage } from '~/server/get-minimum-wage'
 import { useMinimumWage, useSetMinimumWage } from '~/stores/expense-store'
 
@@ -64,6 +65,7 @@ function HomePage() {
         <Form />
       </PageLayout>
       <Footer />
+      <AriaLiveRegion>{/* Form validation errors announced here for screen readers */}</AriaLiveRegion>
     </>
   )
 }
