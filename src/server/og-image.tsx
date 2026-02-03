@@ -80,6 +80,15 @@ interface ParsedParams {
   houseworkB: number
 }
 
+function sanitizeString(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+}
+
 function parseShareParams(searchParams: URLSearchParams): ParsedParams | null {
   const nameA = searchParams.get('a')
   const nameB = searchParams.get('b')
@@ -101,8 +110,8 @@ function parseShareParams(searchParams: URLSearchParams): ParsedParams | null {
   const houseworkB = Number.parseInt(searchParams.get('hb') ?? '0', 10) || 0
 
   return {
-    nameA: nameA.slice(0, 50),
-    nameB: nameB.slice(0, 50),
+    nameA: sanitizeString(nameA.slice(0, 50)),
+    nameB: sanitizeString(nameB.slice(0, 50)),
     incomeA: parsedIncomeA,
     incomeB: parsedIncomeB,
     expenses: parsedExpenses,
