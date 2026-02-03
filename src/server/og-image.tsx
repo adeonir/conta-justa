@@ -6,9 +6,10 @@ import type { ReactNode } from 'react'
 import satori from 'satori'
 
 import {
+  applyHouseworkAdjustment,
   type CalculationInput,
   type CalculationResult,
-  calculateAdjusted,
+  calculateHourlyRate,
   calculateProportional,
 } from '~/lib/calculations'
 import { env } from '~/schemas/env'
@@ -365,8 +366,8 @@ export async function generateOgImage(searchParams: URLSearchParams): Promise<Ui
 
   if (parsed) {
     const minimumWage = await getMinimumWageValue()
-    // minimumWage from server is in reais, convert to centavos
     const minimumWageCents = Math.round(minimumWage * 100)
+    const hasHousework = parsed.houseworkA > 0 || parsed.houseworkB > 0
 
     const input: CalculationInput = {
       incomeA: parsed.incomeA,
@@ -377,8 +378,20 @@ export async function generateOgImage(searchParams: URLSearchParams): Promise<Ui
       minimumWage: minimumWageCents,
     }
 
-    const hasHousework = parsed.houseworkA > 0 || parsed.houseworkB > 0
-    const result = hasHousework ? calculateAdjusted(input) : calculateProportional(input)
+    let result = calculateProportional(input)
+
+    if (hasHousework) {
+      const hourlyRate = calculateHourlyRate(minimumWageCents)
+      result = applyHouseworkAdjustment(
+        result,
+        {
+          houseworkHoursA: parsed.houseworkA,
+          houseworkHoursB: parsed.houseworkB,
+          hourlyRate,
+        },
+        parsed.expenses,
+      )
+    }
 
     jsx = <OgImageLayout params={parsed} result={result} />
   } else {

@@ -88,11 +88,15 @@ The minimum wage is fetched server-side via `createServerFn` (from Brazil's Cent
 
 ### Calculation Engine
 
-Three division methods in `src/lib/calculations.ts`:
+Two base division methods in `src/lib/calculations.ts`:
 
 - **Proportional** (`calculateProportional`): divides expenses by income ratio
-- **Adjusted** (`calculateAdjusted`): adds housework monetary value to income before ratio calculation. Uses `minimumWage / 220` hourly rate, multiplied by weekly hours \* 4 weeks
 - **Equal** (`calculateEqual`): 50/50 split regardless of income
+
+**Transform Pattern** for adjustments:
+- `applyHouseworkAdjustment(baseResult, houseworkData, hourlyRate)`: transforms a proportional result by adding housework monetary value to income and recalculating contributions. Uses `minimumWage / 220` hourly rate, multiplied by weekly hours * 4 weeks
+
+This separation allows for extensibility - other adjustments (e.g., dependents, transport) can be added as additional transformers.
 
 Edge case: when both incomes are zero, all methods fall back to 50/50.
 

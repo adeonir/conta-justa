@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  applyHouseworkAdjustment,
   buildPersonResult,
   type CalculationInput,
-  calculateAdjusted,
   calculateEqual,
   calculateHourlyRate,
   calculateHouseworkValue,
@@ -211,7 +211,7 @@ describe('calculateProportional', () => {
   })
 })
 
-describe('calculateAdjusted', () => {
+describe('applyHouseworkAdjustment', () => {
   const baseInput: CalculationInput = {
     incomeA: 500000, // R$5000
     incomeB: 300000, // R$3000
@@ -221,7 +221,22 @@ describe('calculateAdjusted', () => {
     minimumWage: 162100, // R$1621
   }
 
-  it('reduces contribution for person doing more housework', () => {
+  it('transforms base proportional result with housework adjustment', () => {
+    // First calculate base proportional result
+    const baseResult = calculateProportional(baseInput)
+
+    // Then apply housework adjustment (transform pattern)
+    const hourlyRate = calculateHourlyRate(baseInput.minimumWage)
+    const result = applyHouseworkAdjustment(
+      baseResult,
+      {
+        houseworkHoursA: baseInput.houseworkA,
+        houseworkHoursB: baseInput.houseworkB,
+        hourlyRate,
+      },
+      baseInput.expenses,
+    )
+
     // hourlyRate: 162100 / 220 = 736.818...
     // houseworkValueA: 5 * 4 * 736.82 = 14736 (rounded)
     // houseworkValueB: 15 * 4 * 736.82 = 44209 (rounded)
@@ -229,25 +244,44 @@ describe('calculateAdjusted', () => {
     // adjustedB: 300000 + 44209 = 344209
     // total: 858945
     // A pays more because higher adjusted income
-    const result = calculateAdjusted(baseInput)
-
     expect(result.method).toBe('proportional')
     expect(result.personA.contribution).toBeGreaterThan(result.personB.contribution)
     expect(result.personA.contribution + result.personB.contribution).toBe(200000)
   })
 
-  it('equals proportional when housework is zero for both', () => {
+  it('returns same as base when housework is zero for both', () => {
     const input = { ...baseInput, houseworkA: 0, houseworkB: 0 }
-    const adjustedResult = calculateAdjusted(input)
-    const proportionalResult = calculateProportional(input)
+    const baseResult = calculateProportional(input)
 
-    expect(adjustedResult.personA.contribution).toBe(proportionalResult.personA.contribution)
-    expect(adjustedResult.personB.contribution).toBe(proportionalResult.personB.contribution)
+    const hourlyRate = calculateHourlyRate(input.minimumWage)
+    const adjustedResult = applyHouseworkAdjustment(
+      baseResult,
+      {
+        houseworkHoursA: 0,
+        houseworkHoursB: 0,
+        hourlyRate,
+      },
+      input.expenses,
+    )
+
+    expect(adjustedResult.personA.contribution).toBe(baseResult.personA.contribution)
+    expect(adjustedResult.personB.contribution).toBe(baseResult.personB.contribution)
   })
 
   it('handles zero income with housework', () => {
     const input = { ...baseInput, incomeA: 0, incomeB: 0 }
-    const result = calculateAdjusted(input)
+    const baseResult = calculateProportional(input)
+
+    const hourlyRate = calculateHourlyRate(input.minimumWage)
+    const result = applyHouseworkAdjustment(
+      baseResult,
+      {
+        houseworkHoursA: input.houseworkA,
+        houseworkHoursB: input.houseworkB,
+        hourlyRate,
+      },
+      input.expenses,
+    )
 
     // Person B does more housework (higher adjusted income), so B pays more
     expect(result.personB.contribution).toBeGreaterThan(result.personA.contribution)
@@ -256,14 +290,36 @@ describe('calculateAdjusted', () => {
 
   it('returns 50/50 when both income and housework are zero', () => {
     const input = { ...baseInput, incomeA: 0, incomeB: 0, houseworkA: 0, houseworkB: 0 }
-    const result = calculateAdjusted(input)
+    const baseResult = calculateProportional(input)
+
+    const hourlyRate = calculateHourlyRate(input.minimumWage)
+    const result = applyHouseworkAdjustment(
+      baseResult,
+      {
+        houseworkHoursA: 0,
+        houseworkHoursB: 0,
+        hourlyRate,
+      },
+      input.expenses,
+    )
 
     expect(result.personA.contribution).toBe(100000)
     expect(result.personB.contribution).toBe(100000)
   })
 
   it('uses original income for remaining calculation', () => {
-    const result = calculateAdjusted(baseInput)
+    const baseResult = calculateProportional(baseInput)
+
+    const hourlyRate = calculateHourlyRate(baseInput.minimumWage)
+    const result = applyHouseworkAdjustment(
+      baseResult,
+      {
+        houseworkHoursA: baseInput.houseworkA,
+        houseworkHoursB: baseInput.houseworkB,
+        hourlyRate,
+      },
+      baseInput.expenses,
+    )
 
     // remaining is based on actual income, not adjusted
     expect(result.personA.remaining).toBe(baseInput.incomeA - result.personA.contribution)
@@ -271,7 +327,8 @@ describe('calculateAdjusted', () => {
   })
 
   it('includes houseworkValue in person results', () => {
-    const result = calculateAdjusted(baseInput)
+    const baseResult = calculateProportional(baseInput)
+
     // hourlyRate: 162100 / 220 = 736.818...
     // houseworkValueA: round(5 * 4 * 736.818...) = 14736
     // houseworkValueB: round(15 * 4 * 736.818...) = 44209
@@ -279,13 +336,34 @@ describe('calculateAdjusted', () => {
     const expectedA = Math.round(5 * 4 * hourlyRate)
     const expectedB = Math.round(15 * 4 * hourlyRate)
 
+    const result = applyHouseworkAdjustment(
+      baseResult,
+      {
+        houseworkHoursA: baseInput.houseworkA,
+        houseworkHoursB: baseInput.houseworkB,
+        hourlyRate,
+      },
+      baseInput.expenses,
+    )
+
     expect(result.personA.houseworkValue).toBe(expectedA)
     expect(result.personB.houseworkValue).toBe(expectedB)
   })
 
   it('returns houseworkValue of 0 when person has no housework hours', () => {
     const input = { ...baseInput, houseworkA: 0 }
-    const result = calculateAdjusted(input)
+    const baseResult = calculateProportional(input)
+
+    const hourlyRate = calculateHourlyRate(input.minimumWage)
+    const result = applyHouseworkAdjustment(
+      baseResult,
+      {
+        houseworkHoursA: 0,
+        houseworkHoursB: input.houseworkB,
+        hourlyRate,
+      },
+      input.expenses,
+    )
 
     expect(result.personA.houseworkValue).toBe(0)
     expect(result.personB.houseworkValue).toBeGreaterThan(0)
@@ -381,7 +459,17 @@ describe('proportional baseline comparison', () => {
 
   it('produces different contributions when housework differs between persons', () => {
     const proportional = calculateProportional(baseInput)
-    const adjusted = calculateAdjusted(baseInput)
+
+    const hourlyRate = calculateHourlyRate(baseInput.minimumWage)
+    const adjusted = applyHouseworkAdjustment(
+      proportional,
+      {
+        houseworkHoursA: baseInput.houseworkA,
+        houseworkHoursB: baseInput.houseworkB,
+        hourlyRate,
+      },
+      baseInput.expenses,
+    )
 
     expect(adjusted.personA.contribution).not.toBe(proportional.personA.contribution)
     expect(adjusted.personB.contribution).not.toBe(proportional.personB.contribution)
@@ -389,7 +477,17 @@ describe('proportional baseline comparison', () => {
 
   it('produces different expense percentages between baseline and adjusted', () => {
     const proportional = calculateProportional(baseInput)
-    const adjusted = calculateAdjusted(baseInput)
+
+    const hourlyRate = calculateHourlyRate(baseInput.minimumWage)
+    const adjusted = applyHouseworkAdjustment(
+      proportional,
+      {
+        houseworkHoursA: baseInput.houseworkA,
+        houseworkHoursB: baseInput.houseworkB,
+        hourlyRate,
+      },
+      baseInput.expenses,
+    )
 
     expect(adjusted.personA.expensePercentage).not.toBe(proportional.personA.expensePercentage)
     expect(adjusted.personB.expensePercentage).not.toBe(proportional.personB.expensePercentage)

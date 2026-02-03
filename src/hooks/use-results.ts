@@ -2,10 +2,11 @@ import { useMemo } from 'react'
 
 import type { MethodType } from '~/components/app/results/types'
 import {
+  applyHouseworkAdjustment,
   type CalculationInput,
   type CalculationResult,
-  calculateAdjusted,
   calculateEqual,
+  calculateHourlyRate,
   calculateProportional,
 } from '~/lib/calculations'
 import {
@@ -51,13 +52,24 @@ export function useResults(): Results | null {
     }
 
     const hasHousework = data.houseworkA > 0 || data.houseworkB > 0
-    const proportionalBaseline = hasHousework ? calculateProportional(input) : null
 
-    // Proporcional auto-uses adjusted calculation when housework data exists
-    const proportionalResult = hasHousework ? calculateAdjusted(input) : calculateProportional(input)
-    const proportional: CalculationResult = {
-      ...proportionalResult,
-      method: 'proportional',
+    const proportionalBase = calculateProportional(input)
+    const proportionalBaseline = hasHousework ? proportionalBase : null
+
+    let proportional: CalculationResult
+    if (hasHousework) {
+      const hourlyRate = calculateHourlyRate(minimumWage)
+      proportional = applyHouseworkAdjustment(
+        proportionalBase,
+        {
+          houseworkHoursA: data.houseworkA,
+          houseworkHoursB: data.houseworkB,
+          hourlyRate,
+        },
+        data.expenses,
+      )
+    } else {
+      proportional = proportionalBase
     }
 
     const equal = calculateEqual(input)

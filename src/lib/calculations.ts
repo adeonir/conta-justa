@@ -83,22 +83,36 @@ export function calculateProportional(input: CalculationInput): CalculationResul
   }
 }
 
-/**
- * Method 2: Adjusted Division (with housework)
- * Adds housework value to income before calculating ratio
- */
-export function calculateAdjusted(input: CalculationInput): CalculationResult {
-  const { incomeA, incomeB, expenses, houseworkA, houseworkB, minimumWage } = input
-  const hourlyRate = calculateHourlyRate(minimumWage)
+export interface HouseworkAdjustmentInput {
+  houseworkHoursA: number
+  houseworkHoursB: number
+  hourlyRate: number
+}
 
-  const houseworkValueA = calculateHouseworkValue(houseworkA, hourlyRate)
-  const houseworkValueB = calculateHouseworkValue(houseworkB, hourlyRate)
+/**
+ * Apply housework adjustment to a proportional calculation result.
+ * Adds housework monetary value to income and recalculates contributions.
+ * This is a transform pattern: takes a base result and applies an adjustment.
+ */
+export function applyHouseworkAdjustment(
+  baseResult: CalculationResult,
+  adjustment: HouseworkAdjustmentInput,
+  expenses: number,
+): CalculationResult {
+  const { houseworkHoursA, houseworkHoursB, hourlyRate } = adjustment
+
+  const houseworkValueA = calculateHouseworkValue(houseworkHoursA, hourlyRate)
+  const houseworkValueB = calculateHouseworkValue(houseworkHoursB, hourlyRate)
+
+  // Get original incomes from the base result
+  const incomeA = baseResult.personA.remaining + baseResult.personA.contribution
+  const incomeB = baseResult.personB.remaining + baseResult.personB.contribution
 
   const adjustedIncomeA = incomeA + houseworkValueA
   const adjustedIncomeB = incomeB + houseworkValueB
   const totalAdjustedIncome = adjustedIncomeA + adjustedIncomeB
 
-  // Edge case: zero adjusted income - split 50/50
+  // Edge case: zero adjusted income - keep base result but add housework values
   if (totalAdjustedIncome === 0) {
     const halfExpenses = Math.round(expenses / 2)
     return {
@@ -108,8 +122,7 @@ export function calculateAdjusted(input: CalculationInput): CalculationResult {
     }
   }
 
-  // Calculate person A's contribution, then derive B's to ensure A + B = expenses exactly
-  // This prevents 1-cent rounding bias where one person always pays the extra cent
+  // Calculate contributions based on adjusted income
   const contributionA = Math.round(expenses * (adjustedIncomeA / totalAdjustedIncome))
   const contributionB = expenses - contributionA
 
